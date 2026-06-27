@@ -1,0 +1,16 @@
+baseURL = "https://atidmushlam.github.io/shooting-star-blog/"
+languageCode = "he"
+defaultContentLanguage = "he"
+title = "כוכב נופל"
+enableRobotsTXT = true
+
+[params]
+  description = "סיפורי מדע בדיוני ופנטזיה קצרים מאת ש.מ"
+  author = "ש.מ"
+  contactEmail = "shootingstarblog@outlook.com"
+
+[taxonomies]
+  tag = "tags"
+
+[pagination]
+  pagerSize = 12

@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="utf-8">
+  <title>{{ with .Title }}{{ . }} | {{ end }}{{ .Site.Title }}</title>
+</head>
+<body>
+  <main id="main-content">{{ block "main" . }}{{ end }}</main>
+</body>
+</html>
