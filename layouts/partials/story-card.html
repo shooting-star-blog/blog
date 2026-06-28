@@ -2,7 +2,7 @@
 <article class="story-card">
   {{ with $page.Params.cover }}
   <a href="{{ $page.RelPermalink }}" tabindex="-1" aria-hidden="true">
-    <img src="{{ . }}" alt="" class="story-card__image" loading="lazy">
+    {{ partial "cover-image.html" (dict "cover" . "altText" "" "eager" false "class" "story-card__image" "sizes" "(max-width: 480px) 100vw, (max-width: 900px) 50vw, 380px") }}
   </a>
   {{ end }}
   <div class="story-card__body">

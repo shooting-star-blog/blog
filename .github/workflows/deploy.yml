@@ -5,10 +5,15 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,14 +24,23 @@ jobs:
         uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: '0.163.0'  # pin exact version — update deliberately
-          extended: true            # REQUIRED for WebP image processing
+          extended: true            # required for WebP image processing
+
+      - name: Cache image pipeline output
+        uses: actions/cache@v4
+        with:
+          path: resources/_gen
+          key: hugo-resources-${{ hashFiles('assets/images/**') }}-0.163.0
+          restore-keys: hugo-resources-
 
       - name: Build
         run: hugo --minify
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-          # cname: your-domain.com  # uncomment and set when domain is purchased
+          path: ./public
+
+      - uses: actions/deploy-pages@v4
+        id: deployment

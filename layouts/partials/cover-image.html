@@ -1,0 +1,16 @@
+{{- $src := resources.Get .cover -}}
+{{- if $src -}}
+  {{- $hero   := $src.Process "resize 1200x webp" -}}
+  {{- $tablet := $src.Process "resize 800x webp" -}}
+  {{- $mobile := $src.Process "resize 400x webp" -}}
+  <img
+    src="{{ $hero.RelPermalink }}"
+    srcset="{{ $mobile.RelPermalink }} 400w, {{ $tablet.RelPermalink }} 800w, {{ $hero.RelPermalink }} 1200w"
+    sizes="{{ .sizes | default "(max-width: 480px) 100vw, (max-width: 900px) 100vw, 1140px" }}"
+    alt="{{ .altText | default "" }}"
+    width="{{ $hero.Width }}"
+    height="{{ $hero.Height }}"
+    {{ with .class }}class="{{ . }}"{{ end }}
+    {{ if .eager }}loading="eager" fetchpriority="high"{{ else }}loading="lazy"{{ end }}
+  >
+{{- end -}}

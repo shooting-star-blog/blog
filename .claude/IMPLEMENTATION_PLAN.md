@@ -58,17 +58,17 @@ PHASE 5 — Accessibility
   [x] 5.8  Verify: axe-core reports 0 violations; all flows completable by keyboard
 
 PHASE 6 — Image Pipeline
-  [ ] 6.1  Create assets/images/ directory; confirm images go here (not static/) for Hugo processing
-  [ ] 6.2  Configure image shortcode or partial: resize to 1200px max, convert to WebP, generate srcset at 400/800/1200px
-  [ ] 6.3  Set hero cover image: loading="eager" fetchpriority="high"; all other images: loading="lazy"
-  [ ] 6.4  Add <link rel="preload"> for story body font (Frank Ruhl Libre) on single story pages
-  [ ] 6.5  Source and download 3 placeholder Pixabay images (one per test story), confirm WebP output ≤ 250 KB
-  [ ] 6.6  Verify: Lighthouse Performance ≥ 90 on a story page; LCP ≤ 2.5s; images served as WebP in DevTools Network tab
+  [x] 6.1  Create assets/images/ directory; confirm images go here (not static/) for Hugo processing
+  [x] 6.2  Configure image shortcode or partial: resize to 1200px max, convert to WebP, generate srcset at 400/800/1200px
+  [x] 6.3  Set hero cover image: loading="eager" fetchpriority="high"; all other images: loading="lazy"
+  [x] 6.4  Add <link rel="preload"> for story body font (Frank Ruhl Libre) on single story pages
+  [x] 6.5  Source and download 3 placeholder Pixabay images (one per test story), confirm WebP output ≤ 250 KB
+  [x] 6.6  Verify: Lighthouse Performance ≥ 90 on a story page; LCP ≤ 2.5s; images served as WebP in DevTools Network tab
 
 PHASE 7 — CI/CD & Deployment
-  [ ] 7.1  Write .github/workflows/deploy.yml (trigger: push to main; pin Hugo extended to specific version; build → deploy gh-pages)
-  [ ] 7.2  Add static/CNAME file with the target domain (placeholder until domain is purchased)
-  [ ] 7.3  Add resources/_gen/ to .gitignore OR commit it — decide and document the choice in a comment in deploy.yml
+  [x] 7.1  Write .github/workflows/deploy.yml (trigger: push to main; pin Hugo extended to specific version; build → deploy gh-pages)
+  [x] 7.2  Set custom domain in GitHub repo Settings → Pages (not via CNAME file — Actions workflow makes CNAME redundant)
+  [x] 7.3  Add resources/_gen/ to .gitignore OR commit it — decide and document the choice in a comment in deploy.yml
   [ ] 7.4  Enable GitHub Pages in repo settings: source = gh-pages branch
   [ ] 7.5  Push a test commit; confirm GitHub Actions runs green and site loads at github.io URL
   [ ] 7.6  Verify: GitHub Actions log shows "extended" Hugo version used; deployed site URL matches baseURL in config.toml
@@ -81,15 +81,23 @@ PHASE 8 — Content Migration
   [ ] 8.5  Confirm image processing output: WebP thumbnails ≤ 120 KB, hero images ≤ 250 KB
   [ ] 8.6  Verify: all 13 stories appear on the list page; featured set shows on homepage; each story's tag chips link to populated taxonomy pages; suggested stories section populated on stories that share tags
 
-PHASE 9 — Launch Audit
-  [ ] 9.1  Run Lighthouse on homepage, one story page, one tag page — all scores: Performance ≥ 90, SEO ≥ 95, Accessibility = 100, Best Practices ≥ 90
-  [ ] 9.2  Run axe-core CLI on all three page types — 0 violations
-  [ ] 9.3  Validate JSON-LD on a story page using Google's Rich Results Test
-  [ ] 9.4  Submit sitemap.xml to Google Search Console; verify all 13 stories + tag pages are eligible for indexing
-  [ ] 9.5  Test on real mobile device (or BrowserStack): RTL layout, font rendering, touch targets ≥ 44px, no horizontal scroll
-  [ ] 9.6  Verify RSS feed at /index.xml: valid XML, contains summaries only (not full story text)
-  [ ] 9.7  Verify newsletter form submits to Buttondown correctly (test email signup end-to-end)
-  [ ] 9.8  Confirm annual cost: GitHub Pages (free) + domain (~$10) = total ≤ $10/year
+PHASE 9 — Privacy & Legal Compliance
+  [ ] 9.1  Create content/privacy.md with Hebrew privacy policy (Buttondown data, Umami analytics, unsubscribe rights, contact email)
+  [ ] 9.2  Update layouts/partials/newsletter.html: add consent note + link to /privacy/ below submit button
+  [ ] 9.3  Update layouts/partials/footer.html: add Privacy Policy link
+  [ ] 9.4  Update layouts/partials/head.html: inject Umami script only when site.Params.umamiSiteId is non-empty
+  [ ] 9.5  Add umamiSiteId = "" placeholder param to config.toml
+  [ ] 9.6  Verify: /privacy/ renders; newsletter form shows consent note with link; footer links to /privacy/; Umami script absent when param is empty
+
+PHASE 10 — Launch Audit
+  [ ] 10.1  Run Lighthouse on homepage, one story page, one tag page — all scores: Performance ≥ 90, SEO ≥ 95, Accessibility = 100, Best Practices ≥ 90
+  [ ] 10.2  Run axe-core CLI on all three page types — 0 violations
+  [ ] 10.3  Validate JSON-LD on a story page using Google's Rich Results Test
+  [ ] 10.4  Submit sitemap.xml to Google Search Console; verify all 13 stories + tag pages are eligible for indexing
+  [ ] 10.5  Test on real mobile device (or BrowserStack): RTL layout, font rendering, touch targets ≥ 44px, no horizontal scroll
+  [ ] 10.6  Verify RSS feed at /index.xml: valid XML, contains summaries only (not full story text)
+  [ ] 10.7  Verify newsletter form submits to Buttondown correctly (test email signup end-to-end)
+  [ ] 10.8  Confirm annual cost: GitHub Pages (free) + domain (~$10) = total ≤ $10/year
 ```
 
 ---
@@ -170,7 +178,7 @@ Expect: server starts at `localhost:1313`, no errors (even with empty templates)
 ### Gotchas (grilled)
 
 - **Hugo regular vs extended:** The regular `hugo` binary cannot process images to WebP. `hugo version` must say `extended`. If a CI/CD environment installs the wrong binary, image processing silently fails and falls back to the original format.
-- **baseURL with custom domain:** The site uses `https://shootingstarblog.com/` as the baseURL. GitHub Pages serves the custom domain from any repo name — no subpath needed. A `static/CNAME` file containing `shootingstarblog.com` must be present so GitHub Pages preserves the custom domain configuration across every deploy (see Phase 7).
+- **baseURL with custom domain:** The site uses `https://shootingstarblog.com/` as the baseURL. GitHub Pages serves the custom domain from any repo name — no subpath needed. Set the domain once in GitHub repo Settings → Pages; the official `actions/deploy-pages` workflow persists it automatically without a CNAME file (see Phase 7).
 - **`--force` flag:** Without it, `hugo new site` aborts because the directory is non-empty. CLAUDE.md and PRD.md must not be deleted.
 - **Hebrew slugs in URLs:** Hugo's default `slugify` function will percent-encode Hebrew characters in story URLs (e.g., `/stories/%D7%90%D7%A7%D7%99%D7%A8%D7%94/`). This is ugly and fragile. Prevent it by setting `slug` explicitly in each story's frontmatter using the English slug (e.g., `slug: "akira"`). This is handled in Phase 8 but must be designed for now.
 - **Taxonomy configuration:** Hugo's default config in newer versions may not include `[taxonomies]` at all, relying on auto-detection. Explicitly declare `tag = "tags"` to avoid surprises and to be able to disable unwanted auto-taxonomies like `category`.
@@ -765,11 +773,9 @@ jobs:
           cname: your-domain.com  # placeholder; update when domain is purchased
 ```
 
-**7.2 — static/CNAME**
+**7.2 — Custom domain via GitHub Settings**
 
-Create `static/CNAME` with the target domain. Hugo copies `static/` to `public/` at build time, so CNAME persists across deploys without being managed by the deploy action separately.
-
-> Using the `cname:` parameter in `peaceiris/actions-gh-pages` AND a `static/CNAME` is redundant — pick one. Recommended: use `static/CNAME` so it is version-controlled and visible.
+Set the custom domain in **Settings → Pages → Custom domain** in the GitHub repository UI. With the official `actions/deploy-pages` workflow, GitHub stores the domain in repository settings — a `CNAME` file is explicitly not required and is ignored if present. Do not add a `static/CNAME` file.
 
 **7.3 — GitHub Pages settings**
 
@@ -789,7 +795,7 @@ The URL in the browser must exactly match `baseURL` in `config.toml`. Mismatches
 - **Pin Hugo version:** Never use `hugo-version: 'latest'`. A Hugo major release can change template behavior, breaking the build silently or catastrophically. Pin to a specific version (e.g., `0.128.0`) and update deliberately.
 - **`extended: true` in the workflow:** This is the second place (after local install) where extended must be enforced. If it's absent, image processing builds locally but fails or degrades in CI.
 - **`GITHUB_TOKEN` permissions:** The default `GITHUB_TOKEN` may lack write permissions to the `gh-pages` branch if repo permissions are set to `read` by default. Add `permissions: contents: write` to the job.
-- **CNAME file and gh-pages branch:** The `peaceiris/actions-gh-pages` action deploys a fresh copy of `public/` to the `gh-pages` branch on every run. If the CNAME file is not in `public/` (generated by `static/CNAME` → copied by Hugo build), the custom domain is cleared on every deploy — GitHub then throws a "domain removed" warning in the Pages settings.
+- **CNAME file is not needed with `actions/deploy-pages`:** GitHub's official Pages Actions workflow stores the custom domain in repository settings, not via a CNAME file. The GitHub docs explicitly state: "any existing CNAME file is ignored and is not required." Set the domain once in Settings → Pages and it persists across all deploys automatically.
 - **GitHub Actions secrets for future use:** If Buttondown or any third-party service ever requires an API key (e.g., for a webhook), store it as a GitHub Actions secret, not in `config.toml` or any committed file. Even if there are no secrets now, note this in a comment in `deploy.yml`.
 - **`hugo --minify`:** Minification reduces HTML/CSS/JS output size and improves performance. It can occasionally cause issues with inline JSON-LD (if the minifier mangles the script block). Verify the JSON-LD in the deployed build, not just in `hugo server`.
 
@@ -798,7 +804,7 @@ The URL in the browser must exactly match `baseURL` in `config.toml`. Mismatches
 - [ ] Actions log shows Hugo version matching pinned value; `extended` binary confirmed
 - [ ] Deployed site loads at correct GitHub Pages URL
 - [ ] `<link rel="stylesheet">` and all asset URLs load without 404
-- [ ] `static/CNAME` file present in the deployed `gh-pages` branch root
+- [ ] Custom domain set in GitHub repo Settings → Pages
 - [ ] JSON-LD not broken by minification (view-source on deployed story page)
 
 ### After Phase 7
@@ -913,14 +919,112 @@ Run `/simplify` on frontmatter files if any patterns can be standardized (e.g., 
 
 ---
 
-## Phase 9 — Launch Audit
+## Phase 9 — Privacy & Legal Compliance
+
+### Goal
+The site collects personal data (email addresses via the newsletter) and tracks page views (via Umami). Before launch, a Privacy Policy page must exist, the newsletter form must show explicit consent language, the footer must link to the policy, and analytics must be gated behind a config param so local builds stay clean.
+
+### Tasks
+
+**9.1 — content/privacy.md**
+
+Create the Privacy Policy page with standard frontmatter:
+```yaml
+---
+title: "מדיניות פרטיות"
+slug: "privacy"
+date: <today>
+draft: false
+---
+```
+
+Body must cover in Hebrew:
+1. **מידע שנאסף** — email address when subscribing to the newsletter; aggregate page-view data (no PII) via Umami analytics
+2. **שימוש במידע** — newsletter emails used solely to notify subscribers of new stories; Umami data used for anonymous traffic insights only
+3. **עיבוד נתונים על ידי צד שלישי** — Buttondown (newsletter platform, [buttondown.email/privacy](https://buttondown.email/privacy)); Umami Cloud (analytics, [umami.is/privacy](https://umami.is/privacy))
+4. **עוגיות (Cookies)** — the site does not set cookies; Umami is cookie-free
+5. **זכויות המשתמש** — subscribers may unsubscribe at any time via the link in every newsletter email; may request deletion of their email by contacting shootingstarblog@outlook.com
+6. **יצירת קשר** — shootingstarblog@outlook.com
+
+**9.2 — Newsletter consent note**
+
+In `layouts/partials/newsletter.html`, add directly below the `<button>` element:
+```html
+<p class="newsletter-consent">
+  לא נשלח ספאם. ביטול הרשמה בכל עת.
+  <a href="/privacy/">מדיניות פרטיות</a>
+</p>
+```
+
+Style `.newsletter-consent` with a smaller font size and muted color (still ≥ 4.5:1 contrast).
+
+**9.3 — Footer Privacy Policy link**
+
+In `layouts/partials/footer.html`, add a Privacy Policy link in the footer nav or below the copyright notice:
+```html
+<a href="/privacy/">מדיניות פרטיות</a>
+```
+
+**9.4 — Umami analytics injection**
+
+In `layouts/partials/head.html`, add at the end of the `<head>` block:
+```html
+{{ with .Site.Params.umamiSiteId }}
+<script defer
+  src="https://cloud.umami.is/script.js"
+  data-website-id="{{ . }}">
+</script>
+{{ end }}
+```
+The `{{ with }}` block means the script is injected only when `umamiSiteId` is non-empty — local `hugo server` runs produce zero analytics traffic.
+
+**9.5 — config.toml param**
+
+Add to the `[params]` block:
+```toml
+umamiSiteId = ""  # set to your Umami site ID after creating an account at umami.is
+```
+
+**9.6 — Verification**
+
+```bash
+hugo server --buildDrafts
+```
+Check:
+- `/privacy/` renders with full policy text
+- Newsletter form shows consent note with link to `/privacy/`
+- Footer has a Privacy Policy link on all page types
+- View-source: Umami script tag is absent (param is empty)
+- Set `umamiSiteId = "test-id"` temporarily in config.toml → confirm script tag appears in source
+
+### Gotchas
+
+- **Buttondown unsubscribe is automatic:** Every Buttondown-sent email contains a legally required unsubscribe link. You do not need to build this yourself. The Privacy Policy just needs to state it exists.
+- **Umami `defer` attribute:** The `defer` attribute is required so the analytics script does not block page rendering. Without it, Umami adds to render-blocking time and hurts Lighthouse Performance score.
+- **Privacy Policy page and sitemap:** Hugo will include `/privacy/` in `sitemap.xml` by default. This is fine — it should be indexable.
+- **GDPR legitimate basis for newsletter:** Because users actively submit the form, the legal basis is **consent** (not legitimate interest). This means the Privacy Policy must state consent can be withdrawn (by unsubscribing), which Buttondown handles automatically.
+- **Israeli Privacy Law registration:** Under the Israeli Protection of Privacy Law, databases containing personal data of more than 10,000 individuals must be registered with the Israeli Law, Information and Technology Authority (ILITA). For a small newsletter starting from zero, this threshold is far off — but worth noting for when the list grows.
+
+### Verification Checklist
+- [ ] `/privacy/` page renders; policy covers data collection, Buttondown, Umami, cookies, rights, contact
+- [ ] Newsletter form shows consent note with `/privacy/` link on all pages where the form appears
+- [ ] Footer contains Privacy Policy link on homepage, story list, single story, tag, and about pages
+- [ ] Umami script tag absent from page source when `umamiSiteId = ""`
+- [ ] Umami script tag present and correct when `umamiSiteId` is set
+
+### After Phase 9
+Run `/simplify` on `newsletter.html`, `footer.html`, `head.html`. Commit with message `feat: privacy policy, newsletter consent, and analytics gating`.
+
+---
+
+## Phase 10 — Launch Audit
 
 ### Goal
 Every success metric from the PRD is met before the domain is pointed at the site. The site is ready for public launch.
 
 ### Tasks
 
-**9.1 — Lighthouse audit (three page types)**
+**10.1 — Lighthouse audit (three page types)**
 
 ```bash
 # Install if not present
@@ -940,7 +1044,7 @@ Targets (all must pass):
 | Best Practices | ≥ 90 |
 | SEO | ≥ 95 |
 
-**9.2 — axe-core final scan**
+**10.2 — axe-core final scan**
 
 ```bash
 axe https://<site>/ https://<site>/stories/ https://<site>/stories/akira/ \
@@ -948,18 +1052,18 @@ axe https://<site>/ https://<site>/stories/ https://<site>/stories/akira/ \
 ```
 `--exit` causes a non-zero exit code on violations, making this usable in CI.
 
-**9.3 — Google Rich Results Test**
+**10.3 — Google Rich Results Test**
 
 Navigate to search.google.com/test/rich-results and test the URL of one story page. Confirm the `Article` schema is detected without errors or warnings.
 
-**9.4 — Google Search Console setup**
+**10.4 — Google Search Console setup**
 
 1. Add the site as a property in GSC
 2. Verify ownership via the HTML meta tag method (add to `head.html`, redeploy)
 3. Submit `https://<site>/sitemap.xml`
 4. Check Coverage report after 24 hours for indexing status
 
-**9.5 — Mobile device test**
+**10.5 — Mobile device test**
 
 On a real device (or BrowserStack):
 - [ ] RTL layout correct; text flows right-to-left
@@ -969,17 +1073,17 @@ On a real device (or BrowserStack):
 - [ ] Touch targets (nav, tag chips, story cards) are comfortably tappable
 - [ ] Newsletter form usable on touch keyboard
 
-**9.6 — RSS feed validation**
+**10.6 — RSS feed validation**
 
 Submit `/index.xml` to validator.w3.org/feed. Fix any structural warnings.
 
-**9.7 — Newsletter end-to-end test**
+**10.7 — Newsletter end-to-end test**
 
 1. Submit a test email address via the newsletter form
 2. Confirm subscription appears in Buttondown dashboard
 3. Confirm confirmation email arrives
 
-**9.8 — Cost audit**
+**10.8 — Cost audit**
 
 Confirm the annual cost breakdown:
 | Item | Cost |
@@ -1012,7 +1116,7 @@ Confirm the annual cost breakdown:
 - [ ] Annual cost confirmed ≤ $10
 - [ ] All checkboxes in the Global Task List above are ticked
 
-### After Phase 9
+### After Phase 10
 Run `/simplify` on any files touched during audit fixes. Final commit: `chore: launch audit fixes`. Tag the release: `git tag v1.0.0`.
 
 ---
@@ -1052,7 +1156,7 @@ The following edge cases were identified during plan review and are addressed in
 | 27 | `width`/`height` on `<img>` prevents layout shift (CLS) | Phase 6 |
 | 28 | `fetch-depth: 0` needed for `.Lastmod` from git history | Phase 7 |
 | 29 | Hugo version must be pinned in CI | Phase 7 |
-| 30 | CNAME file must be in `static/` to survive gh-pages deploys | Phase 7 |
+| 30 | CNAME file not needed with `actions/deploy-pages` — set custom domain in GitHub Settings → Pages instead | Phase 7 |
 | 31 | `languageCode` deprecated v0.158.0 — use `locale = "he-IL"` | Phase 1 |
 | 32 | `[imaging] defaultProcessingTimeout` is not a valid key — omit it | Phase 1 |
 | 33 | RSS override path changed — use `layouts/home.rss.xml` not `_default/rss.xml` | Phase 4 |
@@ -1060,3 +1164,7 @@ The following edge cases were identified during plan review and are addressed in
 | 35 | `.Scratch` / `$.Scratch` soft-deprecated v0.138.0 — use `.Store` / `$.Store` | Phase 3 |
 | 36 | `.IsNode` deprecated v0.163.0 — use `.IsBranch` | Any phase |
 | 37 | `resources.ToCSS` removed v0.156.0 — use `css.Sass` if Sass is ever adopted | Phase 2 |
+| 38 | Umami script must be gated on `umamiSiteId` param — absent param = no analytics in dev/staging | Phase 9 |
+| 39 | Buttondown unsubscribe is automatic per email — Privacy Policy must state this, no custom implementation needed | Phase 9 |
+| 40 | Umami `<script>` must use `defer` — without it the script is render-blocking and hurts Lighthouse Performance | Phase 9 |
+| 41 | Israeli Privacy Law ILITA registration required only above 10,000-record threshold — not applicable at launch | Phase 9 |

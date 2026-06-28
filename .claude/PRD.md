@@ -305,7 +305,44 @@ Cover images must be sourced from **Pixabay** (royalty-free). Download originals
 
 ---
 
-## 13. Out of Scope (v1)
+## 13. Privacy & Legal Compliance
+
+### 13.1 Legal Obligations
+
+| Law | Applicability | Trigger |
+|-----|--------------|---------|
+| Israeli Protection of Privacy Law (5741-1981) | Mandatory | Author is Israeli; primary audience is Israeli; email addresses collected via newsletter |
+| GDPR (EU Regulation 2016/679) | Best-effort compliance | Any EU resident who reads the site or subscribes |
+
+### 13.2 Privacy Policy Page
+
+| ID | Requirement |
+|----|-------------|
+| PL-01 | A Privacy Policy page must exist at `/privacy/` |
+| PL-02 | Policy must disclose: what personal data is collected (email address via newsletter), who processes it (Buttondown), how it is used (newsletter only), and the subscriber's right to unsubscribe and request deletion |
+| PL-03 | Policy must disclose analytics: page-view data collected via Umami; no personally identifiable information stored; no cookies set |
+| PL-04 | Policy must include the contact email: shootingstarblog@outlook.com |
+| PL-05 | Privacy Policy link must appear in the site footer on every page |
+
+### 13.3 Newsletter Consent
+
+| ID | Requirement |
+|----|-------------|
+| PL-06 | Newsletter signup form must display a consent note immediately below the submit button: "לא נשלח ספאם. ביטול הרשמה בכל עת." |
+| PL-07 | The consent note must include a link to the Privacy Policy page (`/privacy/`) |
+| PL-08 | No pre-checked consent checkboxes; submitting the form constitutes explicit opt-in |
+
+### 13.4 Analytics
+
+| ID | Requirement |
+|----|-------------|
+| PL-09 | Use **Umami Cloud** (cookie-free, privacy-first) — not Google Analytics. Umami collects no PII and sets no cookies, eliminating the need for a cookie consent banner |
+| PL-10 | If Google Analytics is ever adopted in the future, a GDPR-compliant cookie consent banner must be added before any GA script loads |
+| PL-11 | The Umami site ID is configured via `params.umamiSiteId` in `config.toml`; the script is injected in `head.html` only when this param is non-empty, so local development runs without analytics |
+
+---
+
+## 14. Out of Scope (v1)
 
 - Story comments or reader accounts
 - Full English translation of stories

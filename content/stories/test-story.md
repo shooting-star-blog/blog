@@ -5,6 +5,7 @@ slug: "test-story"
 date: 2024-03-01
 description: "סיפור זה משמש לבדיקת התבניות בשלב הפיתוח. הוא כולל כותרת, תיאור, ותגיות."
 description_en: "This story is used for template testing during development."
+cover: "images/test-story.jpg"
 tags: ["מדע בדיוני", "עתיד"]
 featured: true
 draft: false

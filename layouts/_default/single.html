@@ -4,7 +4,7 @@
 
   {{ with .Params.cover }}
   <div class="story-hero">
-    <img src="{{ . }}" alt="" class="story-hero__image" loading="eager" fetchpriority="high">
+    {{ partial "cover-image.html" (dict "cover" . "altText" $.Title "eager" true "class" "story-hero__image") }}
   </div>
   {{ end }}
 

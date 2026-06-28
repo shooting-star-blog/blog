@@ -13,7 +13,11 @@
 <meta property="og:description" content="{{ $desc }}">
 <meta property="og:url" content="{{ .Permalink }}">
 {{ with .Params.cover }}
-<meta property="og:image" content="{{ . | absURL }}">
+  {{ $ogSrc := resources.Get . }}
+  {{ if $ogSrc }}
+    {{ $ogImg := $ogSrc.Process "resize 1200x webp" }}
+    <meta property="og:image" content="{{ $ogImg.Permalink }}">
+  {{ end }}
 {{ end }}
 <meta property="og:locale" content="he_IL">
 <meta property="og:site_name" content="{{ .Site.Title }}">
@@ -22,6 +26,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&display=swap&subset=hebrew" rel="stylesheet">
 {{ if .IsPage }}
+<link rel="preload" as="font" type="font/woff2"
+  href="https://fonts.gstatic.com/s/frankruhllibre/v23/j8_w6_fAw7jrcalD7oKYNX0QfAnPW7Ll4ajn.woff2"
+  crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&display=swap&subset=hebrew" rel="stylesheet">
 {{ end }}
 
