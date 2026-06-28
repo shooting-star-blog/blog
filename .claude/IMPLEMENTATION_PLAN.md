@@ -69,7 +69,7 @@ PHASE 7 — CI/CD & Deployment
   [x] 7.1  Write .github/workflows/deploy.yml (trigger: push to main; pin Hugo extended to specific version; build → deploy gh-pages)
   [x] 7.2  Set custom domain in GitHub repo Settings → Pages (not via CNAME file — Actions workflow makes CNAME redundant)
   [x] 7.3  Add resources/_gen/ to .gitignore OR commit it — decide and document the choice in a comment in deploy.yml
-  [ ] 7.4  Enable GitHub Pages in repo settings: source = gh-pages branch
+  [x] 7.4  Enable GitHub Pages in repo settings: source = gh-pages branch
   [ ] 7.5  Push a test commit; confirm GitHub Actions runs green and site loads at github.io URL
   [ ] 7.6  Verify: GitHub Actions log shows "extended" Hugo version used; deployed site URL matches baseURL in config.toml
 
