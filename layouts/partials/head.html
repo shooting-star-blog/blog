@@ -1,0 +1,15 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} · {{ .Site.Title }}{{ end }}</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+{{/* Heebo loaded on all pages — UI font */}}
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&display=swap&subset=hebrew" rel="stylesheet">
+{{/* Frank Ruhl Libre loaded only on story pages — .story-body font; weight 500 unused */}}
+{{ if .IsPage }}
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&display=swap&subset=hebrew" rel="stylesheet">
+{{ end }}
+
+{{ $css := resources.Get "css/main.css" | css.Build (dict "minify" true) | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}">

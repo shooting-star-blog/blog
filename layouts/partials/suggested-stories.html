@@ -1,0 +1,17 @@
+{{/* Hugo has no built-in tag-intersection; where+intersect operator handles it natively */}}
+{{ $currentTags := .Params.tags }}
+{{ $suggested := slice }}
+{{ if $currentTags }}
+  {{ $suggested = where .Site.RegularPages ".Params.tags" "intersect" $currentTags | complement (slice .) | first 3 }}
+{{ end }}
+
+{{ if $suggested }}
+<section class="suggested-stories" aria-labelledby="suggested-heading">
+  <h2 id="suggested-heading">סיפורים נוספים</h2>
+  <div class="stories-grid">
+    {{ range $suggested }}
+    {{ partial "story-card.html" . }}
+    {{ end }}
+  </div>
+</section>
+{{ end }}

@@ -1,0 +1,34 @@
+<a href="#main-content" class="skip-link">דלג לתוכן</a>
+
+<header class="site-header" role="banner">
+  <div class="container">
+    <div class="site-header__inner">
+      <a href="{{ "/" | relURL }}" class="site-logo">{{ .Site.Title }}</a>
+
+      {{/* CSS-only hamburger — no JS required */}}
+      <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true">
+      <label for="nav-toggle" class="nav-toggle-label" aria-label="תפריט ניווט">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+
+      <nav class="site-nav" aria-label="ניווט ראשי">
+        <ul class="site-nav__list" role="list">
+          <li>
+            <a href="{{ "/" | relURL }}" class="site-nav__link"
+              {{ if .IsHome }}aria-current="page"{{ end }}>בית</a>
+          </li>
+          <li>
+            <a href="{{ "/stories/" | relURL }}" class="site-nav__link"
+              {{ if eq .Section "stories" }}aria-current="page"{{ end }}>סיפורים</a>
+          </li>
+          <li>
+            <a href="{{ "/about/" | relURL }}" class="site-nav__link"
+              {{ if eq .RelPermalink "/about/" }}aria-current="page"{{ end }}>אודות</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>

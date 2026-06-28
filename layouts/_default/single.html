@@ -1,0 +1,40 @@
+{{ define "main" }}
+
+<article class="story-article">
+
+  {{ with .Params.cover }}
+  <div class="story-hero">
+    <img src="{{ . }}" alt="" class="story-hero__image" loading="eager" fetchpriority="high">
+  </div>
+  {{ end }}
+
+  <div class="container">
+    <header class="story-header">
+      <h1 class="story-title">{{ .Title }}</h1>
+
+      {{ with .Params.title_en }}
+      <p class="story-subtitle" lang="en">{{ . }}</p>
+      {{ end }}
+
+      <div class="story-meta">
+        <time class="story-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "02.01.2006" }}</time>
+
+        {{ partial "tag-chips.html" .Params.tags }}
+      </div>
+    </header>
+
+    <div class="story-body">
+      {{ .Content }}
+    </div>
+
+    <footer class="story-copyright" lang="he">
+      <p>© כל הזכויות שמורות לש.מ</p>
+      <p>אין להעתיק, לשכפל, לצלם, לתרגם, להקליט, לשדר, לקלוט ו/או לאכסן במאגר מידע בכל דרך ו/או אמצעי מכני, דיגיטלי, אופטי, מגנטי ו/או אחר – חלק כלשהו מן המידע ו/או הסיפורים ו/או התמונות ו/או האיורים ו/או כל תוכן אחר שצורף ו/או נכלל באתר אינטרנט זה.</p>
+    </footer>
+  </div>
+
+</article>
+
+{{ partial "suggested-stories.html" . }}
+
+{{ end }}

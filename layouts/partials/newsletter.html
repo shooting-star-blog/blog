@@ -1,0 +1,22 @@
+<section class="newsletter" aria-labelledby="newsletter-heading">
+  <h2 id="newsletter-heading">הירשמו לרשימת התפוצה</h2>
+  <p>הירשמו ותדעו מתי מתפרסם הסיפור הבא</p>
+  {{ $bd := .Site.Params.buttondownUsername }}
+  {{ if $bd }}
+  <form action="https://buttondown.email/api/emails/embed-subscribe/{{ $bd }}"
+        method="post"
+        target="popupwindow"
+        onsubmit="window.open('https://buttondown.email/{{ $bd }}', 'popupwindow')">
+    <label for="bd-email">כתובת אימייל</label>
+    {{/* dir="ltr" required — email addresses are always LTR text */}}
+    <input type="email" id="bd-email" name="email" required
+           placeholder="you@example.com"
+           dir="ltr"
+           autocomplete="email"
+           aria-required="true">
+    <button type="submit">הירשמו</button>
+  </form>
+  {{ else }}
+  {{/* Newsletter form hidden until buttondownUsername is set in config.toml */}}
+  {{ end }}
+</section>

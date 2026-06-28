@@ -1,0 +1,23 @@
+{{ define "main" }}
+
+<div class="page-header">
+  <div class="container">
+    <h1>סיפורים בנושא: {{ .Title }}</h1>
+  </div>
+</div>
+
+<section class="story-list" aria-label="רשימת סיפורים">
+  <div class="container">
+    {{ if .Pages }}
+    <div class="stories-grid">
+      {{ range .Pages }}
+      {{ partial "story-card.html" . }}
+      {{ end }}
+    </div>
+    {{ else }}
+    <p class="empty-state">אין סיפורים בנושא זה עדיין.</p>
+    {{ end }}
+  </div>
+</section>
+
+{{ end }}

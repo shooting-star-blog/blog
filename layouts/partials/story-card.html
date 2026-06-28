@@ -1,0 +1,20 @@
+{{ $page := . }}
+<article class="story-card">
+  {{ with $page.Params.cover }}
+  <a href="{{ $page.RelPermalink }}" tabindex="-1" aria-hidden="true">
+    <img src="{{ . }}" alt="" class="story-card__image" loading="lazy">
+  </a>
+  {{ end }}
+  <div class="story-card__body">
+    <h3 class="story-card__title">
+      <a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
+    </h3>
+    {{ with $page.Params.description }}
+    <p class="story-card__excerpt">{{ . | truncate 120 }}</p>
+    {{ end }}
+    <div class="story-card__meta">
+      <time datetime="{{ $page.Date.Format "2006-01-02" }}">{{ $page.Date.Format "02.01.2006" }}</time>
+      {{ partial "tag-chips.html" $page.Params.tags }}
+    </div>
+  </div>
+</article>

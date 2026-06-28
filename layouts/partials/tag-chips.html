@@ -1,0 +1,9 @@
+{{ if . }}
+<div class="tag-chips">
+  {{ range . }}
+  <a href="{{ printf "/tags/%s/" (. | urlize) | relURL }}"
+     class="tag-chip"
+     aria-label="סיפורים בנושא: {{ . }}">{{ . }}</a>
+  {{ end }}
+</div>
+{{ end }}

@@ -1,5 +1,5 @@
 baseURL = "https://atidmushlam.github.io/shooting-star-blog/"
-languageCode = "he"
+locale = "he-IL"
 defaultContentLanguage = "he"
 title = "כוכב נופל"
 enableRobotsTXT = true
@@ -8,9 +8,13 @@ enableRobotsTXT = true
   description = "סיפורי מדע בדיוני ופנטזיה קצרים מאת ש.מ"
   author = "ש.מ"
   contactEmail = "shootingstarblog@outlook.com"
+  buttondownUsername = "" # set to your Buttondown account slug when created
 
 [taxonomies]
   tag = "tags"
 
 [pagination]
   pagerSize = 12
+
+[imaging.webp]
+  quality = 75

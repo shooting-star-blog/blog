@@ -1,0 +1,18 @@
+<footer class="site-footer" role="contentinfo">
+  <div class="container">
+    <div class="site-footer__inner">
+
+      {{ partial "newsletter.html" . }}
+
+      <div class="copyright" lang="he">
+        <p>© כל הזכויות שמורות לש.מ</p>
+        <p>אין להעתיק, לשכפל, לצלם, לתרגם, להקליט, לשדר, לקלוט ו/או לאכסן במאגר מידע בכל דרך ו/או אמצעי מכני, דיגיטלי, אופטי, מגנטי ו/או אחר – חלק כלשהו מן המידע ו/או הסיפורים ו/או התמונות ו/או האיורים ו/או כל תוכן אחר שצורף ו/או נכלל באתר אינטרנט זה.</p>
+      </div>
+
+      <p class="footer-contact">
+        <a href="mailto:{{ .Site.Params.contactEmail }}">{{ .Site.Params.contactEmail }}</a>
+      </p>
+
+    </div>
+  </div>
+</footer>

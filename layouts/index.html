@@ -1,1 +1,29 @@
-{{ define "main" }}<h1>{{ .Site.Title }}</h1>{{ end }}
+{{ define "main" }}
+
+<section class="hero">
+  <div class="container">
+    <h1 class="hero__title">{{ .Site.Title }}</h1>
+    <p class="hero__tagline">{{ .Site.Params.description }}</p>
+  </div>
+</section>
+
+<section class="featured-section" aria-labelledby="featured-heading">
+  <div class="container">
+    {{ $featured := where .Site.RegularPages "Params.featured" true | first 6 | default (first 6 .Site.RegularPages) }}
+
+    {{ if $featured }}
+    <h2 id="featured-heading" class="section-heading">סיפורים מובחרים</h2>
+    <div class="stories-grid">
+      {{ range $featured }}
+      {{ partial "story-card.html" . }}
+      {{ end }}
+    </div>
+    {{ end }}
+
+    <div class="homepage-cta">
+      <a href="{{ "/stories/" | relURL }}" class="btn-all-stories">כל הסיפורים &larr;</a>
+    </div>
+  </div>
+</section>
+
+{{ end }}

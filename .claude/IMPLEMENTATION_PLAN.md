@@ -23,22 +23,22 @@ PHASE 1 — Hugo Scaffold & Configuration
   [ ] 1.6  Smoke-test: `hugo server` runs at localhost with no errors
 
 PHASE 2 — Design System & Base Templates
-  [ ] 2.1  Write assets/css/main.css (dark theme, RTL, custom properties, focus styles, prefers-reduced-motion)
-  [ ] 2.2  Write layouts/partials/head.html (fonts preconnect + load, charset, viewport)
-  [ ] 2.3  Write layouts/partials/header.html (skip link, site nav, RTL-safe)
-  [ ] 2.4  Write layouts/partials/footer.html (copyright notice, newsletter slot, nav)
-  [ ] 2.5  Write layouts/_default/baseof.html (html[dir=rtl lang=he], wires all partials)
-  [ ] 2.6  Verify: `hugo server` renders a page with Heebo + Frank Ruhl Libre, dark background, RTL layout, skip link present
+  [x] 2.1  Write assets/css/main.css (dark theme, RTL, custom properties, focus styles, prefers-reduced-motion)
+  [x] 2.2  Write layouts/partials/head.html (fonts preconnect + load, charset, viewport)
+  [x] 2.3  Write layouts/partials/header.html (skip link, site nav, RTL-safe)
+  [x] 2.4  Write layouts/partials/footer.html (copyright notice, newsletter slot, nav)
+  [x] 2.5  Write layouts/_default/baseof.html (html[dir=rtl lang=he], wires all partials)
+  [x] 2.6  Verify: `hugo server` renders a page with Heebo + Frank Ruhl Libre, dark background, RTL layout, skip link present
 
 PHASE 3 — Page Templates
-  [ ] 3.1  Write layouts/index.html (featured stories grid with fallback to 6 most recent)
-  [ ] 3.2  Write layouts/_default/list.html (paginated story cards with tag chips)
-  [ ] 3.3  Write layouts/_default/single.html (story text, cover hero, tag chips, suggested stories, copyright)
-  [ ] 3.4  Write layouts/taxonomy/tag.html (all stories for a given tag, reuse card partial)
-  [ ] 3.5  Write layouts/partials/story-card.html (shared card used in list, homepage, taxonomy, suggested)
-  [ ] 3.6  Write layouts/partials/suggested-stories.html (up to 3 related stories by tag, omit if empty)
-  [ ] 3.7  Write layouts/partials/newsletter.html (Buttondown embed with labeled form, accessible)
-  [ ] 3.8  Verify: all page types render correctly with stub content; tag pages reachable; suggested stories appear and are absent when empty
+  [x] 3.1  Write layouts/index.html (featured stories grid with fallback to 6 most recent)
+  [x] 3.2  Write layouts/_default/list.html (paginated story cards with tag chips)
+  [x] 3.3  Write layouts/_default/single.html (story text, cover hero, tag chips, suggested stories, copyright)
+  [x] 3.4  Write layouts/taxonomy/tag.html (all stories for a given tag, reuse card partial)
+  [x] 3.5  Write layouts/partials/story-card.html (shared card used in list, homepage, taxonomy, suggested)
+  [x] 3.6  Write layouts/partials/suggested-stories.html (up to 3 related stories by tag, omit if empty)
+  [x] 3.7  Write layouts/partials/newsletter.html (Buttondown embed with labeled form, accessible)
+  [x] 3.8  Verify: all page types render correctly with stub content; tag pages reachable; suggested stories appear and are absent when empty
 
 PHASE 4 — SEO & Structured Data
   [ ] 4.1  Complete layouts/partials/head.html: <title>, meta description, OG tags, hreflang, canonical
@@ -120,7 +120,7 @@ hugo new site . --force
 Key settings to include:
 ```toml
 baseURL = "https://<username>.github.io/<repo>/"  # or custom domain later
-languageCode = "he"
+locale = "he-IL"              # replaces languageCode (deprecated v0.158.0)
 defaultContentLanguage = "he"
 title = "כוכב נופל"
 
@@ -135,8 +135,8 @@ title = "כוכב נופל"
 [pagination]
   pagerSize = 12
 
-[imaging]
-  defaultProcessingTimeout = "60s"
+[imaging.webp]
+  quality = 75                # explicit WebP quality (global imaging.quality deprecated v0.163.0)
 
 [markup.goldmark.renderer]
   unsafe = false  # stories are author-controlled so safe to keep false
@@ -180,7 +180,7 @@ Expect: server starts at `localhost:1313`, no errors (even with empty templates)
 - [ ] `hugo version` shows `extended` and ≥ 0.120
 - [ ] `hugo server` starts without errors
 - [ ] Directory tree matches the structure in CLAUDE.md
-- [ ] `config.toml` has `languageCode = "he"`, `[taxonomies]`, `[pagination]`, `[imaging]`
+- [ ] `config.toml` has `locale = "he-IL"`, `[taxonomies]`, `[pagination]`, `[imaging.webp]`
 - [ ] `.gitignore` excludes `public/`, `resources/_gen/`, `.hugo_build.lock`
 
 ### After Phase 1
@@ -231,7 +231,7 @@ At minimum for this phase (SEO expanded in Phase 4):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Heebo (UI) + Frank Ruhl Libre (body) — Hebrew subset required -->
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap&subset=hebrew" rel="stylesheet">
-{{ $css := resources.Get "css/main.css" | minify }}
+{{ $css := resources.Get "css/main.css" | css.Build (dict "minify" true) | fingerprint }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}">
 ```
 
@@ -289,13 +289,13 @@ Run `hugo server` and verify visually.
 - **Mobile hamburger in RTL:** In RTL layouts, the hamburger icon conventionally appears on the left (the start edge). CSS `margin-inline-start` and `margin-inline-end` should be used instead of `margin-left`/`margin-right` everywhere in the nav to be direction-agnostic.
 
 ### Verification Checklist
-- [ ] `<html dir="rtl" lang="he">` present in page source
-- [ ] Heebo and Frank Ruhl Libre load in browser DevTools → Network → Fonts
-- [ ] Hebrew text renders in correct font (not system fallback)
-- [ ] Skip link appears on Tab keypress; `href` resolves to `#main-content`
-- [ ] Footer contains full Hebrew copyright notice
-- [ ] Dark background, light text visible in browser
-- [ ] No `outline: none` without a focus replacement in main.css
+- [x] `<html dir="rtl" lang="he">` present in page source
+- [x] Heebo and Frank Ruhl Libre load in browser DevTools → Network → Fonts
+- [x] Hebrew text renders in correct font (not system fallback)
+- [x] Skip link appears on Tab keypress; `href` resolves to `#main-content`
+- [x] Footer contains full Hebrew copyright notice
+- [x] Dark background, light text visible in browser
+- [x] No `outline: none` without a focus replacement in main.css
 
 ### After Phase 2
 Run `/simplify` on `main.css`, `baseof.html`, `head.html`, `header.html`, `footer.html`. Commit with message `feat: design system and base templates`.
@@ -363,7 +363,7 @@ candidates := where .Site.RegularPages "Params.draft" false
 render only if len(candidates) > 0
 ```
 
-Hugo does not have a built-in "stories sharing a tag" query. Use a scratch approach or a range-with-if loop over all pages. Document this with a comment in the partial.
+Use Hugo's built-in `where ... "intersect"` operator for tag intersection, then `complement` to exclude the current page. No scratch/loop needed: `where .Site.RegularPages ".Params.tags" "intersect" $currentTags | complement (slice .) | first 3`.
 
 **3.7 — layouts/partials/newsletter.html**
 
@@ -490,7 +490,9 @@ In `single.html`, wrap any rendered English fields:
 
 **4.4 — Custom RSS template**
 
-Create `layouts/_default/rss.xml` (copy Hugo's built-in as starting point, then modify the `<description>` element to use `.Params.description` rather than `.Content`). This protects full story text from appearing in feeds.
+Create `layouts/home.rss.xml` (copy Hugo's built-in as starting point, then modify the `<description>` element to use `.Params.description` rather than `.Content`). This protects full story text from appearing in feeds.
+
+> Note: `layouts/_default/rss.xml` is no longer the documented override path as of Hugo 0.163.0. Use the per-kind paths: `layouts/home.rss.xml` for the home feed, `layouts/section.rss.xml` for section feeds.
 
 **4.5 — robots.txt and sitemap**
 
@@ -749,7 +751,7 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: '0.128.0'  # pin exact version — update deliberately
+          hugo-version: '0.163.0'  # pin exact version — update deliberately
           extended: true            # REQUIRED for WebP image processing
 
       - name: Build
@@ -894,6 +896,7 @@ Ensure:
 - **Story text encoding:** Copy-paste from Wix may introduce non-standard Unicode spaces, directional marks (U+200F RIGHT-TO-LEFT MARK), or smart quotes. Run a text editor find/replace to clean up before committing.
 - **Featured story count:** If the author wants more than 6 featured stories in the future, the template currently caps at 6. This is by design (PRD F-30). If more are marked `featured: true`, the 6 most recent are shown. Document this behavior in a comment in `index.html`.
 - **Pixabay download size:** Pixabay originals can be 5–10 MB (JPEG). These are committed to `assets/images/`. Hugo processes them to WebP at build time. The repo size increases by ~100 MB for 13 original images. This is fine for a private GitHub repo. If repo size becomes a concern, use Git LFS.
+- **HTML files in `content/` blocked by default (v0.162.0):** Hugo now rejects `text/html` content files by default. All migrated Wix stories must be saved as `.md` files. If any Wix copy-paste introduces raw `.html` files, either convert them to Markdown or add `security.allowContent = ['.*']` to `config.toml` (with caution — that also permits arbitrary script execution from content).
 
 ### Verification Checklist
 - [ ] All 13 stories appear on `/stories/` list page
@@ -1031,7 +1034,7 @@ The following edge cases were identified during plan review and are addressed in
 | 9 | CSS in `assets/` required for Hugo pipeline | Phase 2, Phase 6 |
 | 10 | `featured` field absent → Hugo returns nil not false | Phase 3 |
 | 11 | Suggested stories: draft exclusion in server mode | Phase 3 |
-| 12 | Suggested stories: tag intersection has no native Hugo function | Phase 3 |
+| 12 | Suggested stories: use `where ... "intersect"` + `complement` built-ins (no scratch needed) | Phase 3 |
 | 13 | Pagination arrow direction in RTL | Phase 3 |
 | 14 | `story-card` partial context must be Page object | Phase 3 |
 | 15 | Email input must have `dir="ltr"` | Phase 3 |
@@ -1050,3 +1053,10 @@ The following edge cases were identified during plan review and are addressed in
 | 28 | `fetch-depth: 0` needed for `.Lastmod` from git history | Phase 7 |
 | 29 | Hugo version must be pinned in CI | Phase 7 |
 | 30 | CNAME file must be in `static/` to survive gh-pages deploys | Phase 7 |
+| 31 | `languageCode` deprecated v0.158.0 — use `locale = "he-IL"` | Phase 1 |
+| 32 | `[imaging] defaultProcessingTimeout` is not a valid key — omit it | Phase 1 |
+| 33 | RSS override path changed — use `layouts/home.rss.xml` not `_default/rss.xml` | Phase 4 |
+| 34 | HTML content files blocked by default since v0.162.0 — all stories must be `.md` | Phase 8 |
+| 35 | `.Scratch` / `$.Scratch` soft-deprecated v0.138.0 — use `.Store` / `$.Store` | Phase 3 |
+| 36 | `.IsNode` deprecated v0.163.0 — use `.IsBranch` | Any phase |
+| 37 | `resources.ToCSS` removed v0.156.0 — use `css.Sass` if Sass is ever adopted | Phase 2 |
