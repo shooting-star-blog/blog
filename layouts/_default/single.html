@@ -37,4 +37,18 @@
 
 {{ partial "suggested-stories.html" . }}
 
+{{- $jsonld := dict
+    "@context" "https://schema.org"
+    "@type" "Article"
+    "headline" .Title
+    "inLanguage" "he"
+    "datePublished" (.Date.Format "2006-01-02")
+    "dateModified" (.Lastmod.Format "2006-01-02")
+    "author" (dict "@type" "Person" "name" .Site.Params.author)
+    "publisher" (dict "@type" "Organization" "name" .Site.Title)
+    "description" (.Params.description | default .Site.Params.description)
+-}}
+{{- with .Params.cover -}}{{- $jsonld = merge $jsonld (dict "image" (. | absURL)) -}}{{- end -}}
+<script type="application/ld+json">{{ $jsonld | jsonify | safeJS }}</script>
+
 {{ end }}

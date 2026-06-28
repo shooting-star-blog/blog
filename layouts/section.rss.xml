@@ -1,0 +1,19 @@
+{{- $pages := .Pages -}}
+{{- $limit := .Site.Config.Services.RSS.Limit -}}
+{{- if ge $limit 1 -}}{{- $pages = $pages | first $limit -}}{{- end -}}
+{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ .Title }} · {{ .Site.Title }}</title>
+    <link>{{ .Permalink }}</link>
+    <description>{{ .Site.Params.description }}</description>
+    <generator>Hugo</generator>
+    <language>he</language>
+    {{- with .OutputFormats.Get "RSS" }}
+    <atom:link href="{{ .Permalink }}" rel="self" type="{{ .MediaType }}" />
+    {{- end }}
+    {{- range $pages }}
+    {{ partial "rss-item.xml" . }}
+    {{- end }}
+  </channel>
+</rss>

@@ -41,11 +41,11 @@ PHASE 3 — Page Templates
   [x] 3.8  Verify: all page types render correctly with stub content; tag pages reachable; suggested stories appear and are absent when empty
 
 PHASE 4 — SEO & Structured Data
-  [ ] 4.1  Complete layouts/partials/head.html: <title>, meta description, OG tags, hreflang, canonical
-  [ ] 4.2  Add JSON-LD Article schema to single.html (headline, image, datePublished, author, inLanguage)
-  [ ] 4.3  Add `lang="en"` wrapper around any English metadata rendered in HTML (title_en, description_en)
-  [ ] 4.4  Configure custom RSS template (layouts/_default/rss.xml) truncated to description for copyright
-  [ ] 4.5  Verify: view-source on a story page shows correct <title>, OG image, JSON-LD block, hreflang; RSS contains summaries only
+  [x] 4.1  Complete layouts/partials/head.html: <title>, meta description, OG tags, hreflang, canonical
+  [x] 4.2  Add JSON-LD Article schema to single.html (headline, image, datePublished, author, inLanguage)
+  [x] 4.3  Add `lang="en"` wrapper around any English metadata rendered in HTML (title_en, description_en)
+  [x] 4.4  Configure custom RSS template (layouts/_default/rss.xml) truncated to description for copyright
+  [x] 4.5  Verify: view-source on a story page shows correct <title>, OG image, JSON-LD block, hreflang; RSS contains summaries only
 
 PHASE 5 — Accessibility
   [ ] 5.1  Audit all templates: one <h1> per page, no skipped heading levels
@@ -119,7 +119,7 @@ hugo new site . --force
 
 Key settings to include:
 ```toml
-baseURL = "https://<username>.github.io/<repo>/"  # or custom domain later
+baseURL = "https://shootingstarblog.com/"
 locale = "he-IL"              # replaces languageCode (deprecated v0.158.0)
 defaultContentLanguage = "he"
 title = "כוכב נופל"
@@ -170,7 +170,7 @@ Expect: server starts at `localhost:1313`, no errors (even with empty templates)
 ### Gotchas (grilled)
 
 - **Hugo regular vs extended:** The regular `hugo` binary cannot process images to WebP. `hugo version` must say `extended`. If a CI/CD environment installs the wrong binary, image processing silently fails and falls back to the original format.
-- **baseURL subpath on GitHub Pages:** If the repo is *not* a `username.github.io` repo (i.e., it's a project repo like `username.github.io/shooting-star-blog`), the baseURL must include the subpath: `https://username.github.io/shooting-star-blog/`. A wrong baseURL breaks every internal link, CSS reference, and sitemap entry. Use a placeholder now; update before launch.
+- **baseURL with custom domain:** The site uses `https://shootingstarblog.com/` as the baseURL. GitHub Pages serves the custom domain from any repo name — no subpath needed. A `static/CNAME` file containing `shootingstarblog.com` must be present so GitHub Pages preserves the custom domain configuration across every deploy (see Phase 7).
 - **`--force` flag:** Without it, `hugo new site` aborts because the directory is non-empty. CLAUDE.md and PRD.md must not be deleted.
 - **Hebrew slugs in URLs:** Hugo's default `slugify` function will percent-encode Hebrew characters in story URLs (e.g., `/stories/%D7%90%D7%A7%D7%99%D7%A8%D7%94/`). This is ugly and fragile. Prevent it by setting `slug` explicitly in each story's frontmatter using the English slug (e.g., `slug: "akira"`). This is handled in Phase 8 but must be designed for now.
 - **Taxonomy configuration:** Hugo's default config in newer versions may not include `[taxonomies]` at all, relying on auto-detection. Explicitly declare `tag = "tags"` to avoid surprises and to be able to disable unwanted auto-taxonomies like `category`.
@@ -777,7 +777,7 @@ In repo Settings → Pages → Source: deploy from `gh-pages` branch, root direc
 
 **7.4 — Test push**
 
-Push any change to `main`. Watch the Actions tab. Confirm the `extended` Hugo binary is used (visible in the Build step output). Navigate to `https://<username>.github.io/<repo>/` and verify the site loads.
+Push any change to `main`. Watch the Actions tab. Confirm the `extended` Hugo binary is used (visible in the Build step output). Before the custom domain is pointed, navigate to the temporary github.io URL to verify the site loads. Once the domain is live, verify at `https://shootingstarblog.com/`.
 
 **7.5 — Verify baseURL match**
 
