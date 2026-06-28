@@ -70,8 +70,8 @@ PHASE 7 — CI/CD & Deployment
   [x] 7.2  Set custom domain in GitHub repo Settings → Pages (not via CNAME file — Actions workflow makes CNAME redundant)
   [x] 7.3  Add resources/_gen/ to .gitignore OR commit it — decide and document the choice in a comment in deploy.yml
   [x] 7.4  Enable GitHub Pages in repo settings: source = gh-pages branch
-  [ ] 7.5  Push a test commit; confirm GitHub Actions runs green and site loads at github.io URL
-  [ ] 7.6  Verify: GitHub Actions log shows "extended" Hugo version used; deployed site URL matches baseURL in config.toml
+  [x] 7.5  Push a test commit; confirm GitHub Actions runs green and site loads at github.io URL
+  [x] 7.6  Verify: GitHub Actions log shows "extended" Hugo version used; deployed site URL matches baseURL in config.toml
 
 PHASE 8 — Content Migration
   [ ] 8.1  Create all 13 story .md files in content/stories/ with complete frontmatter (Hebrew + English fields, slug, tags, featured)
