@@ -9,8 +9,9 @@
   </div>
 </div>
 
-<section class="story-list" aria-label="רשימת סיפורים">
+<section class="story-list" aria-labelledby="story-list-heading">
   <div class="container">
+    <h2 id="story-list-heading" class="visually-hidden">רשימת סיפורים</h2>
     {{ $paginator := .Paginate .Pages }}
     {{ if $paginator.Pages }}
     <div class="stories-grid">

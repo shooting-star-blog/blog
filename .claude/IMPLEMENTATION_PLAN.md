@@ -48,14 +48,14 @@ PHASE 4 — SEO & Structured Data
   [x] 4.5  Verify: view-source on a story page shows correct <title>, OG image, JSON-LD block, hreflang; RSS contains summaries only
 
 PHASE 5 — Accessibility
-  [ ] 5.1  Audit all templates: one <h1> per page, no skipped heading levels
-  [ ] 5.2  Add aria-label to all icon-only links and tag chips ("סיפורים בנושא: <tag>")
-  [ ] 5.3  Add aria-label / <label> to newsletter form input; add aria-live region for form feedback
-  [ ] 5.4  Verify focus outline visible on all interactive elements (never `outline: none` without replacement)
-  [ ] 5.5  Add `@media (prefers-reduced-motion: reduce)` block to main.css disabling all transitions/animations
-  [ ] 5.6  Run axe-core CLI against `hugo server` output — fix all violations before continuing
-  [ ] 5.7  Manual keyboard walkthrough: homepage → story list → single story → tag page → newsletter form → footer (Tab + Enter only)
-  [ ] 5.8  Verify: axe-core reports 0 violations; all flows completable by keyboard
+  [x] 5.1  Audit all templates: one <h1> per page, no skipped heading levels
+  [x] 5.2  Add aria-label to all icon-only links and tag chips ("סיפורים בנושא: <tag>")
+  [x] 5.3  Add aria-label / <label> to newsletter form input; add aria-live region for form feedback
+  [x] 5.4  Verify focus outline visible on all interactive elements (never `outline: none` without replacement)
+  [x] 5.5  Add `@media (prefers-reduced-motion: reduce)` block to main.css disabling all transitions/animations
+  [x] 5.6  Run axe-core CLI against `hugo server` output — fix all violations before continuing
+  [x] 5.7  Manual keyboard walkthrough: homepage → story list → single story → tag page → newsletter form → footer (Tab + Enter only)
+  [x] 5.8  Verify: axe-core reports 0 violations; all flows completable by keyboard
 
 PHASE 6 — Image Pipeline
   [ ] 6.1  Create assets/images/ directory; confirm images go here (not static/) for Hugo processing
@@ -621,14 +621,14 @@ Using a contrast checker (e.g., WebAIM Contrast Checker):
 - **`loading="lazy"` and accessibility:** Lazy-loaded images that are also `<a>` targets or described by `<figcaption>` are fine. But if an image is the only content of a link (e.g., a cover image card link with no text), the `<a>` needs an `aria-label` or the `<img>` needs descriptive `alt` text. The `story-card` partial must have text alongside the image link.
 
 ### Verification Checklist
-- [ ] One `<h1>` per page across all five page types; no heading level skips
-- [ ] All nav and section landmarks have `aria-label` or `aria-labelledby`
-- [ ] Tag chip `aria-label` includes the tag name
-- [ ] Email input has associated `<label>`
-- [ ] `axe-core` reports 0 violations on homepage, list page, and story page
-- [ ] Keyboard walkthrough (5.7) completes without getting stuck
-- [ ] Contrast ratios verified: body text ≥ 4.5:1, large text ≥ 3:1, focus outline ≥ 3:1
-- [ ] `prefers-reduced-motion` block present in CSS
+- [x] One `<h1>` per page across all five page types; no heading level skips
+- [x] All nav and section landmarks have `aria-label` or `aria-labelledby`
+- [x] Tag chip `aria-label` includes the tag name
+- [x] Email input has associated `<label>`
+- [x] `axe-core` reports 0 violations on homepage, list page, and story page
+- [x] Keyboard walkthrough (5.7) completes without getting stuck
+- [x] Contrast ratios verified: body text ≥ 4.5:1, large text ≥ 3:1, focus outline ≥ 3:1
+- [x] `prefers-reduced-motion` block present in CSS
 
 ### After Phase 5
 Run `/simplify` on `main.css` and all partials touched in this phase. Commit with message `feat: WCAG 2.1 AA accessibility`.

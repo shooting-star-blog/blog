@@ -6,8 +6,9 @@
   </div>
 </div>
 
-<section class="story-list" aria-label="רשימת סיפורים">
+<section class="story-list" aria-labelledby="tag-story-list-heading">
   <div class="container">
+    <h2 id="tag-story-list-heading" class="visually-hidden">סיפורים</h2>
     {{ if .Pages }}
     <div class="stories-grid">
       {{ range .Pages }}

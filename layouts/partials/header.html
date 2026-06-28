@@ -5,15 +5,16 @@
     <div class="site-header__inner">
       <a href="{{ "/" | relURL }}" class="site-logo">{{ .Site.Title }}</a>
 
-      {{/* CSS-only hamburger — no JS required */}}
-      <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true">
-      <label for="nav-toggle" class="nav-toggle-label" aria-label="תפריט ניווט">
+      <button class="nav-toggle-btn"
+              aria-expanded="false"
+              aria-controls="main-nav"
+              aria-label="פתח תפריט ניווט">
         <span></span>
         <span></span>
         <span></span>
-      </label>
+      </button>
 
-      <nav class="site-nav" aria-label="ניווט ראשי">
+      <nav id="main-nav" class="site-nav" aria-label="ניווט ראשי">
         <ul class="site-nav__list" role="list">
           <li>
             <a href="{{ "/" | relURL }}" class="site-nav__link"
@@ -32,3 +33,18 @@
     </div>
   </div>
 </header>
+
+<script>
+(function () {
+  var btn = document.querySelector('.nav-toggle-btn');
+  var nav = document.getElementById('main-nav');
+  if (!btn || !nav) return;
+  var open = false;
+  btn.addEventListener('click', function () {
+    open = !open;
+    btn.setAttribute('aria-expanded', open);
+    btn.setAttribute('aria-label', open ? 'סגור תפריט ניווט' : 'פתח תפריט ניווט');
+    nav.classList.toggle('is-open', open);
+  });
+}());
+</script>
