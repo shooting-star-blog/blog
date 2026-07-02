@@ -74,12 +74,12 @@ PHASE 7 — CI/CD & Deployment
   [x] 7.6  Verify: GitHub Actions log shows "extended" Hugo version used; deployed site URL matches baseURL in config.toml
 
 PHASE 8 — Content Migration
-  [ ] 8.1  Create all 13 story .md files in content/stories/ with complete frontmatter (Hebrew + English fields, slug, tags, featured)
-  [ ] 8.2  Source 13 cover images from Pixabay (thematically matched); download originals to assets/images/
-  [ ] 8.3  Migrate full story text from Wix into each .md file (copy-paste + cleanup)
-  [ ] 8.4  Set featured: true on 3–6 stories to populate the homepage grid
-  [ ] 8.5  Confirm image processing output: WebP thumbnails ≤ 120 KB, hero images ≤ 250 KB
-  [ ] 8.6  Verify: all 13 stories appear on the list page; featured set shows on homepage; each story's tag chips link to populated taxonomy pages; suggested stories section populated on stories that share tags
+  [x] 8.1  Create all 13 story .md files in content/stories/ with complete frontmatter (Hebrew + English fields, slug, tags, featured)
+  [x] 8.2  Source 13 cover images from Pixabay (thematically matched); download originals to assets/images/
+  [x] 8.3  Migrate full story text from Wix into each .md file (copy-paste + cleanup)
+  [x] 8.4  Set featured: true on 3–6 stories to populate the homepage grid
+  [x] 8.5  Confirm image processing output: WebP thumbnails ≤ 120 KB, hero images ≤ 250 KB
+  [x] 8.6  Verify: all 13 stories appear on the list page; featured set shows on homepage; each story's tag chips link to populated taxonomy pages; suggested stories section populated on stories that share tags
 
 PHASE 9 — Privacy & Legal Compliance
   [ ] 9.1  Create content/privacy.md with Hebrew privacy policy (Buttondown data, Umami analytics, unsubscribe rights, contact email)

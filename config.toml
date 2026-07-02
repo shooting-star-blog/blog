@@ -14,7 +14,7 @@ enableRobotsTXT = true
   tag = "tags"
 
 [pagination]
-  pagerSize = 12
+  pagerSize = 15
 
 [imaging.webp]
   quality = 75

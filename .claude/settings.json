@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(python3 /tmp/claude-1000/-home-sabichos-Projects-shooting-star-blog/13d32b5a-28fc-4cb7-9d3f-39329082ec1b/scratchpad/clean_blank_lines.py write)"
+    ]
+  }
+}
