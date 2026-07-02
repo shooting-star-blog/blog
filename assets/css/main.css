@@ -2,14 +2,14 @@
    CSS Custom Properties
    ========================================================================== */
 :root {
-  --color-bg: #0d0d0d;
-  --color-surface: #161616;
-  --color-surface-2: #1e1e1e;
-  --color-text: #e8e8e8;
-  --color-text-muted: #a0a0a0;
-  --color-accent: #9d87ff; /* lightened from #7b61ff to pass 4.5:1 on #0d0d0d */
-  --color-accent-hover: #b8a5ff;
-  --color-border: #2a2a2a;
+  --color-bg: #faf7f2;
+  --color-surface: #f1ece3;
+  --color-surface-2: #e8e1d4;
+  --color-text: #1c1a17;
+  --color-text-muted: #5c554c;
+  --color-accent: #5b3aa0; /* 7.68:1 on --color-bg */
+  --color-accent-hover: #432b78;
+  --color-border: #d8cfc0;
 
   --font-ui: 'Heebo', sans-serif;
   --font-body: 'Frank Ruhl Libre', serif;
@@ -35,7 +35,6 @@
 
 /* ==========================================================================
    Reset & Base
-   intentionally dark — no light-mode override (thematic sci-fi aesthetic)
    ========================================================================== */
 *,
 *::before,
@@ -160,6 +159,55 @@ h3 { font-size: clamp(1.1rem, 2.5vw, 1.375rem); }
 
 .story-body p:last-child {
   margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Story Content — Blockquotes
+   Markdown `>` blockquotes: all but the last paragraph render as the quoted
+   text (italic); a final paragraph, if present alongside others, is read as
+   the attribution (bold, upright). A single-paragraph blockquote is just a
+   plain italic quote with no attribution line.
+   ========================================================================== */
+.story-body blockquote {
+  margin-block: var(--space-xl);
+  padding-inline-start: var(--space-l);
+  border-inline-start: 3px solid var(--color-accent);
+  color: var(--color-text-muted);
+}
+
+.story-body blockquote p {
+  font-style: italic;
+}
+
+.story-body blockquote p:last-child:not(:only-child) {
+  margin-top: var(--space-m);
+  font-style: normal;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* ==========================================================================
+   Story Content — LTR Blocks
+   Wraps embedded non-Hebrew text (e.g. an English song lyric or quote) so it
+   reads left-to-right inside an otherwise RTL page.
+   ========================================================================== */
+.story-body .ltr-block {
+  direction: ltr;
+  text-align: left;
+  margin-block: var(--space-l);
+}
+
+/* ==========================================================================
+   Story Content — Poem Blocks
+   Verse-style formatting: italic, indented, with breathing room from the
+   surrounding prose. Direction is inherited, so a poem block can be nested
+   inside (or wrap) an .ltr-block for non-Hebrew verse.
+   ========================================================================== */
+.story-body .poem {
+  margin-block: var(--space-xl);
+  padding-inline-start: var(--space-l);
+  border-inline-start: 3px solid var(--color-text-muted);
+  font-style: italic;
 }
 
 /* ==========================================================================

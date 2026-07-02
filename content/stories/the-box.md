@@ -296,17 +296,16 @@ featured: false
 
 היא זמזמה שיר:
 
-**" I drive your truck**
-
-**I roll every window down and I burn up**
-
-**Every back road in this town**
-
-**I find a field, I tear it up**
-
-**Till all the pain’s a cloud of dust**
-
-**Yeah, sometimes I drive your truck"**
+{{% ltr %}}
+{{% poem %}}
+"I drive your truck  
+I roll every window down and I burn up  
+Every back road in this town  
+I find a field, I tear it up  
+Till all the pain's a cloud of dust  
+Yeah, sometimes I drive your truck"
+{{% /poem %}}
+{{% /ltr %}}
 
 "בחלומות", אמר טומי. "חלקם טובים, כשהיא הייתה מלווה אותי מבית הספר ושרה לי שירים… בחלקם היא הייתה מתרחקת וכמה שהייתי רץ היא הייתה נעלמת…"
 
@@ -316,17 +315,16 @@ featured: false
 
 "אתה די משעשע כשאתה רוצה.
 
-**"I drive your truck**
-
-**I roll every window down and I burn up**
-
-**Every back road in this town**
-
-**I find a field, I tear it up**
-
-**Till all the pain’s a cloud of dust**
-
-**Yeah, sometimes I drive your truck"**
+{{% ltr %}}
+{{% poem %}}
+"I drive your truck  
+I roll every window down and I burn up  
+Every back road in this town  
+I find a field, I tear it up  
+Till all the pain's a cloud of dust  
+Yeah, sometimes I drive your truck"
+{{% /poem %}}
+{{% /ltr %}}
 
 כעבור שבוע וחצי הגיעו לתחנה הראשונה. הם נסעו בממוצע 300 קילומטר ביום. בדרך הטרשית הזאת הם חטפו מכות בלתי נסבלות, "גם, ולמרות, ועל אף", אמרה ריטה, "הערצתו של טומי למתלים הפרבוליים הפרוגרסיביים עם בולמי הזעזועים הטלסקופים הידראוליים ומתלים הטרפזיים מרובי-עלים עם מוטות הרדיוס". הם כולם שמחו על נווה המדבר. הם נכנסו למחסה מוגן מריק. והדלת נסגרה אחריהם. מלא רכבי שטח חנו במרכז הטרפז תחת גג כיפה. אורות שמחים האירו אותו כמו אחרון בית הזנאים. לא לחינם קראו לו הברדלס. הוא היה מהיר. שמח. עליז ומנוקד אורות. הם ירדו מהמשאית ונכנסו לאחד מהמקומות בהיקף. 
 
