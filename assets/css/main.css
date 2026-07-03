@@ -614,6 +614,50 @@ main {
 }
 
 /* ==========================================================================
+   About Page
+   ========================================================================== */
+.about-bio {
+  display: flex;
+  gap: var(--space-2xl);
+  align-items: flex-start;
+  margin-bottom: var(--space-2xl);
+}
+
+.about-bio__photo {
+  flex: 0 0 280px;
+  border-radius: var(--radius-l);
+  overflow: hidden;
+}
+
+.about-bio__image {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.about-bio__text {
+  flex: 1;
+  margin-inline: 0;
+}
+
+.about-quote {
+  background: var(--color-surface-2);
+  padding-block: var(--space-2xl);
+  margin-bottom: var(--space-2xl);
+}
+
+.about-quote p {
+  max-width: var(--column-width);
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 1.25rem;
+  line-height: var(--body-line-height);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
    Pagination (stub)
    ========================================================================== */
 .pagination {
@@ -694,6 +738,16 @@ main {
 
   .newsletter form {
     align-items: stretch;
+  }
+
+  .about-bio {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .about-bio__photo {
+    flex-basis: auto;
+    width: 200px;
   }
 }
 

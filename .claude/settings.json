@@ -6,7 +6,19 @@
       "Bash(./bin/hugo version *)",
       "Bash(python3 -)",
       "Bash(grep -o '<div class=ltr-block[^>]*>.\\\\{0,80\\\\}' public/stories/the-box/index.html)",
-      "Bash(grep -o '<div class=poem>.\\\\{0,120\\\\}' public/stories/akira/index.html)"
+      "Bash(grep -o '<div class=poem>.\\\\{0,120\\\\}' public/stories/akira/index.html)",
+      "Bash(curl -s -o about-photo-orig.jpg \"https://static.wixstatic.com/media/7bebd2_c914364daf1f4ab780c854dc3fdedfc6~mv2.jpg\")",
+      "Bash(curl -s -o about-photo-hq.jpg \"https://static.wixstatic.com/media/7bebd2_c914364daf1f4ab780c854dc3fdedfc6~mv2.jpg/v1/fill/w_800,h_800,al_c,q_90/7bebd2_c914364daf1f4ab780c854dc3fdedfc6~mv2.jpg\")",
+      "Bash(python3 -c \"import PIL; print\\(PIL.__version__\\)\")",
+      "Bash(pkill -f \"http.server 8971\")",
+      "Bash(/tmp/claude-1000/-home-sabichos-Projects-shooting-star-blog/221fd629-ada1-4e1c-907f-1b5f8209c9aa/scratchpad/hugo --minify)",
+      "Bash(nohup python3 -m http.server 8971 --directory /home/sabichos/Projects/shooting-star-blog/public)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:8971/about/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:8971/favicon.ico)",
+      "Bash(export CHROME_PATH=/home/sabichos/.cache/puppeteer/chrome/linux-150.0.7871.24/chrome-linux64/chrome)",
+      "Bash(npx --yes lighthouse http://localhost:8971/about/ --output=json --output-path=./about-lh2.json '--chrome-flags=--headless=new --no-sandbox' --only-categories=performance,seo,accessibility,best-practices --quiet)",
+      "Bash(npx --yes lighthouse http://localhost:8971/about/ --output=json --output-path=./about-lh3.json '--chrome-flags=--headless=new --no-sandbox' --only-categories=performance --quiet)",
+      "Bash(pkill -f \"chrome-linux64/chrome\")"
     ]
   }
 }

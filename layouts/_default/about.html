@@ -1,0 +1,29 @@
+{{ define "main" }}
+
+<article class="about-page">
+  <div class="container">
+    <header class="page-header">
+      <h1>{{ .Title }}</h1>
+    </header>
+
+    <div class="about-bio">
+      {{ with .Params.photo }}
+      <div class="about-bio__photo">
+        {{ partial "cover-image.html" (dict "cover" . "altText" $.Site.Params.author "eager" true "class" "about-bio__image" "sizes" "(max-width: 640px) 200px, 280px") }}
+      </div>
+      {{ end }}
+
+      <div class="about-bio__text story-body">
+        {{ .Content }}
+      </div>
+    </div>
+  </div>
+
+  {{ with .Params.quote }}
+  <div class="about-quote">
+    <p class="container">{{ . }}</p>
+  </div>
+  {{ end }}
+</article>
+
+{{ end }}

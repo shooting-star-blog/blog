@@ -2,17 +2,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} · {{ .Site.Title }}{{ end }}</title>
 
+<link rel="icon" href="{{ "favicon.ico" | absURL }}" sizes="any">
+<link rel="icon" href="{{ "favicon-32x32.png" | absURL }}" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="{{ "apple-touch-icon.png" | absURL }}">
+
 {{- $desc := .Params.description | default .Site.Params.description -}}
 
 <link rel="canonical" href="{{ .Permalink }}">
 <link rel="alternate" hreflang="he" href="{{ .Permalink }}">
 <meta name="description" content="{{ $desc }}">
 
-<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+<meta property="og:type" content="{{ if eq .Section "stories" }}article{{ else }}website{{ end }}">
 <meta property="og:title" content="{{ .Title }}">
 <meta property="og:description" content="{{ $desc }}">
 <meta property="og:url" content="{{ .Permalink }}">
-{{ with .Params.cover }}
+{{ with (.Params.cover | default .Params.photo) }}
   {{ $ogSrc := resources.Get . }}
   {{ if $ogSrc }}
     {{ $ogImg := $ogSrc.Process "resize 1200x webp" }}

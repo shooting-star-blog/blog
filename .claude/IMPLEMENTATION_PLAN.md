@@ -15,12 +15,12 @@ Copy this block into each conversation and tick tasks as they complete.
 
 ```
 PHASE 1 — Hugo Scaffold & Configuration
-  [ ] 1.1  Verify Hugo extended ≥ 0.120 is installed
-  [ ] 1.2  Run `hugo new site . --force` to initialize project structure
-  [ ] 1.3  Write config.toml (language, RTL, baseURL, pagination, taxonomy, image pipeline)
-  [ ] 1.4  Create full directory skeleton (layouts, assets, static, content, .github)
-  [ ] 1.5  Add .gitignore (resources/_gen, public, .hugo_build.lock)
-  [ ] 1.6  Smoke-test: `hugo server` runs at localhost with no errors
+  [x] 1.1  Verify Hugo extended ≥ 0.120 is installed
+  [x] 1.2  Run `hugo new site . --force` to initialize project structure
+  [x] 1.3  Write config.toml (language, RTL, baseURL, pagination, taxonomy, image pipeline)
+  [x] 1.4  Create full directory skeleton (layouts, assets, static, content, .github)
+  [x] 1.5  Add .gitignore (resources/_gen, public, .hugo_build.lock)
+  [x] 1.6  Smoke-test: `hugo server` runs at localhost with no errors
 
 PHASE 2 — Design System & Base Templates
   [x] 2.1  Write assets/css/main.css (dark theme, RTL, custom properties, focus styles, prefers-reduced-motion)
