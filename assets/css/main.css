@@ -380,6 +380,8 @@ main { flex: 1; }
   transition: opacity 0.15s;
 }
 .ss-newsletter__submit:hover { opacity: 0.88; }
+.ss-newsletter__consent { font-size: 13px; color: var(--text-dim); margin-top: 16px; }
+.ss-newsletter__consent a { color: var(--accent-text); text-decoration: underline; }
 
 /* ==========================================================================
    Story single page
@@ -566,6 +568,18 @@ main { flex: 1; }
   position: relative; font-size: 20px; line-height: 1.8;
   color: var(--text); max-width: 62ch; text-wrap: pretty;
 }
+
+/* ==========================================================================
+   Legal pages (privacy, etc.) — reuses .ss-about__eyebrow / .ss-about__title
+   ========================================================================== */
+.ss-legal { max-width: 720px; margin: 0 auto; padding: 64px 28px 90px; }
+.ss-legal__body { font-size: 17px; line-height: 1.85; color: var(--text-dim); text-wrap: pretty; }
+.ss-legal__body h2 {
+  font-family: var(--font-ui); font-size: 21px; font-weight: 600;
+  color: var(--text); margin: 36px 0 12px;
+}
+.ss-legal__body p { margin-bottom: 14px; }
+.ss-legal__body a { color: var(--accent-text); text-decoration: underline; }
 
 /* ==========================================================================
    Tag chips

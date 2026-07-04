@@ -82,12 +82,12 @@ PHASE 8 — Content Migration
   [x] 8.6  Verify: all 13 stories appear on the list page; featured set shows on homepage; each story's tag chips link to populated taxonomy pages; suggested stories section populated on stories that share tags
 
 PHASE 9 — Privacy & Legal Compliance
-  [ ] 9.1  Create content/privacy.md with Hebrew privacy policy (Buttondown data, Umami analytics, unsubscribe rights, contact email)
-  [ ] 9.2  Update layouts/partials/newsletter.html: add consent note + link to /privacy/ below submit button
-  [ ] 9.3  Update layouts/partials/footer.html: add Privacy Policy link
-  [ ] 9.4  Update layouts/partials/head.html: inject Umami script only when site.Params.umamiSiteId is non-empty
-  [ ] 9.5  Add umamiSiteId = "" placeholder param to config.toml
-  [ ] 9.6  Verify: /privacy/ renders; newsletter form shows consent note with link; footer links to /privacy/; Umami script absent when param is empty
+  [x] 9.1  Create content/privacy.md with Hebrew privacy policy (Buttondown data, Umami analytics, unsubscribe rights, contact email)
+  [x] 9.2  Update layouts/partials/newsletter.html: add consent note + link to /privacy/ below submit button
+  [x] 9.3  Update layouts/partials/footer.html: add Privacy Policy link
+  [x] 9.4  Update layouts/partials/head.html: inject Umami script only when site.Params.umamiSiteId is non-empty
+  [x] 9.5  Add umamiSiteId = "" placeholder param to config.toml
+  [x] 9.6  Verify: /privacy/ renders; newsletter form shows consent note with link; footer links to /privacy/; Umami script absent when param is empty
 
 PHASE 10 — Launch Audit
   [ ] 10.1  Run Lighthouse on homepage, one story page, one tag page — all scores: Performance ≥ 90, SEO ≥ 95, Accessibility = 100, Best Practices ≥ 90
@@ -1006,11 +1006,11 @@ Check:
 - **Israeli Privacy Law registration:** Under the Israeli Protection of Privacy Law, databases containing personal data of more than 10,000 individuals must be registered with the Israeli Law, Information and Technology Authority (ILITA). For a small newsletter starting from zero, this threshold is far off — but worth noting for when the list grows.
 
 ### Verification Checklist
-- [ ] `/privacy/` page renders; policy covers data collection, Buttondown, Umami, cookies, rights, contact
-- [ ] Newsletter form shows consent note with `/privacy/` link on all pages where the form appears
-- [ ] Footer contains Privacy Policy link on homepage, story list, single story, tag, and about pages
-- [ ] Umami script tag absent from page source when `umamiSiteId = ""`
-- [ ] Umami script tag present and correct when `umamiSiteId` is set
+- [x] `/privacy/` page renders; policy covers data collection, Buttondown, Umami, cookies, rights, contact
+- [x] Newsletter form shows consent note with `/privacy/` link on all pages where the form appears
+- [x] Footer contains Privacy Policy link on homepage, story list, single story, tag, and about pages
+- [x] Umami script tag absent from page source when `umamiSiteId = ""`
+- [x] Umami script tag present and correct when `umamiSiteId` is set
 
 ### After Phase 9
 Run `/simplify` on `newsletter.html`, `footer.html`, `head.html`. Commit with message `feat: privacy policy, newsletter consent, and analytics gating`.
