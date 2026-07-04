@@ -6,7 +6,14 @@
 <link rel="icon" href="{{ "favicon-32x32.png" | absURL }}" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="{{ "apple-touch-icon.png" | absURL }}">
 
-{{- $desc := .Params.description | default .Site.Params.description -}}
+{{- $desc := .Params.description -}}
+{{- if not $desc -}}
+  {{- if eq .Kind "term" -}}
+    {{- $desc = printf "סיפורי מדע בדיוני ופנטזיה בנושא %s מאת %s, מתוך %s" .Title .Site.Params.author .Site.Title -}}
+  {{- else -}}
+    {{- $desc = .Site.Params.description -}}
+  {{- end -}}
+{{- end -}}
 
 <link rel="canonical" href="{{ .Permalink }}">
 <link rel="alternate" hreflang="he" href="{{ .Permalink }}">
@@ -29,7 +36,23 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;800&family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+{{- $fontHref := "https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=Heebo:wght@400;500;600;700&display=swap" }}
+<link rel="preload" as="style" href="{{ $fontHref }}">
+<link rel="stylesheet" href="{{ $fontHref }}" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="{{ $fontHref }}"></noscript>
 
 {{ $css := resources.Get "css/main.css" | css.Build (dict "minify" true) | fingerprint }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}">
+
+{{ if .IsHome }}
+{{- $siteSchema := dict
+    "@context" "https://schema.org"
+    "@type" "WebSite"
+    "name" .Site.Title
+    "url" (absURL "")
+    "description" .Site.Params.description
+    "inLanguage" "he"
+    "author" (dict "@type" "Person" "name" .Site.Params.author)
+-}}
+<script type="application/ld+json">{{ $siteSchema | jsonify | safeJS }}</script>
+{{ end }}

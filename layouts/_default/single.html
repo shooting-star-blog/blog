@@ -68,6 +68,7 @@
     "@type" "Article"
     "headline" .Title
     "inLanguage" "he"
+    "mainEntityOfPage" (dict "@type" "WebPage" "@id" .Permalink)
     "datePublished" (.Date.Format "2006-01-02")
     "dateModified" (.Lastmod.Format "2006-01-02")
     "author" (dict "@type" "Person" "name" .Site.Params.author)
@@ -75,6 +76,18 @@
     "description" (.Params.description | default .Site.Params.description)
 -}}
 {{- with .Params.cover -}}{{- $jsonld = merge $jsonld (dict "image" (. | absURL)) -}}{{- end -}}
+{{- with .Params.title_en -}}{{- $jsonld = merge $jsonld (dict "alternateName" .) -}}{{- end -}}
 <script type="application/ld+json">{{ $jsonld | jsonify | safeJS }}</script>
+
+{{- $breadcrumb := dict
+    "@context" "https://schema.org"
+    "@type" "BreadcrumbList"
+    "itemListElement" (slice
+      (dict "@type" "ListItem" "position" 1 "name" "בית" "item" (absURL ""))
+      (dict "@type" "ListItem" "position" 2 "name" "סיפורים" "item" ("/stories/" | absURL))
+      (dict "@type" "ListItem" "position" 3 "name" .Title "item" .Permalink)
+    )
+-}}
+<script type="application/ld+json">{{ $breadcrumb | jsonify | safeJS }}</script>
 
 {{ end }}

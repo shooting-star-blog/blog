@@ -11,6 +11,6 @@
     width="{{ $hero.Width }}"
     height="{{ $hero.Height }}"
     {{ with .class }}class="{{ . }}"{{ end }}
-    {{ if .eager }}loading="eager" fetchpriority="high"{{ else }}loading="lazy"{{ end }}
+    {{ if .eager }}loading="eager" fetchpriority="high"{{ else }}loading="lazy" decoding="async"{{ end }}
   >
 {{- end -}}

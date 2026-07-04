@@ -16,7 +16,7 @@ Original Wix site: https://shalev76.wixsite.com/shooting-star
 | Static site generator | **Hugo** | Fast, great RTL/Hebrew support, built-in SEO scaffolding |
 | Hosting | **GitHub Pages** | Free, deploys on push via GitHub Actions |
 | Domain | **Namecheap or Cloudflare Registrar** | ~$10/year |
-| Newsletter | **Buttondown** | Free up to 100 subs, writer-focused, clean embed |
+| Newsletter | **TBD** (Buttondown ruled out — no RTL support) | Site shows a "coming soon" placeholder until a Hebrew-friendly provider is picked |
 | Analytics | **Umami** (cloud free tier) or Google Search Console | Privacy-friendly, no cookie banners |
 | Content editing | **VS Code or Obsidian** + Git push | No custom admin needed |
 | Optional CMS UI | **Decap CMS** (formerly Netlify CMS) | Browser-based editor that commits to GitHub — use if Git CLI feels too technical |
@@ -48,7 +48,7 @@ shooting-star/
 │       ├── head.html          # Meta tags, OG, structured data
 │       ├── header.html
 │       ├── footer.html
-│       └── newsletter.html    # Buttondown embed
+│       └── newsletter.html    # "Coming soon" placeholder; Buttondown embed kept dormant behind newsletterEnabled flag
 ├── static/
 │   └── images/                # Story cover images
 ├── assets/
@@ -115,9 +115,9 @@ These stories exist on the current Wix site and need to be migrated:
 5. GitHub Actions builds and deploys automatically (~60 seconds)
 
 ## Newsletter
-- Embed a **Buttondown** signup form in the footer and on the homepage
-- Buttondown account: to be created at buttondown.email
-- The form should match the existing copy: "הירשמו ותדעו מתי מתפרסם הסיפור הבא"
+- **On hold.** Buttondown was the original pick but doesn't support RTL — ruled out.
+- Homepage/footer currently show a Hebrew "coming soon" placeholder (`layouts/partials/newsletter.html`).
+- The Buttondown embed markup is still in that file, gated behind `params.newsletterEnabled` in `config.toml` (currently `false`), so it can be flipped back on quickly if we ever return to it — otherwise swap in whatever RTL-friendly provider gets picked.
 
 ## Contact
 - Email: shootingstarblog@outlook.com
@@ -137,5 +137,5 @@ Must appear in footer on all pages (Hebrew):
 6. `head.html` partial with full SEO meta tags
 7. GitHub Actions deploy workflow
 8. Migrate 2–3 stories as sample `.md` files to test everything
-9. Newsletter embed (Buttondown)
+9. Newsletter — "coming soon" placeholder (provider TBD)
 10. About/Contact page

@@ -8,7 +8,8 @@ enableRobotsTXT = true
   description = "סיפורי מדע בדיוני ופנטזיה קצרים מאת ש.מ"
   author = "ש.מ"
   contactEmail = "shootingstarblog@outlook.com"
-  buttondownUsername = "shootingstarblog" # set to your Buttondown account slug when created
+  newsletterEnabled = false # Buttondown dropped: no RTL support. Flip on once a Hebrew-friendly provider is picked
+  buttondownUsername = "shootingstarblog" # kept for reference; unused while newsletterEnabled = false
 
 [taxonomies]
   tag = "tags"

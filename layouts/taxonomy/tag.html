@@ -23,7 +23,7 @@
           <span class="ss-archive__dot" aria-hidden="true"></span>
           <span class="ss-archive__date">{{ index $months $mn }} {{ .Date.Format "2006" }}</span>
         </div>
-        <span class="ss-archive__item-title">{{ .Title }}</span>
+        <h2 class="ss-archive__item-title">{{ .Title }}</h2>
         {{ with .Params.description }}
         <p class="ss-archive__excerpt">{{ . | truncate 160 }}</p>
         {{ end }}

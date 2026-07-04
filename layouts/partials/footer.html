@@ -21,8 +21,10 @@
       <p class="ss-footer__col-label">במקומות אחרים</p>
       <ul class="ss-footer__links">
         <li><a href="{{ "/index.xml" | absURL }}">הזנת RSS</a></li>
+        {{ if .Site.Params.newsletterEnabled }}
         {{ with .Site.Params.buttondownUsername }}
         <li><a href="https://buttondown.email/{{ . }}">ניוזלטר</a></li>
+        {{ end }}
         {{ end }}
       </ul>
     </div>

@@ -1,3 +1,4 @@
+{{ if .Site.Params.newsletterEnabled }}
 {{ $bd := .Site.Params.buttondownUsername }}
 {{ if $bd }}
 <section class="ss-newsletter-section" aria-labelledby="newsletter-heading">
@@ -20,6 +21,17 @@
                aria-required="true">
         <button type="submit" class="ss-newsletter__submit">הרשמה</button>
       </form>
+    </div>
+  </div>
+</section>
+{{ end }}
+{{ else }}
+<section class="ss-newsletter-section" aria-labelledby="newsletter-heading">
+  <div class="ss-newsletter">
+    <div class="ss-newsletter__stars" aria-hidden="true"></div>
+    <div class="ss-newsletter__inner">
+      <h2 id="newsletter-heading" class="ss-newsletter__title">ניוזלטר בדרך</h2>
+      <p class="ss-newsletter__desc">אנחנו בוחרים שירות דיוור שתומך כראוי בעברית. בקרוב תוכלו להירשם כאן.</p>
     </div>
   </div>
 </section>
