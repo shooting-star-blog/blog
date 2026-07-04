@@ -1,4 +1,3 @@
-{{/* Hugo has no built-in tag-intersection; where+intersect operator handles it natively */}}
 {{ $currentTags := .Params.tags }}
 {{ $suggested := slice }}
 {{ if $currentTags }}
@@ -6,9 +5,9 @@
 {{ end }}
 
 {{ if $suggested }}
-<section class="suggested-stories" aria-labelledby="suggested-heading">
-  <h2 id="suggested-heading">סיפורים נוספים</h2>
-  <div class="stories-grid">
+<section class="ss-suggested" aria-labelledby="suggested-heading">
+  <h2 id="suggested-heading" class="ss-suggested__title">סיפורים נוספים</h2>
+  <div class="ss-cards">
     {{ range $suggested }}
     {{ partial "story-card.html" . }}
     {{ end }}

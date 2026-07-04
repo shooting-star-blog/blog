@@ -1,6 +1,16 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="he">
+<html dir="rtl" lang="he" data-theme="dark" data-accent="cyan">
 <head>
+  <script>
+    (function(){
+      try{
+        var t=localStorage.getItem('ss-theme')||'dark';
+        var a=localStorage.getItem('ss-accent')||'cyan';
+        document.documentElement.setAttribute('data-theme',t);
+        document.documentElement.setAttribute('data-accent',a);
+      }catch(e){}
+    }());
+  </script>
   {{ partial "head.html" . }}
 </head>
 <body>

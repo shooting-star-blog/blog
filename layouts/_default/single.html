@@ -1,37 +1,63 @@
 {{ define "main" }}
 
-<article class="story-article">
+{{- $months := slice "" "ינואר" "פברואר" "מרץ" "אפריל" "מאי" "יוני" "יולי" "אוגוסט" "ספטמבר" "אוקטובר" "נובמבר" "דצמבר" -}}
+{{- $monthNum := .Date.Format "1" | int -}}
 
+<article>
+
+  <!-- Cover image -->
   {{ with .Params.cover }}
-  <div class="story-hero">
-    {{ partial "cover-image.html" (dict "cover" . "altText" $.Title "eager" true "class" "story-hero__image") }}
+  <div class="ss-story__hero">
+    {{ partial "cover-image.html" (dict "cover" . "altText" $.Title "eager" true "sizes" "100vw") }}
   </div>
   {{ end }}
 
-  <div class="container">
-    <header class="story-header">
-      <h1 class="story-title">{{ .Title }}</h1>
-
-      {{ with .Params.title_en }}
-      <p class="story-subtitle" lang="en">{{ . }}</p>
-      {{ end }}
-
-      <div class="story-meta">
-        <time class="story-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "02.01.2006" }}</time>
-
-        {{ partial "tag-chips.html" .Params.tags }}
-      </div>
-    </header>
-
-    <div class="story-body">
-      {{ .Content }}
+  <!-- Header -->
+  <div class="ss-story__header-wrap">
+    <div class="ss-story__header">
+      <p class="ss-story__meta">
+        <span class="ss-story__meta-byline">מאת <span class="ss-story__author-name">{{ .Site.Params.author }}</span> · <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2" }} ב{{ index $months $monthNum }} {{ .Date.Format "2006" }}</time></span>
+        {{ with .Params.tags }}
+        <span class="ss-story__meta-sep" aria-hidden="true">•</span>
+        <span class="ss-story__meta-tags">{{ delimit . " · " }}</span>
+        {{ end }}
+      </p>
+      <h1 class="ss-story__title">{{ .Title }}</h1>
     </div>
-
-    <footer class="story-copyright" lang="he">
-      <p>© כל הזכויות שמורות לש.מ</p>
-      <p>אין להעתיק, לשכפל, לצלם, לתרגם, להקליט, לשדר, לקלוט ו/או לאכסן במאגר מידע בכל דרך ו/או אמצעי מכני, דיגיטלי, אופטי, מגנטי ו/או אחר – חלק כלשהו מן המידע ו/או הסיפורים ו/או התמונות ו/או האיורים ו/או כל תוכן אחר שצורף ו/או נכלל באתר אינטרנט זה.</p>
-    </footer>
   </div>
+
+  <!-- Body -->
+  <div class="ss-story__body">
+    {{ .Content }}
+  </div>
+
+  <!-- Copyright -->
+  <div class="ss-story__copyright" lang="he">
+    <p>© כל הזכויות שמורות לש.מ</p>
+    <p>אין להעתיק, לשכפל, לצלם, לתרגם, להקליט, לשדר, לקלוט ו/או לאכסן במאגר מידע בכל דרך ו/או אמצעי מכני, דיגיטלי, אופטי, מגנטי ו/או אחר – חלק כלשהו מן המידע ו/או הסיפורים ו/או התמונות ו/או האיורים ו/או כל תוכן אחר שצורף ו/או נכלל באתר אינטרנט זה.</p>
+  </div>
+
+  <!-- Prev / Next navigation -->
+  {{ $prev := .PrevInSection }}
+  {{ $next := .NextInSection }}
+  {{ if or $prev $next }}
+  <nav class="ss-story__nav" aria-label="סיפורים נוספים">
+    <div class="ss-story__nav-inner">
+      {{ if $prev }}
+      <a href="{{ $prev.RelPermalink }}" class="ss-story__nav-link ss-story__nav-link--prev">
+        <span class="ss-story__nav-label">→ הקודם</span>
+        <span class="ss-story__nav-title">{{ $prev.Title }}</span>
+      </a>
+      {{ else }}<div></div>{{ end }}
+      {{ if $next }}
+      <a href="{{ $next.RelPermalink }}" class="ss-story__nav-link ss-story__nav-link--next">
+        <span class="ss-story__nav-label">הבא ←</span>
+        <span class="ss-story__nav-title">{{ $next.Title }}</span>
+      </a>
+      {{ end }}
+    </div>
+  </nav>
+  {{ end }}
 
 </article>
 

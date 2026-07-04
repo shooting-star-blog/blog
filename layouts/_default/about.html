@@ -1,29 +1,37 @@
 {{ define "main" }}
 
-<article class="about-page">
-  <div class="container">
-    <header class="page-header">
-      <h1>{{ .Title }}</h1>
-    </header>
+<div class="ss-about">
+  <p class="ss-about__eyebrow">הסופר</p>
+  <h1 class="ss-about__title">{{ .Title | default "אודות" }}</h1>
 
-    <div class="about-bio">
-      {{ with .Params.photo }}
-      <div class="about-bio__photo">
-        {{ partial "cover-image.html" (dict "cover" . "altText" $.Site.Params.author "eager" true "class" "about-bio__image" "sizes" "(max-width: 640px) 200px, 280px") }}
-      </div>
+  <div class="ss-about__grid">
+    <div>
+      {{ with .Params.author_name }}
+      <p class="ss-about__name">שלום, שמי {{ . }}</p>
+      {{ else }}
+      <p class="ss-about__name">שלום, שמי ש. מ.</p>
       {{ end }}
-
-      <div class="about-bio__text story-body">
+      <div class="ss-about__bio">
         {{ .Content }}
       </div>
     </div>
-  </div>
 
-  {{ with .Params.quote }}
-  <div class="about-quote">
-    <p class="container">{{ . }}</p>
+    <div class="ss-about__photo">
+      {{ with .Params.photo }}
+        {{ partial "cover-image.html" (dict "cover" . "altText" $.Site.Params.author "eager" true "sizes" "(max-width: 900px) 100vw, 280px") }}
+      {{ end }}
+    </div>
   </div>
-  {{ end }}
-</article>
+</div>
+
+{{ with .Params.quote }}
+<div class="ss-about-quote-wrap">
+  <div class="ss-about-quote">
+    <div class="ss-about-quote__stars" aria-hidden="true"></div>
+    <span class="ss-about-quote__symbol" aria-hidden="true">✦</span>
+    <p class="ss-about-quote__text">{{ . }}</p>
+  </div>
+</div>
+{{ end }}
 
 {{ end }}

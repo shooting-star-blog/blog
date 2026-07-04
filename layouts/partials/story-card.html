@@ -1,20 +1,15 @@
-{{ $page := . }}
-<article class="story-card">
-  {{ with $page.Params.cover }}
-  <a href="{{ $page.RelPermalink }}" tabindex="-1" aria-hidden="true">
-    {{ partial "cover-image.html" (dict "cover" . "altText" "" "eager" false "class" "story-card__image" "sizes" "(max-width: 480px) 100vw, (max-width: 900px) 50vw, 380px") }}
-  </a>
-  {{ end }}
-  <div class="story-card__body">
-    <h3 class="story-card__title">
-      <a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
-    </h3>
-    {{ with $page.Params.description }}
-    <p class="story-card__excerpt">{{ . | truncate 120 }}</p>
+{{ $p := . }}
+<a href="{{ $p.RelPermalink }}" class="ss-card">
+  <div class="ss-card__body">
+    {{ with $p.Params.tags }}<span class="ss-card__tagline">{{ delimit . " · " }}</span>{{ end }}
+    <h3 class="ss-card__title">{{ $p.Title }}</h3>
+    {{ with $p.Params.description }}
+    <p class="ss-card__excerpt">{{ . | truncate 120 }}</p>
     {{ end }}
-    <div class="story-card__meta">
-      <time datetime="{{ $page.Date.Format "2006-01-02" }}">{{ $page.Date.Format "02.01.2006" }}</time>
-      {{ partial "tag-chips.html" $page.Params.tags }}
-    </div>
   </div>
-</article>
+  {{ with $p.Params.cover }}
+  <div class="ss-card__cover">
+    {{ partial "cover-image.html" (dict "cover" . "altText" "" "eager" false "sizes" "86px") }}
+  </div>
+  {{ end }}
+</a>

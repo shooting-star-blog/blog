@@ -1,29 +1,72 @@
 {{ define "main" }}
 
-<section class="hero">
-  <div class="container">
-    <h1 class="hero__title">{{ .Site.Title }}</h1>
-    <p class="hero__tagline">{{ .Site.Params.description }}</p>
+{{- $stories  := .Site.RegularPages -}}
+{{- $featured := where $stories "Params.featured" true -}}
+{{- if not $featured }}{{ $featured = $stories }}{{ end -}}
+{{- $withCover := where $featured "Params.cover" "ne" "" -}}
+{{- $heroPool := $featured -}}
+{{- if $withCover }}{{ $heroPool = $withCover }}{{ end -}}
+{{- $hero := index $heroPool 0 -}}
+{{- $grid := $featured | complement (slice $hero) -}}
+
+<!-- ===== HERO ===== -->
+<section class="ss-hero">
+  <div aria-hidden="true">
+    <div class="ss-hero__stars ss-hero__stars--dark">
+      <div class="ss-dawn-glow"></div>
+      <span class="ss-star-tw ss-star-tw--1"></span>
+      <span class="ss-star-tw ss-star-tw--2"></span>
+      <span class="ss-shoot"></span>
+    </div>
+    <div class="ss-hero__stars ss-hero__stars--light">
+      <div class="ss-dawn-glow"></div>
+      <span class="ss-star-tw ss-star-tw--l1"></span>
+      <span class="ss-star-tw ss-star-tw--l2"></span>
+    </div>
   </div>
-</section>
 
-<section class="featured-section" aria-labelledby="featured-heading">
-  <div class="container">
-    {{ $featured := where .Site.RegularPages "Params.featured" true | first 6 | default (first 6 .Site.RegularPages) }}
+  <div class="ss-hero__inner">
+    <p class="ss-hero__eyebrow">השידור הנבחר</p>
 
-    {{ if $featured }}
-    <h2 id="featured-heading" class="section-heading">סיפורים מובחרים</h2>
-    <div class="stories-grid">
-      {{ range $featured }}
-      {{ partial "story-card.html" . }}
-      {{ end }}
+    {{ with $hero }}
+    <div class="ss-hero__grid">
+      <div>
+        <h1 class="ss-hero__title">{{ .Title }}</h1>
+        {{ with .Params.description }}
+        <p class="ss-hero__excerpt">{{ . }}</p>
+        {{ end }}
+        <div class="ss-hero__actions">
+          <a href="{{ .RelPermalink }}" class="ss-hero__cta">לקריאת הסיפור</a>
+          <span class="ss-hero__meta">מאת {{ $.Site.Params.author }}</span>
+        </div>
+      </div>
+
+      <div class="ss-hero__cover">
+        {{ with .Params.cover }}
+          {{ partial "cover-image.html" (dict "cover" . "altText" $.Title "eager" true "sizes" "(max-width: 900px) 100vw, 480px") }}
+        {{ end }}
+      </div>
     </div>
     {{ end }}
-
-    <div class="homepage-cta">
-      <a href="{{ "/stories/" | relURL }}" class="btn-all-stories">כל הסיפורים &larr;</a>
-    </div>
   </div>
 </section>
+
+<!-- ===== SELECTED STORIES GRID ===== -->
+{{ if $grid }}
+<section class="ss-grid-section" aria-labelledby="featured-heading">
+  <div class="ss-grid-head">
+    <h2 id="featured-heading" class="ss-grid-head__title">סיפורים נבחרים</h2>
+    <a href="{{ "/stories/" | relURL }}" class="ss-grid-head__link">לכל הסיפורים ←</a>
+  </div>
+  <div class="ss-cards">
+    {{ range $grid }}
+    {{ partial "story-card.html" . }}
+    {{ end }}
+  </div>
+</section>
+{{ end }}
+
+<!-- ===== NEWSLETTER ===== -->
+{{ partial "newsletter.html" . }}
 
 {{ end }}

@@ -1,53 +1,61 @@
 {{ define "main" }}
 
-<div class="page-header">
-  <div class="container">
-    <h1>{{ .Title }}</h1>
-    {{ with .Params.description }}
-    <p class="page-header__desc">{{ . }}</p>
+{{- $months := slice "" "ינואר" "פברואר" "מרץ" "אפריל" "מאי" "יוני" "יולי" "אוגוסט" "ספטמבר" "אוקטובר" "נובמבר" "דצמבר" -}}
+
+<section class="ss-archive">
+  <p class="ss-archive__eyebrow">כל הסיפורים</p>
+  <h1 class="ss-archive__title">{{ .Title | default "כל משלוח, מהחדש ועד הראשון." }}</h1>
+  <p class="ss-archive__desc">
+    {{ with .Params.description }}{{ . }}{{ else }}אוסף הולך וגדל של מדע בדיוני קצר — מסעות בחלל, מושבות, והעתידים הרחוקים שנמשכים אחרינו אל שם.{{ end }}
+  </p>
+
+  {{ $paginator := .Paginate .Pages }}
+  {{ if $paginator.Pages }}
+  <div class="ss-archive__list">
+    {{ range $paginator.Pages }}
+    {{- $mn := .Date.Format "1" | int -}}
+    <a href="{{ .RelPermalink }}" class="ss-archive__item">
+      {{ with .Params.cover }}
+      <div class="ss-archive__cover">
+        {{ partial "cover-image.html" (dict "cover" . "altText" "" "eager" false "sizes" "150px") }}
+      </div>
+      {{ end }}
+      <div class="ss-archive__body">
+        <div class="ss-archive__meta">
+          {{ with .Params.tags }}<span class="ss-archive__tagline">{{ delimit . " · " }}</span>{{ end }}
+          <span class="ss-archive__dot" aria-hidden="true"></span>
+          <span class="ss-archive__date">{{ index $months $mn }} {{ .Date.Format "2006" }}</span>
+        </div>
+        <span class="ss-archive__item-title">{{ .Title }}</span>
+        {{ with .Params.description }}
+        <p class="ss-archive__excerpt">{{ . | truncate 160 }}</p>
+        {{ end }}
+      </div>
+    </a>
     {{ end }}
   </div>
-</div>
 
-<section class="story-list" aria-labelledby="story-list-heading">
-  <div class="container">
-    <h2 id="story-list-heading" class="visually-hidden">רשימת סיפורים</h2>
-    {{ $paginator := .Paginate .Pages }}
-    {{ if $paginator.Pages }}
-    <div class="stories-grid">
-      {{ range $paginator.Pages }}
-      {{ partial "story-card.html" . }}
-      {{ end }}
-    </div>
-
-    {{ if gt $paginator.TotalPages 1 }}
-    <nav class="pagination" aria-label="ניווט עמוד">
-      {{ if $paginator.HasPrev }}
-      <a href="{{ $paginator.Prev.URL }}" rel="prev">הקודם &rarr;</a>
-      {{ else }}
-      <span aria-hidden="true">הקודם &rarr;</span>
-      {{ end }}
-
-      {{ range $paginator.Pagers }}
+  {{ if gt $paginator.TotalPages 1 }}
+  <nav class="ss-pagination" aria-label="ניווט עמוד">
+    {{ if $paginator.HasPrev }}
+    <a href="{{ $paginator.Prev.URL }}" rel="prev" class="ss-pagination__btn">→ הקודם</a>
+    {{ end }}
+    {{ range $paginator.Pagers }}
       {{ if eq . $paginator }}
-      <span class="current" aria-current="page">{{ .PageNumber }}</span>
+      <span class="ss-pagination__btn ss-pagination__btn--current" aria-current="page">{{ .PageNumber }}</span>
       {{ else }}
-      <a href="{{ .URL }}">{{ .PageNumber }}</a>
+      <a href="{{ .URL }}" class="ss-pagination__btn">{{ .PageNumber }}</a>
       {{ end }}
-      {{ end }}
-
-      {{ if $paginator.HasNext }}
-      <a href="{{ $paginator.Next.URL }}" rel="next">&larr; הבא</a>
-      {{ else }}
-      <span aria-hidden="true">&larr; הבא</span>
-      {{ end }}
-    </nav>
     {{ end }}
-
-    {{ else }}
-    <p class="empty-state">אין סיפורים עדיין.</p>
+    {{ if $paginator.HasNext }}
+    <a href="{{ $paginator.Next.URL }}" rel="next" class="ss-pagination__btn">הבא ←</a>
     {{ end }}
-  </div>
+  </nav>
+  {{ end }}
+
+  {{ else }}
+  <p class="ss-archive__empty">אין סיפורים עדיין.</p>
+  {{ end }}
 </section>
 
 {{ end }}

@@ -1,24 +1,39 @@
 {{ define "main" }}
 
-<div class="page-header">
-  <div class="container">
-    <h1>סיפורים בנושא: {{ .Title }}</h1>
-  </div>
-</div>
+{{- $months := slice "" "ינואר" "פברואר" "מרץ" "אפריל" "מאי" "יוני" "יולי" "אוגוסט" "ספטמבר" "אוקטובר" "נובמבר" "דצמבר" -}}
 
-<section class="story-list" aria-labelledby="tag-story-list-heading">
-  <div class="container">
-    <h2 id="tag-story-list-heading" class="visually-hidden">סיפורים</h2>
-    {{ if .Pages }}
-    <div class="stories-grid">
-      {{ range .Pages }}
-      {{ partial "story-card.html" . }}
+<section class="ss-archive">
+  <p class="ss-archive__eyebrow">תגית</p>
+  <h1 class="ss-archive__title">{{ .Title }}</h1>
+  <p class="ss-archive__desc">סיפורים בנושא {{ .Title }}</p>
+
+  {{ if .Pages }}
+  <div class="ss-archive__list">
+    {{ range .Pages }}
+    {{- $mn := .Date.Format "1" | int -}}
+    <a href="{{ .RelPermalink }}" class="ss-archive__item">
+      {{ with .Params.cover }}
+      <div class="ss-archive__cover">
+        {{ partial "cover-image.html" (dict "cover" . "altText" "" "eager" false "sizes" "150px") }}
+      </div>
       {{ end }}
-    </div>
-    {{ else }}
-    <p class="empty-state">אין סיפורים בנושא זה עדיין.</p>
+      <div class="ss-archive__body">
+        <div class="ss-archive__meta">
+          {{ with .Params.tags }}<span class="ss-archive__tagline">{{ delimit . " · " }}</span>{{ end }}
+          <span class="ss-archive__dot" aria-hidden="true"></span>
+          <span class="ss-archive__date">{{ index $months $mn }} {{ .Date.Format "2006" }}</span>
+        </div>
+        <span class="ss-archive__item-title">{{ .Title }}</span>
+        {{ with .Params.description }}
+        <p class="ss-archive__excerpt">{{ . | truncate 160 }}</p>
+        {{ end }}
+      </div>
+    </a>
     {{ end }}
   </div>
+  {{ else }}
+  <p class="ss-archive__empty">אין סיפורים בנושא זה עדיין.</p>
+  {{ end }}
 </section>
 
 {{ end }}

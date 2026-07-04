@@ -1,50 +1,55 @@
-<a href="#main-content" class="skip-link">דלג לתוכן</a>
+<a href="#main-content" class="ss-skip">דלג לתוכן</a>
 
-<header class="site-header" role="banner">
-  <div class="container">
-    <div class="site-header__inner">
-      <a href="{{ "/" | relURL }}" class="site-logo">{{ .Site.Title }}</a>
+<header class="ss-header" role="banner">
+  <div class="ss-header__inner">
+    <a href="{{ "/" | relURL }}" class="ss-logo" aria-label="{{ .Site.Title }} — דף הבית">
+      <img src="{{ "images/logo.svg" | relURL }}" alt="" aria-hidden="true" class="ss-logo__img">
+      <span class="ss-logo__name">{{ .Site.Title }}</span>
+    </a>
 
-      <button class="nav-toggle-btn"
-              aria-expanded="false"
-              aria-controls="main-nav"
-              aria-label="פתח תפריט ניווט">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+    <nav class="ss-nav" aria-label="ניווט ראשי">
+      <a href="{{ "/" | relURL }}" class="ss-nav__btn"
+         {{ if .IsHome }}aria-current="page"{{ end }}>
+        <span class="ss-nav__dot" aria-hidden="true"></span>בית
+      </a>
+      <a href="{{ "/stories/" | relURL }}" class="ss-nav__btn"
+         {{ if eq .Section "stories" }}aria-current="page"{{ end }}>
+        <span class="ss-nav__dot" aria-hidden="true"></span>סיפורים
+      </a>
+      <a href="{{ "/about/" | relURL }}" class="ss-nav__btn"
+         {{ if eq .RelPermalink "/about/" }}aria-current="page"{{ end }}>
+        <span class="ss-nav__dot" aria-hidden="true"></span>אודות
+      </a>
+    </nav>
 
-      <nav id="main-nav" class="site-nav" aria-label="ניווט ראשי">
-        <ul class="site-nav__list" role="list">
-          <li>
-            <a href="{{ "/" | relURL }}" class="site-nav__link"
-              {{ if .IsHome }}aria-current="page"{{ end }}>בית</a>
-          </li>
-          <li>
-            <a href="{{ "/stories/" | relURL }}" class="site-nav__link"
-              {{ if eq .Section "stories" }}aria-current="page"{{ end }}>סיפורים</a>
-          </li>
-          <li>
-            <a href="{{ "/about/" | relURL }}" class="site-nav__link"
-              {{ if eq .RelPermalink "/about/" }}aria-current="page"{{ end }}>אודות</a>
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <button class="ss-theme-btn" id="ss-theme-btn" aria-label="מעבר למצב בהיר">
+      <span class="ss-theme-btn__icon" id="ss-theme-icon" aria-hidden="true">☀</span>
+      <span class="ss-theme-btn__label" id="ss-theme-label">בהיר</span>
+    </button>
   </div>
 </header>
 
 <script>
 (function () {
-  var btn = document.querySelector('.nav-toggle-btn');
-  var nav = document.getElementById('main-nav');
-  if (!btn || !nav) return;
-  var open = false;
+  var html = document.documentElement;
+  var btn  = document.getElementById('ss-theme-btn');
+  var lbl  = document.getElementById('ss-theme-label');
+  var ico  = document.getElementById('ss-theme-icon');
+  if (!btn) return;
+
+  function apply(t) {
+    html.setAttribute('data-theme', t);
+    try { localStorage.setItem('ss-theme', t); } catch(e){}
+    var dark = t === 'dark';
+    if (lbl) lbl.textContent = dark ? 'בהיר' : 'כהה';
+    if (ico) ico.textContent = dark ? '☀' : '☽';
+    btn.setAttribute('aria-label', dark ? 'מעבר למצב בהיר' : 'מעבר למצב כהה');
+  }
+
   btn.addEventListener('click', function () {
-    open = !open;
-    btn.setAttribute('aria-expanded', open);
-    btn.setAttribute('aria-label', open ? 'סגור תפריט ניווט' : 'פתח תפריט ניווט');
-    nav.classList.toggle('is-open', open);
+    apply(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
   });
+
+  apply(html.getAttribute('data-theme') || 'dark');
 }());
 </script>

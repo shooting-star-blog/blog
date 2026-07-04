@@ -1,14 +1,38 @@
-<footer class="site-footer" role="contentinfo">
-  <div class="container">
-    <div class="site-footer__inner">
+<footer class="ss-footer" role="contentinfo">
+  <div class="ss-footer__grid">
 
-      {{ partial "newsletter.html" . }}
-
-      <div class="copyright" lang="he">
-        <p>© כל הזכויות שמורות לש.מ</p>
-        <p>אין להעתיק, לשכפל, לצלם, לתרגם, להקליט, לשדר, לקלוט ו/או לאכסן במאגר מידע בכל דרך ו/או אמצעי מכני, דיגיטלי, אופטי, מגנטי ו/או אחר – חלק כלשהו מן המידע ו/או הסיפורים ו/או התמונות ו/או האיורים ו/או כל תוכן אחר שצורף ו/או נכלל באתר אינטרנט זה.</p>
+    <div class="ss-footer__brand">
+      <div class="ss-footer__brand-logo">
+        {{ .Site.Title }}
       </div>
+      <p class="ss-footer__brand-desc">מדע בדיוני קצר על מסעות בחלל, מושבות, והעתידים שאנחנו עדיין כותבים את דרכנו אליהם.</p>
+    </div>
 
+    <div class="ss-footer__col">
+      <p class="ss-footer__col-label">קריאה</p>
+      <ul class="ss-footer__links">
+        <li><a href="{{ "/" | relURL }}">בית</a></li>
+        <li><a href="{{ "/stories/" | relURL }}">סיפורים</a></li>
+        <li><a href="{{ "/about/" | relURL }}">אודות הסופר</a></li>
+      </ul>
+    </div>
+
+    <div class="ss-footer__col">
+      <p class="ss-footer__col-label">במקומות אחרים</p>
+      <ul class="ss-footer__links">
+        <li><a href="{{ "/index.xml" | absURL }}">הזנת RSS</a></li>
+        {{ with .Site.Params.buttondownUsername }}
+        <li><a href="https://buttondown.email/{{ . }}">ניוזלטר</a></li>
+        {{ end }}
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="ss-footer__bottom">
+    <div class="ss-footer__bottom-inner" lang="he">
+      <p>© כל הזכויות שמורות לש.מ</p>
+      <p>אין להעתיק, לשכפל, לצלם, לתרגם, להקליט, לשדר, לקלוט ו/או לאכסן במאגר מידע בכל דרך ו/או אמצעי מכני, דיגיטלי, אופטי, מגנטי ו/או אחר – חלק כלשהו מן המידע ו/או הסיפורים ו/או התמונות ו/או האיורים ו/או כל תוכן אחר שצורף ו/או נכלל באתר אינטרנט זה.</p>
     </div>
   </div>
 </footer>

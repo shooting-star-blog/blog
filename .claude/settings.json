@@ -18,7 +18,10 @@
       "Bash(export CHROME_PATH=/home/sabichos/.cache/puppeteer/chrome/linux-150.0.7871.24/chrome-linux64/chrome)",
       "Bash(npx --yes lighthouse http://localhost:8971/about/ --output=json --output-path=./about-lh2.json '--chrome-flags=--headless=new --no-sandbox' --only-categories=performance,seo,accessibility,best-practices --quiet)",
       "Bash(npx --yes lighthouse http://localhost:8971/about/ --output=json --output-path=./about-lh3.json '--chrome-flags=--headless=new --no-sandbox' --only-categories=performance --quiet)",
-      "Bash(pkill -f \"chrome-linux64/chrome\")"
+      "Bash(pkill -f \"chrome-linux64/chrome\")",
+      "WebSearch",
+      "WebFetch(domain:claude.ai)",
+      "Bash(git status *)"
     ]
   }
 }

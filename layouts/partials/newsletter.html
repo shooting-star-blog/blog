@@ -1,22 +1,26 @@
-<section class="newsletter" aria-labelledby="newsletter-heading">
-  <h2 id="newsletter-heading">הירשמו לרשימת התפוצה</h2>
-  <p>הירשמו ותדעו מתי מתפרסם הסיפור הבא</p>
-  {{ $bd := .Site.Params.buttondownUsername }}
-  {{ if $bd }}
-  <form action="https://buttondown.email/api/emails/embed-subscribe/{{ $bd }}"
-        method="post"
-        target="popupwindow"
-        onsubmit="window.open('https://buttondown.email/{{ $bd }}', 'popupwindow')">
-    <label for="bd-email">כתובת אימייל</label>
-    {{/* dir="ltr" required — email addresses are always LTR text */}}
-    <input type="email" id="bd-email" name="email" required
-           placeholder="you@example.com"
-           dir="ltr"
-           autocomplete="email"
-           aria-required="true">
-    <button type="submit">הירשמו</button>
-  </form>
-  {{ else }}
-  {{/* Newsletter form hidden until buttondownUsername is set in config.toml */}}
-  {{ end }}
+{{ $bd := .Site.Params.buttondownUsername }}
+{{ if $bd }}
+<section class="ss-newsletter-section" aria-labelledby="newsletter-heading">
+  <div class="ss-newsletter">
+    <div class="ss-newsletter__stars" aria-hidden="true"></div>
+    <div class="ss-newsletter__inner">
+      <h2 id="newsletter-heading" class="ss-newsletter__title">סיפור חדש בכל בוקר שקט ראשון של החודש.</h2>
+      <p class="ss-newsletter__desc">בלי רעש, בלי שיתופים חוזרים — רק המשלוח הבא מקצה המפה, פעם בחודש.</p>
+      <form class="ss-newsletter__form"
+            action="https://buttondown.email/api/emails/embed-subscribe/{{ $bd }}"
+            method="post"
+            target="popupwindow"
+            onsubmit="window.open('https://buttondown.email/{{ $bd }}', 'popupwindow')">
+        <label for="ss-nl-email" class="ss-newsletter__label">כתובת דוא״ל</label>
+        <input id="ss-nl-email" type="email" name="email" required
+               placeholder="כתובת הדוא״ל שלך"
+               class="ss-newsletter__input"
+               dir="ltr"
+               autocomplete="email"
+               aria-required="true">
+        <button type="submit" class="ss-newsletter__submit">הרשמה</button>
+      </form>
+    </div>
+  </div>
 </section>
+{{ end }}
