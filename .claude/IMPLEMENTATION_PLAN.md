@@ -93,10 +93,10 @@ PHASE 10 — Launch Audit
   [ ] 10.1  Run Lighthouse on homepage, one story page, one tag page — all scores: Performance ≥ 90, SEO ≥ 95, Accessibility = 100, Best Practices ≥ 90
   [ ] 10.2  Run axe-core CLI on all three page types — 0 violations
   [ ] 10.3  Validate JSON-LD on a story page using Google's Rich Results Test
-  [ ] 10.4  Submit sitemap.xml to Google Search Console; verify all 13 stories + tag pages are eligible for indexing
+  [ ] 10.4  Submit sitemap.xml to Google Search Console; verify all stories + tag pages are eligible for indexing
   [ ] 10.5  Test on real mobile device (or BrowserStack): RTL layout, font rendering, touch targets ≥ 44px, no horizontal scroll
   [ ] 10.6  Verify RSS feed at /index.xml: valid XML, contains summaries only (not full story text)
-  [ ] 10.7  Verify newsletter form submits to Buttondown correctly (test email signup end-to-end)
+  [x] 10.7  SKIP THAT ~~Verify newsletter form submits to Buttondown correctly (test email signup end-to-end)~~
   [ ] 10.8  Confirm annual cost: GitHub Pages (free) + domain (~$10) = total ≤ $10/year
 ```
 
@@ -1027,13 +1027,10 @@ Every success metric from the PRD is met before the domain is pointed at the sit
 **10.1 — Lighthouse audit (three page types)**
 
 ```bash
-# Install if not present
-npm install -g lighthouse
-
 # Run against deployed GitHub Pages URL (not localhost — lighthouse scores differ)
-lighthouse https://<site>/              --output json --output-path lh-home.json
-lighthouse https://<site>/stories/     --output json --output-path lh-list.json
-lighthouse https://<site>/stories/akira/ --output json --output-path lh-story.json
+npx lighthouse https://<site>/              --output json --output-path lh-home.json
+npx lighthouse https://<site>/stories/     --output json --output-path lh-list.json
+npx lighthouse https://<site>/stories/akira/ --output json --output-path lh-story.json
 ```
 
 Targets (all must pass):
@@ -1077,11 +1074,11 @@ On a real device (or BrowserStack):
 
 Submit `/index.xml` to validator.w3.org/feed. Fix any structural warnings.
 
-**10.7 — Newsletter end-to-end test**
+**10.7 — [SKIP] Newsletter end-to-end test**
 
-1. Submit a test email address via the newsletter form
-2. Confirm subscription appears in Buttondown dashboard
-3. Confirm confirmation email arrives
+1. ~~Submit a test email address via the newsletter form~~
+2. ~~Confirm subscription appears in Buttondown dashboard~~
+3. ~~Confirm confirmation email arrives~~
 
 **10.8 — Cost audit**
 

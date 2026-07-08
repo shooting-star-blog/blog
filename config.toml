@@ -10,7 +10,7 @@ enableRobotsTXT = true
   contactEmail = "shootingstarblog@outlook.com"
   newsletterEnabled = false # Buttondown dropped: no RTL support. Flip on once a Hebrew-friendly provider is picked
   buttondownUsername = "shootingstarblog" # kept for reference; unused while newsletterEnabled = false
-  umamiSiteId = "" # set to your Umami site ID after creating an account at umami.is
+  umamiSiteId = "3f8b449d-9a37-4f79-b838-d949d6f2ef85"
 
 [taxonomies]
   tag = "tags"
