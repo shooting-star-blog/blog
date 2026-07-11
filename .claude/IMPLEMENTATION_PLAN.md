@@ -90,15 +90,17 @@ PHASE 9 — Privacy & Legal Compliance
   [x] 9.6  Verify: /privacy/ renders; newsletter form shows consent note with link; footer links to /privacy/; Umami script absent when param is empty
 
 PHASE 10 — Launch Audit
-  [ ] 10.1  Run Lighthouse on homepage, one story page, one tag page — all scores: Performance ≥ 90, SEO ≥ 95, Accessibility = 100, Best Practices ≥ 90
-  [ ] 10.2  Run axe-core CLI on all three page types — 0 violations
-  [ ] 10.3  Validate JSON-LD on a story page using Google's Rich Results Test
-  [ ] 10.4  Submit sitemap.xml to Google Search Console; verify all stories + tag pages are eligible for indexing
-  [ ] 10.5  Test on real mobile device (or BrowserStack): RTL layout, font rendering, touch targets ≥ 44px, no horizontal scroll
-  [ ] 10.6  Verify RSS feed at /index.xml: valid XML, contains summaries only (not full story text)
+  [x] 10.1  Run Lighthouse on homepage, one story page, one tag page — all scores: Performance ≥ 90, SEO ≥ 95, Accessibility = 100, Best Practices ≥ 90
+  [x] 10.2  Run axe-core CLI on all three page types — 0 violations
+  [x] 10.3  Validate JSON-LD on a story page using Google's Rich Results Test
+  [ ] 10.4  Submit sitemap.xml to Google Search Console; verify all stories + tag pages are eligible for indexing (requires GSC account access — manual)
+  [ ] 10.5  Test on real mobile device (or BrowserStack): RTL layout, font rendering, touch targets ≥ 44px, no horizontal scroll (requires physical device — manual)
+  [x] 10.6  Verify RSS feed at /index.xml: valid XML, contains summaries only (not full story text)
   [x] 10.7  SKIP THAT ~~Verify newsletter form submits to Buttondown correctly (test email signup end-to-end)~~
-  [ ] 10.8  Confirm annual cost: GitHub Pages (free) + domain (~$10) = total ≤ $10/year
+  [x] 10.8  Confirm annual cost: GitHub Pages (free) + domain (~$10) = total ≤ $10/year
 ```
+
+10.4 and 10.5 require the user's Google account and a physical device respectively — not doable from an agent environment. All other tasks passed against the deployed site.
 
 ---
 
@@ -1101,17 +1103,19 @@ Confirm the annual cost breakdown:
 - **Buttondown free tier limit:** Buttondown's free tier allows up to 100 subscribers. If the list grows past 100, a paid plan (~$9/month) is needed. This does not affect the site build — only the newsletter service. Note this threshold.
 - **Domain propagation time:** After pointing a custom domain to GitHub Pages, DNS propagation can take up to 48 hours. GitHub Pages also needs time to provision the TLS certificate. Plan for 24–48 hours of partial availability after domain setup.
 - **Decap CMS deferred to post-launch:** Decap CMS with GitHub Pages requires a third-party OAuth provider (Netlify Identity, or a custom GitHub OAuth app). This is non-trivial and is explicitly out of scope for v1. If the author finds Git CLI too difficult after launch, address Decap CMS as a separate project.
+- **No system Chrome in some dev environments:** `lighthouse` and `@axe-core/cli` both expect a `google-chrome`/`chromium` binary. If only Brave is installed, point Lighthouse at it via `CHROME_PATH=/path/to/brave`. `@axe-core/cli` uses selenium/chromedriver under the hood and fails against Brave's version string ("Chrome instance exited") — use `puppeteer-core` + `@axe-core/puppeteer` with `executablePath` set to the Brave binary instead.
+- **JSON-LD dates need full RFC3339, not just a date:** Google's Rich Results Test flags `datePublished`/`dateModified` as invalid if they're date-only (e.g. `2020-12-08`) — it wants a full datetime with timezone (e.g. `2020-12-08T00:00:00Z`). In Hugo, use `.Date.Format "2006-01-02T15:04:05Z07:00"` (RFC3339), not `"2006-01-02"`. Also include a top-level `"url"` field on the `Article` object alongside `mainEntityOfPage`.
 
 ### Verification Checklist — Final Gates Before Launch
-- [ ] Lighthouse: Performance ≥ 90, Accessibility = 100, SEO ≥ 95, Best Practices ≥ 90 (on deployed URL)
-- [ ] axe-core: 0 violations on all page types
-- [ ] JSON-LD valid in Google Rich Results Test
+- [x] Lighthouse: Performance ≥ 90, Accessibility = 100, SEO ≥ 95, Best Practices ≥ 90 (on deployed URL)
+- [x] axe-core: 0 violations on all page types
+- [x] JSON-LD valid in Google Rich Results Test
 - [ ] Sitemap submitted to Google Search Console
 - [ ] Mobile layout passes visual and interaction review
-- [ ] RSS feed validates at validator.w3.org/feed
-- [ ] Newsletter form end-to-end verified
-- [ ] Annual cost confirmed ≤ $10
-- [ ] All checkboxes in the Global Task List above are ticked
+- [x] RSS feed validates at validator.w3.org/feed
+- [x] Newsletter form end-to-end verified — N/A, intentionally skipped (10.7) while newsletter is on hold
+- [x] Annual cost confirmed ≤ $10
+- [ ] All checkboxes in the Global Task List above are ticked — blocked on 10.4/10.5
 
 ### After Phase 10
 Run `/simplify` on any files touched during audit fixes. Final commit: `chore: launch audit fixes`. Tag the release: `git tag v1.0.0`.
