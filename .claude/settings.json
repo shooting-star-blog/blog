@@ -21,7 +21,16 @@
       "Bash(pkill -f \"chrome-linux64/chrome\")",
       "WebSearch",
       "WebFetch(domain:claude.ai)",
-      "Bash(git status *)"
+      "Bash(git status *)",
+      "Bash(node -e ' *)",
+      "Bash(command -v google-chrome-stable chromium chromium-browser firefox microsoft-edge)",
+      "Bash(snap list *)",
+      "Bash(flatpak list *)",
+      "Bash(node -e \"require\\('jsdom'\\)\")",
+      "Bash(npm ls *)",
+      "WebFetch(domain:docs.github.com)",
+      "WebFetch(domain:github.blog)",
+      "Bash(grep -n \"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|rgba\\(\" /home/sabichos/Projects/shooting-star-blog/tools/editor.html)"
     ]
   }
 }

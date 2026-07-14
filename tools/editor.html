@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>עורך סיפורים — כוכב נופל</title>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('ssb_editor_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    }());
+  </script>
+  <style>
+    :root,
+    [data-theme="dark"] {
+      --bg: #0a0d18;
+      --panel: #151b30;
+      --border: rgba(233, 231, 246, 0.13);
+      --text: #ece9f3;
+      --muted: #a5a6bd;
+      --accent: #4bb8d8;
+      --accent-text: #67cfee;
+      --on-accent: #062329;
+      --error-bg: #3a1c1f;
+      --error-text: #ff9d9d;
+      --success-bg: #1c3a24;
+      --success-text: #7ee0a0;
+      --info-bg: #1c2b3a;
+      --info-text: #8fc4ff;
+    }
+
+    [data-theme="light"] {
+      --bg: #f6f4ee;
+      --panel: #fffdf8;
+      --border: rgba(22, 23, 42, 0.15);
+      --text: #171a2e;
+      --muted: #5a5d72;
+      --accent: #1f7d9c;
+      --accent-text: #186680;
+      --on-accent: #eafbff;
+      --error-bg: #fbe2e0;
+      --error-text: #9c2b23;
+      --success-bg: #ddf3e3;
+      --success-text: #1f6b3a;
+      --info-bg: #dcebfa;
+      --info-text: #1a5490;
+    }
+
+    :root {
+      --accent-hover: color-mix(in oklab, var(--accent) 82%, black);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    header.app-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    header.app-header h1 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .theme-toggle-btn:hover {
+      background: var(--bg);
+      border-color: var(--accent);
+    }
+
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    .view.hidden {
+      display: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    label small {
+      display: block;
+      font-weight: 400;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="date"],
+    textarea {
+      width: 100%;
+      margin-top: 0.35rem;
+      padding: 0.55rem 0.7rem;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    #f_body {
+      min-height: 320px;
+      font-family: "Consolas", monospace;
+    }
+
+    #f_description,
+    #f_description_en {
+      min-height: 70px;
+    }
+
+    label.checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 400;
+    }
+
+    label.checkbox-label input {
+      width: auto;
+      margin: 0;
+    }
+
+    button {
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.6rem 1.1rem;
+      border-radius: 6px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: var(--on-accent);
+      font-weight: 600;
+    }
+
+    button:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    button:disabled:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    button.secondary:hover {
+      background: var(--panel);
+    }
+
+    .back-btn {
+      margin-bottom: 1rem;
+    }
+
+    .menu-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .menu-actions button {
+      padding: 1rem;
+      font-size: 1.05rem;
+    }
+
+    .story-row {
+      display: block;
+      width: 100%;
+      text-align: right;
+      margin-bottom: 0.5rem;
+      background: var(--panel);
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .story-row:hover {
+      background: color-mix(in oklab, var(--text) 6%, transparent);
+    }
+
+    #statusBar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+    }
+
+    #statusBar.info {
+      background: var(--info-bg);
+      color: var(--info-text);
+    }
+
+    #statusBar.error {
+      background: var(--error-bg);
+      color: var(--error-text);
+    }
+
+    #statusBar.success {
+      background: var(--success-bg);
+      color: var(--success-text);
+    }
+
+    .field-error {
+      background: var(--error-bg);
+      color: var(--error-text);
+      border-radius: 6px;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .field-error.success {
+      background: var(--success-bg);
+      color: var(--success-text);
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 1rem;
+    }
+
+    .overlay.hidden {
+      display: none;
+    }
+
+    .confirm-box,
+    .conflict-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      max-width: 480px;
+      width: 100%;
+    }
+
+    .confirm-box .actions,
+    .conflict-box .actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    #conflictBox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 1rem;
+    }
+
+    details {
+      margin: 0.75rem 0;
+      color: var(--muted);
+    }
+
+    details ol {
+      padding-inline-start: 1.25rem;
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    .list-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      font-weight: 400;
+    }
+
+    .list-controls select {
+      padding: 0.35rem 0.5rem;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    .draft-badge {
+      display: inline-block;
+      margin-inline-start: 0.5rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: var(--error-bg);
+      color: var(--error-text);
+    }
+
+    .save-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .publish-counter {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .publish-counter.warn {
+      color: var(--info-text);
+      font-weight: 600;
+    }
+
+    .publish-counter.danger {
+      color: var(--error-text);
+      font-weight: 600;
+    }
+
+    .info-tooltip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.3rem;
+      height: 1.3rem;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.8rem;
+      cursor: help;
+      flex-shrink: 0;
+    }
+
+    .info-tooltip .tooltip-text {
+      display: none;
+      position: absolute;
+      bottom: 135%;
+      right: 0;
+      width: 250px;
+      max-width: 65vw;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.6rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 400;
+      line-height: 1.5;
+      z-index: 30;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .info-tooltip:hover .tooltip-text,
+    .info-tooltip:focus .tooltip-text,
+    .info-tooltip:focus-within .tooltip-text {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="app-header">
+    <h1>עורך סיפורים — כוכב נופל</h1>
+    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="מעבר למצב בהיר">
+      <span id="themeToggleIcon" aria-hidden="true">☀</span>
+      <span id="themeToggleLabel">בהיר</span>
+    </button>
+  </header>
+
+  <div id="statusBar" class="hidden"></div>
+
+  <main>
+
+    <section data-view="auth" class="view hidden">
+      <h2>התחברות</h2>
+      <p>כדי לפרסם סיפורים באתר צריך טוקן גישה אישי (Personal Access Token) של GitHub.</p>
+      <details>
+        <summary>איך יוצרים טוקן?</summary>
+        <ol>
+          <li>
+            <div>נכנסים לחשבון</div>
+            <pre>GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens</pre>
+          </li>
+          <li>לוחצים על "Generate new token"</li>
+          <li>ממלאים שם לטוקן, תיאור ותאריך תפוגה</li>
+          <li>תחת Repository access בוחרים "Only select repositories" ובוחרים את המאגר
+            <code>shooting-star-blog/blog</code> בלבד</li>
+          <li>תחת Permissions בוחרים בהרשאת "Contents" ומגדירים אותה ל-"Read and write"</li>
+          <li>יוצרים את הטוקן ומעתיקים אותו — הוא יוצג פעם אחת בלבד ולא ניתן לשחזר אותו לאחר מכן אלא רק ליצור אחד חדש</li>
+        </ol>
+        <blockquote>הטוקן יישמר רק בדפדפן שבו מתבצעת ההתחברות. במעבר לדפדפן אחר, יש צורך להזין את הטוקן פעם נוספת. במידה ויפוג תוקף הטוקן, הוא יימחק ויהיה צורך ליצור טוקן חדש</blockquote>
+      </details>
+      <label for="tokenInput">טוקן גישה
+        <input type="password" id="tokenInput" placeholder="github_pat_..." dir="ltr">
+      </label>
+      <div class="menu-actions">
+        <button type="button" id="validateBtn">בדוק חיבור</button>
+        <button id="loginBtn" disabled>שמור והתחבר</button>
+      </div>
+      <div id="validateResult" class="field-error hidden"></div>
+      <div id="authError" class="field-error hidden"></div>
+    </section>
+
+    <section data-view="menu" class="view hidden">
+      <h2>מה תרצה לעשות?</h2>
+      <p>מחובר בתור <strong id="menuUsername"></strong> — <a href="#" id="logoutLink">התנתק</a></p>
+      <div class="menu-actions">
+        <button id="newStoryBtn">כתוב סיפור חדש</button>
+        <button id="editStoryBtn">ערוך סיפור קיים</button>
+      </div>
+    </section>
+
+    <section data-view="list" class="view hidden">
+      <button class="back-btn secondary" id="listBackBtn">→ חזרה</button>
+      <h2>בחר סיפור לעריכה</h2>
+      <div class="list-controls">
+        <label for="sortSelect">מיון:</label>
+        <select id="sortSelect">
+          <option value="title">לפי כותרת (א-ב)</option>
+          <option value="updated">לפי עדכון אחרון</option>
+        </select>
+      </div>
+      <div id="storyListContainer"></div>
+    </section>
+
+    <section data-view="form" class="view hidden">
+      <button type="button" class="back-btn secondary" id="formBackBtn">→ חזרה</button>
+      <h2 id="formTitle">סיפור חדש</h2>
+      <div id="formErrors" class="field-error hidden"></div>
+      <form id="storyForm">
+        <label>כותרת (עברית) *
+          <input type="text" id="f_title" required>
+        </label>
+        <label>כותרת (אנגלית) *
+          <input type="text" id="f_title_en" required>
+        </label>
+        <label>כתובת האתר (Slug) *
+          <input type="text" id="f_slug" required>
+          <small>כתובת הסיפור באתר: /stories/<span id="slugPreview"></span>/</small>
+        </label>
+        <label>תאריך *
+          <input type="date" id="f_date" required>
+        </label>
+        <label>תיאור קצר (עברית)
+          <textarea id="f_description"></textarea>
+        </label>
+        <label>תיאור קצר (אנגלית)
+          <textarea id="f_description_en"></textarea>
+        </label>
+        <label>תגיות (מופרדות בפסיקים)
+          <input type="text" id="f_tags" placeholder="לדוגמה: מדע בדיוני, חלל">
+        </label>
+        <label class="checkbox-label"><input type="checkbox" id="f_featured"> סיפור מומלץ</label>
+        <label class="checkbox-label"><input type="checkbox" id="f_draft"> טיוטה (לא יופיע כסופי)</label>
+        <label>גוף הסיפור *
+          <textarea id="f_body" required></textarea>
+        </label>
+        <div class="save-row">
+          <button type="submit" id="saveBtn">שמור ופרסם</button>
+          <span class="publish-counter" id="publishCounter"></span>
+          <span class="info-tooltip" tabindex="0" role="img"
+            aria-label="GitHub Pages מגביל בנייה מחודשת של האתר לכ-10 פעמים בשעה. המונה הזה סופר כמה פרסומים בוצעו מהדפדפן הזה בשעה האחרונה, כדי לעזור להימנע מחריגה מהמגבלה. שינוי כתובת (Slug) של סיפור קיים נספר כשני פרסומים.">
+            <span aria-hidden="true">ⓘ</span>
+            <span class="tooltip-text" aria-hidden="true">GitHub Pages מגביל בנייה מחודשת של האתר לכ-10 פעמים בשעה. המונה סופר פרסומים שבוצעו מהדפדפן הזה בשעה האחרונה. שינוי כתובת (Slug) של סיפור קיים נספר כשני פרסומים (יצירה + מחיקה).</span>
+          </span>
+        </div>
+      </form>
+    </section>
+
+  </main>
+
+  <div id="confirmOverlay" class="overlay hidden">
+    <div class="confirm-box">
+      <p id="confirmText"></p>
+      <div class="actions">
+        <button id="confirmYes">אישור</button>
+        <button class="secondary" id="confirmNo">ביטול</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="conflictBox" class="hidden">
+    <div class="conflict-box">
+      <p>הקובץ השתנה בגיטהאב מאז שנטען לעריכה.</p>
+      <div class="actions">
+        <button id="conflictKeepMineBtn">שמור על מה שכתבתי — רק עדכן את הגרסה</button>
+        <button class="secondary" id="conflictDiscardMineBtn">טען מחדש את הגרסה העדכנית (מוחק את מה שכתבתי כאן)</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var GH_OWNER = 'shooting-star-blog';
+      var GH_REPO = 'blog';
+      var GH_API_BASE = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO;
+      var BRANCH = 'main';
+      var TOKEN_KEY = 'ssb_editor_gh_token';
+      var KNOWN_KEYS = ['title', 'title_en', 'date', 'description', 'description_en', 'cover', 'tags', 'featured', 'draft'];
+      var PUBLISH_LOG_KEY = 'ssb_editor_publish_log';
+      var PUBLISH_WINDOW_MS = 60 * 60 * 1000;
+      var PUBLISH_SOFT_LIMIT = 10;
+
+      var ghToken = null;
+      var storyListCache = [];
+      var state = null;
+
+      // ---------- view / status helpers ----------
+
+      function showView(name) {
+        document.querySelectorAll('[data-view]').forEach(function (el) {
+          el.classList.toggle('hidden', el.dataset.view !== name);
+        });
+      }
+
+      function showStatus(message, type) {
+        var el = document.getElementById('statusBar');
+        el.textContent = message;
+        el.className = type || 'info';
+        el.classList.remove('hidden');
+      }
+
+      function clearStatus() {
+        document.getElementById('statusBar').classList.add('hidden');
+      }
+
+      function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      function todayIso() {
+        return new Date().toISOString().slice(0, 10);
+      }
+
+      // ---------- publish counter ----------
+      // GitHub Pages has an undocumented soft limit of ~10 site builds per hour per repo.
+      // Each PUT/DELETE via the Contents API is a separate push, so a rename (create+delete)
+      // counts as two. This is a local, per-browser estimate — not a real GitHub-side quota
+      // check — meant to warn the author before they trip the limit.
+
+      function getPublishLog() {
+        try {
+          var raw = localStorage.getItem(PUBLISH_LOG_KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function prunePublishLog(log) {
+        var cutoff = Date.now() - PUBLISH_WINDOW_MS;
+        return log.filter(function (t) { return t > cutoff; });
+      }
+
+      function savePublishLog(log) {
+        try { localStorage.setItem(PUBLISH_LOG_KEY, JSON.stringify(log)); } catch (e) {}
+      }
+
+      function recordPublish() {
+        var log = prunePublishLog(getPublishLog());
+        log.push(Date.now());
+        savePublishLog(log);
+        renderPublishCounter();
+      }
+
+      function renderPublishCounter() {
+        var el = document.getElementById('publishCounter');
+        if (!el) return;
+        var log = prunePublishLog(getPublishLog());
+        savePublishLog(log);
+        var count = log.length;
+        el.textContent = count + '/' + PUBLISH_SOFT_LIMIT + ' פרסומים בשעה האחרונה';
+        el.classList.remove('warn', 'danger');
+        if (count >= PUBLISH_SOFT_LIMIT) el.classList.add('danger');
+        else if (count >= PUBLISH_SOFT_LIMIT - 2) el.classList.add('warn');
+      }
+
+      // ---------- confirm dialog ----------
+
+      function showConfirm(message, onConfirm, yesLabel, noLabel) {
+        document.getElementById('confirmText').textContent = message;
+        var yesBtn = document.getElementById('confirmYes');
+        var noBtn = document.getElementById('confirmNo');
+        yesBtn.textContent = yesLabel || 'אישור';
+        noBtn.textContent = noLabel || 'ביטול';
+        document.getElementById('confirmOverlay').classList.remove('hidden');
+
+        function cleanup() {
+          document.getElementById('confirmOverlay').classList.add('hidden');
+          yesBtn.removeEventListener('click', onYes);
+          noBtn.removeEventListener('click', onNo);
+        }
+        function onYes() { cleanup(); onConfirm(); }
+        function onNo() { cleanup(); }
+
+        yesBtn.addEventListener('click', onYes);
+        noBtn.addEventListener('click', onNo);
+      }
+
+      // ---------- base64 / utf-8 ----------
+
+      function b64EncodeUtf8(str) {
+        return btoa(unescape(encodeURIComponent(str)));
+      }
+
+      function b64DecodeUtf8(b64) {
+        return decodeURIComponent(escape(atob(b64.replace(/\n/g, ''))));
+      }
+
+      // ---------- GitHub API ----------
+
+      function ghFetch(path, options) {
+        options = options || {};
+        var headers = Object.assign({
+          'Authorization': 'Bearer ' + ghToken,
+          'Accept': 'application/vnd.github+json'
+        }, options.headers || {});
+        return fetch(GH_API_BASE + path, Object.assign({}, options, { headers: headers }));
+      }
+
+      function classifyError(res) {
+        if (res.status === 401) {
+          return { code: 'auth', message: 'ההתחברות פגה. יש להתחבר מחדש.' };
+        }
+        if (res.status === 403 && res.headers.get('X-RateLimit-Remaining') === '0') {
+          return { code: 'ratelimit', message: 'הגעת למגבלת הבקשות של GitHub. נסה שוב בעוד כמה דקות.' };
+        }
+        if (res.status === 409) {
+          return { code: 'conflict', message: 'הקובץ השתנה מאז שנטען. רענן ונסה שוב.' };
+        }
+        if (res.status === 422) {
+          return { code: 'validation', message: 'שגיאת אימות מצד GitHub. ייתכן שכתובת הסיפור כבר תפוסה או שיש בעיה בנתונים.' };
+        }
+        return { code: 'unknown', message: 'שגיאה לא צפויה (קוד ' + res.status + ').' };
+      }
+
+      function handleAuthExpired() {
+        localStorage.removeItem(TOKEN_KEY);
+        ghToken = null;
+        showView('auth');
+        var errorEl = document.getElementById('authError');
+        errorEl.textContent = 'ההתחברות פגה. יש להתחבר מחדש.';
+        errorEl.classList.remove('hidden');
+      }
+
+      async function verifyToken(token) {
+        try {
+          var res = await fetch('https://api.github.com/user', {
+            headers: {
+              'Authorization': 'Bearer ' + token,
+              'Accept': 'application/vnd.github+json'
+            }
+          });
+          if (res.status === 401) {
+            return { ok: false, error: 'הטוקן אינו תקין. נסה להדביק אותו שוב.' };
+          }
+          if (!res.ok) {
+            return { ok: false, error: 'שגיאה בהתחברות (קוד ' + res.status + ').' };
+          }
+          var data = await res.json();
+          return { ok: true, username: data.login };
+        } catch (e) {
+          return { ok: false, error: 'לא ניתן להתחבר לאינטרנט או ל-GitHub. בדוק את החיבור ונסה שוב.' };
+        }
+      }
+
+      async function ghListStories() {
+        var res = await ghFetch('/contents/content/stories');
+        if (res.status === 401) { handleAuthExpired(); throw Object.assign(new Error('unauthorized'), { isAuthFailure: true }); }
+        if (!res.ok) throw new Error('שגיאה בטעינת רשימת הסיפורים (קוד ' + res.status + ').');
+        var data = await res.json();
+        return data
+          .filter(function (item) { return item.type === 'file' && item.name.endsWith('.md') && item.name !== '_index.md'; })
+          .map(function (item) { return { slug: item.name.replace(/\.md$/, ''), name: item.name, path: item.path }; })
+          .sort(function (a, b) { return a.slug.localeCompare(b.slug); });
+      }
+
+      async function ghGetFile(path) {
+        var res = await ghFetch('/contents/' + path);
+        if (res.status === 401) { handleAuthExpired(); throw Object.assign(new Error('unauthorized'), { isAuthFailure: true }); }
+        if (!res.ok) throw new Error('שגיאה בטעינת הקובץ (קוד ' + res.status + ').');
+        var data = await res.json();
+        return { text: b64DecodeUtf8(data.content), sha: data.sha };
+      }
+
+      async function ghGetLastCommitDate(path) {
+        var res = await ghFetch('/commits?path=' + encodeURIComponent(path) + '&sha=' + BRANCH + '&per_page=1');
+        if (!res.ok) return null;
+        var data = await res.json();
+        if (!data.length) return null;
+        var commit = data[0].commit;
+        return (commit.committer && commit.committer.date) || (commit.author && commit.author.date) || null;
+      }
+
+      function ghPutFile(path, text, message, sha) {
+        var body = { message: message, content: b64EncodeUtf8(text), branch: BRANCH };
+        if (sha) body.sha = sha;
+        return ghFetch('/contents/' + path, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+      }
+
+      function ghDeleteFile(path, sha, message) {
+        return ghFetch('/contents/' + path, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: message, sha: sha, branch: BRANCH })
+        });
+      }
+
+      // ---------- slug ----------
+
+      function stripCombiningMarks(str) {
+        // U+0300-U+036F is the Unicode "Combining Diacritical Marks" block, produced by
+        // NFKD normalization when splitting accented Latin letters into base + mark.
+        var out = '';
+        for (var i = 0; i < str.length; i++) {
+          var code = str.charCodeAt(i);
+          if (code < 0x0300 || code > 0x036f) out += str[i];
+        }
+        return out;
+      }
+
+      function slugify(str) {
+        return stripCombiningMarks(str.toString().toLowerCase().normalize('NFKD'))
+          .replace(/[^a-z0-9\s-]/g, '')
+          .trim()
+          .replace(/[\s_]+/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-+|-+$/g, '');
+      }
+
+      // ---------- frontmatter parse / serialize ----------
+
+      function parseQuotedValue(raw) {
+        raw = raw.trim();
+        if (!raw) throw new Error('empty');
+        var quoteChar = raw[0];
+        if (quoteChar !== '"' && quoteChar !== "'") throw new Error('not-quoted');
+        var result = '';
+        var i = 1;
+        var closed = false;
+        while (i < raw.length) {
+          var ch = raw[i];
+          if (quoteChar === '"' && ch === '\\' && i + 1 < raw.length && (raw[i + 1] === '"' || raw[i + 1] === '\\')) {
+            result += raw[i + 1];
+            i += 2;
+            continue;
+          }
+          if (ch === quoteChar) {
+            closed = true;
+            i += 1;
+            break;
+          }
+          result += ch;
+          i += 1;
+        }
+        if (!closed) throw new Error('unterminated');
+        return result;
+      }
+
+      function quoteYaml(str) {
+        var escaped = String(str == null ? '' : str).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+        return '"' + escaped + '"';
+      }
+
+      function parseFailure() {
+        var err = new Error('לא ניתן לפתוח קובץ זה לעריכה — מבנה הכותרת מורכב מדי לכלי זה. יש לפנות למפתח.');
+        err.isParseFailure = true;
+        return err;
+      }
+
+      function parseFrontmatter(rawText) {
+        var normalized = rawText.replace(/\r\n/g, '\n');
+        if (!normalized.startsWith('---\n')) {
+          throw parseFailure();
+        }
+        var closingIdx = normalized.indexOf('\n---\n', 4);
+        if (closingIdx === -1) {
+          throw parseFailure();
+        }
+        var fmBlock = normalized.slice(4, closingIdx);
+        var body = normalized.slice(closingIdx + 5);
+        var lines = fmBlock.split('\n').filter(function (l) { return l.length > 0; });
+
+        var fields = {};
+        var extraLines = [];
+
+        for (var idx = 0; idx < lines.length; idx++) {
+          var line = lines[idx];
+          var match = line.match(/^([a-zA-Z_]+):\s*(.*)$/);
+          if (!match) { extraLines.push(line); continue; }
+          var key = match[1];
+          var rawValue = match[2];
+          if (KNOWN_KEYS.indexOf(key) === -1) { extraLines.push(line); continue; }
+
+          try {
+            if (key === 'title' || key === 'title_en' || key === 'description' || key === 'description_en' || key === 'cover') {
+              fields[key] = parseQuotedValue(rawValue);
+            } else if (key === 'date') {
+              if (!/^\d{4}-\d{2}-\d{2}$/.test(rawValue.trim())) throw new Error('bad-date');
+              fields.date = rawValue.trim();
+            } else if (key === 'tags') {
+              var tmatch = rawValue.trim().match(/^\[(.*)\]$/);
+              if (!tmatch) throw new Error('bad-tags');
+              var inner = tmatch[1].trim();
+              fields.tags = inner === '' ? [] : inner.split(',').map(function (s) { return parseQuotedValue(s.trim()); });
+            } else if (key === 'featured' || key === 'draft') {
+              var v = rawValue.trim();
+              if (v !== 'true' && v !== 'false') throw new Error('bad-bool');
+              fields[key] = v === 'true';
+            }
+          } catch (e) {
+            throw parseFailure();
+          }
+        }
+
+        if (fields.title === undefined || fields.title_en === undefined || fields.date === undefined) {
+          throw parseFailure();
+        }
+        if (fields.cover === undefined) fields.cover = '';
+        if (fields.description === undefined) fields.description = '';
+        if (fields.description_en === undefined) fields.description_en = '';
+        if (fields.tags === undefined) fields.tags = [];
+        if (fields.featured === undefined) fields.featured = false;
+        if (fields.draft === undefined) fields.draft = false;
+
+        return { fields: fields, extraLines: extraLines, body: body };
+      }
+
+      function serializeStory(fields, extraLines, body) {
+        var lines = ['---'];
+        lines.push('title: ' + quoteYaml(fields.title));
+        lines.push('title_en: ' + quoteYaml(fields.title_en));
+        lines.push('date: ' + fields.date);
+        lines.push('description: ' + quoteYaml(fields.description));
+        lines.push('description_en: ' + quoteYaml(fields.description_en));
+        lines.push('cover: ' + quoteYaml(fields.cover));
+        lines.push('tags: [' + (fields.tags || []).map(quoteYaml).join(', ') + ']');
+        lines.push('featured: ' + (fields.featured ? 'true' : 'false'));
+        if (fields.draft) lines.push('draft: true');
+        extraLines.forEach(function (l) { lines.push(l); });
+        lines.push('---');
+        return lines.join('\n') + '\n' + body;
+      }
+
+      // ---------- auth flow ----------
+
+      var validatedToken = null;
+      var validatedUsername = null;
+
+      function resetValidation() {
+        validatedToken = null;
+        validatedUsername = null;
+        document.getElementById('loginBtn').disabled = true;
+        var resultEl = document.getElementById('validateResult');
+        resultEl.classList.add('hidden');
+        resultEl.classList.remove('success');
+      }
+
+      async function handleValidate() {
+        var tokenInput = document.getElementById('tokenInput');
+        var errorEl = document.getElementById('authError');
+        var resultEl = document.getElementById('validateResult');
+        errorEl.classList.add('hidden');
+        resultEl.classList.add('hidden');
+        resetValidation();
+        var token = tokenInput.value.trim();
+        if (!token) {
+          errorEl.textContent = 'יש להזין טוקן.';
+          errorEl.classList.remove('hidden');
+          return;
+        }
+        showStatus('בודק חיבור...', 'info');
+        var result = await verifyToken(token);
+        clearStatus();
+        if (result.ok) {
+          validatedToken = token;
+          validatedUsername = result.username;
+          resultEl.textContent = 'החיבור תקין! מחובר בתור ' + result.username + '.';
+          resultEl.classList.remove('hidden');
+          resultEl.classList.add('success');
+          document.getElementById('loginBtn').disabled = false;
+        } else {
+          errorEl.textContent = result.error;
+          errorEl.classList.remove('hidden');
+        }
+      }
+
+      function handleLogin() {
+        var tokenInput = document.getElementById('tokenInput');
+        var errorEl = document.getElementById('authError');
+        errorEl.classList.add('hidden');
+        // guards against the disabled button being triggered some other way (e.g. Enter key)
+        // without a successful validation, or after the token field was edited post-validation
+        if (!validatedToken || tokenInput.value.trim() !== validatedToken) {
+          errorEl.textContent = 'יש לבדוק את החיבור לפני השמירה.';
+          errorEl.classList.remove('hidden');
+          return;
+        }
+        ghToken = validatedToken;
+        localStorage.setItem(TOKEN_KEY, validatedToken);
+        tokenInput.value = '';
+        var username = validatedUsername;
+        resetValidation();
+        enterMenu(username);
+      }
+
+      function enterMenu(username) {
+        document.getElementById('menuUsername').textContent = username;
+        showView('menu');
+      }
+
+      function handleLogout() {
+        localStorage.removeItem(TOKEN_KEY);
+        ghToken = null;
+        showView('auth');
+      }
+
+      async function initApp() {
+        var stored = localStorage.getItem(TOKEN_KEY);
+        if (!stored) {
+          showView('auth');
+          return;
+        }
+        showStatus('מתחבר מחדש...', 'info');
+        var result = await verifyToken(stored);
+        clearStatus();
+        if (result.ok) {
+          ghToken = stored;
+          enterMenu(result.username);
+        } else {
+          localStorage.removeItem(TOKEN_KEY);
+          showView('auth');
+          var errorEl = document.getElementById('authError');
+          errorEl.textContent = result.error;
+          errorEl.classList.remove('hidden');
+        }
+      }
+
+      // ---------- story list (edit flow) ----------
+
+      var storySortMode = 'title';
+
+      async function enrichStoryList(list) {
+        return Promise.all(list.map(async function (story) {
+          var meta = { title: null, draft: false, updatedAt: null };
+          try {
+            var fileRes = await ghGetFile(story.path);
+            var parsed = parseFrontmatter(fileRes.text);
+            meta.title = parsed.fields.title;
+            meta.draft = !!parsed.fields.draft;
+          } catch (e) {
+            // fall back to slug/no-draft-marker below; opening the story for edit
+            // will surface the real error (auth expiry, parse failure, etc.)
+          }
+          try {
+            meta.updatedAt = await ghGetLastCommitDate(story.path);
+          } catch (e) {
+            // updatedAt stays null; story still shows (sorts last in "updated" mode)
+          }
+          return Object.assign({}, story, meta);
+        }));
+      }
+
+      function sortStories(list, mode) {
+        var copy = list.slice();
+        if (mode === 'updated') {
+          copy.sort(function (a, b) {
+            var at = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+            var bt = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+            return bt - at;
+          });
+        } else {
+          copy.sort(function (a, b) {
+            return (a.title || a.slug).localeCompare(b.title || b.slug, 'he');
+          });
+        }
+        return copy;
+      }
+
+      async function openEditList() {
+        showStatus('טוען רשימת סיפורים...', 'info');
+        try {
+          var basicList = await ghListStories();
+          storyListCache = await enrichStoryList(basicList);
+          clearStatus();
+          renderStoryList();
+          showView('list');
+        } catch (e) {
+          clearStatus();
+          if (!e.isAuthFailure) showStatus(e.message || 'שגיאה בטעינת רשימת הסיפורים.', 'error');
+        }
+      }
+
+      function renderStoryList() {
+        var container = document.getElementById('storyListContainer');
+        container.innerHTML = '';
+        var sorted = sortStories(storyListCache, storySortMode);
+        sorted.forEach(function (story) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'story-row';
+          btn.textContent = story.title || story.slug;
+          if (story.draft) {
+            var badge = document.createElement('span');
+            badge.className = 'draft-badge';
+            badge.textContent = 'טיוטה';
+            btn.appendChild(badge);
+          }
+          btn.addEventListener('click', function () { openStoryForEdit(story); });
+          container.appendChild(btn);
+        });
+      }
+
+      async function openStoryForEdit(story) {
+        showStatus('טוען סיפור...', 'info');
+        try {
+          var result = await ghGetFile(story.path);
+          var parsed = parseFrontmatter(result.text);
+          clearStatus();
+          state = {
+            mode: 'edit',
+            slug: story.slug,
+            path: story.path,
+            sha: result.sha,
+            extraLines: parsed.extraLines,
+            slugManuallyEdited: false,
+            fields: parsed.fields,
+            body: parsed.body
+          };
+          renderForm();
+        } catch (e) {
+          clearStatus();
+          if (e.isParseFailure) {
+            showStatus(e.message, 'error');
+          } else if (!e.isAuthFailure) {
+            showStatus(e.message || 'שגיאה בטעינת הסיפור.', 'error');
+          }
+        }
+      }
+
+      // ---------- form ----------
+
+      function newStoryState() {
+        return {
+          mode: 'new',
+          slug: '',
+          path: null,
+          sha: null,
+          extraLines: [],
+          slugManuallyEdited: false,
+          fields: {
+            title: '', title_en: '', date: todayIso(),
+            description: '', description_en: '', cover: '',
+            tags: [], featured: false, draft: false
+          },
+          body: ''
+        };
+      }
+
+      function renderForm() {
+        document.getElementById('formTitle').textContent =
+          state.mode === 'new' ? 'סיפור חדש' : ('עריכת סיפור: ' + state.fields.title_en);
+        document.getElementById('f_title').value = state.fields.title || '';
+        document.getElementById('f_title_en').value = state.fields.title_en || '';
+        document.getElementById('f_slug').value = state.slug || '';
+        document.getElementById('slugPreview').textContent = state.slug || '';
+        document.getElementById('f_date').value = state.fields.date || todayIso();
+        document.getElementById('f_description').value = state.fields.description || '';
+        document.getElementById('f_description_en').value = state.fields.description_en || '';
+        document.getElementById('f_tags').value = (state.fields.tags || []).join(', ');
+        document.getElementById('f_featured').checked = !!state.fields.featured;
+        document.getElementById('f_draft').checked = !!state.fields.draft;
+        document.getElementById('f_body').value = state.body || '';
+        document.getElementById('formErrors').classList.add('hidden');
+        state.pristineSnapshot = JSON.stringify(collectFormToFields());
+        renderPublishCounter();
+        showView('form');
+      }
+
+      function collectFormToFields() {
+        var tagsRaw = document.getElementById('f_tags').value;
+        var tags = tagsRaw.split(',').map(function (t) { return t.trim(); }).filter(Boolean);
+        return {
+          slug: document.getElementById('f_slug').value.trim(),
+          fields: {
+            title: document.getElementById('f_title').value.trim(),
+            title_en: document.getElementById('f_title_en').value.trim(),
+            date: document.getElementById('f_date').value,
+            description: document.getElementById('f_description').value.trim(),
+            description_en: document.getElementById('f_description_en').value.trim(),
+            cover: state.fields.cover,
+            tags: tags,
+            featured: document.getElementById('f_featured').checked,
+            draft: document.getElementById('f_draft').checked
+          },
+          body: document.getElementById('f_body').value
+        };
+      }
+
+      async function validateForm(collected) {
+        var errors = [];
+        if (!collected.fields.title) errors.push('כותרת (עברית) היא שדה חובה.');
+        if (!collected.fields.title_en) errors.push('כותרת (אנגלית) היא שדה חובה.');
+        if (!collected.fields.date) errors.push('תאריך הוא שדה חובה.');
+        if (!collected.body.trim()) errors.push('גוף הסיפור הוא שדה חובה.');
+        if (!collected.slug || !/^[a-z0-9-]+$/.test(collected.slug)) {
+          errors.push('כתובת האתר (Slug) חייבת להכיל רק אותיות לועזיות קטנות, מספרים ומקפים.');
+        }
+
+        if (errors.length === 0 && (state.mode === 'new' || collected.slug !== state.slug)) {
+          try {
+            var list = await ghListStories();
+            if (list.some(function (s) { return s.slug === collected.slug; })) {
+              errors.push('כתובת זו כבר קיימת. בחר כתובת אחרת.');
+            }
+          } catch (e) {
+            errors.push('לא ניתן היה לבדוק אם הכתובת כבר תפוסה. נסה שוב.');
+          }
+        }
+        return errors;
+      }
+
+      async function performSave(collected, isRename) {
+        showStatus('שומר ומפרסם...', 'info');
+        var path = 'content/stories/' + collected.slug + '.md';
+        var content = serializeStory(collected.fields, state.extraLines, collected.body);
+        var message = state.mode === 'new'
+          ? ('story: add ' + collected.fields.title_en)
+          : (isRename ? ('story: rename ' + state.slug + ' to ' + collected.slug) : ('story: update ' + collected.fields.title_en));
+
+        try {
+          var sha = (state.mode === 'edit' && !isRename) ? state.sha : undefined;
+          var res = await ghPutFile(path, content, message, sha);
+          if (res.ok) {
+            recordPublish();
+            if (isRename) {
+              var delRes = await ghDeleteFile(state.path, state.sha, 'story: rename ' + state.slug + ' to ' + collected.slug);
+              if (!delRes.ok) {
+                clearStatus();
+                showStatus('הסיפור נשמר בכתובת החדשה, אך מחיקת הקובץ הישן (' + state.slug + ') נכשלה. יש למחוק אותו ידנית בגיטהאב.', 'error');
+                showView('menu');
+                return;
+              }
+              recordPublish();
+            }
+            clearStatus();
+            showStatus('הסיפור פורסם! השינויים יופיעו באתר תוך כדקה.', 'success');
+            showView('menu');
+            return;
+          }
+          var errInfo = classifyError(res);
+          clearStatus();
+          if (errInfo.code === 'auth') { handleAuthExpired(); return; }
+          if (errInfo.code === 'conflict') { document.getElementById('conflictBox').classList.remove('hidden'); return; }
+          showStatus(errInfo.message, 'error');
+        } catch (e) {
+          clearStatus();
+          showStatus('בעיית חיבור לאינטרנט. נסה שוב.', 'error');
+        }
+      }
+
+      // ---------- theme toggle ----------
+
+      function applyTheme(t) {
+        document.documentElement.setAttribute('data-theme', t);
+        try { localStorage.setItem('ssb_editor_theme', t); } catch (e) {}
+        var dark = t === 'dark';
+        document.getElementById('themeToggleLabel').textContent = dark ? 'בהיר' : 'כהה';
+        document.getElementById('themeToggleIcon').textContent = dark ? '☀' : '☽';
+        document.getElementById('themeToggleBtn').setAttribute('aria-label', dark ? 'מעבר למצב בהיר' : 'מעבר למצב כהה');
+      }
+
+      document.getElementById('themeToggleBtn').addEventListener('click', function () {
+        applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      });
+
+      applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+
+      // ---------- wire up ----------
+
+      document.getElementById('validateBtn').addEventListener('click', handleValidate);
+      document.getElementById('loginBtn').addEventListener('click', handleLogin);
+      document.getElementById('tokenInput').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); handleValidate(); }
+      });
+      document.getElementById('tokenInput').addEventListener('input', resetValidation);
+      document.getElementById('logoutLink').addEventListener('click', function (e) {
+        e.preventDefault();
+        handleLogout();
+      });
+
+      document.getElementById('newStoryBtn').addEventListener('click', function () {
+        state = newStoryState();
+        renderForm();
+      });
+      document.getElementById('editStoryBtn').addEventListener('click', openEditList);
+      document.getElementById('listBackBtn').addEventListener('click', function () { showView('menu'); });
+      document.getElementById('sortSelect').addEventListener('change', function () {
+        storySortMode = this.value;
+        renderStoryList();
+      });
+
+      document.getElementById('formBackBtn').addEventListener('click', function () {
+        var targetView = state.mode === 'edit' ? 'list' : 'menu';
+        var current = JSON.stringify(collectFormToFields());
+        if (current === state.pristineSnapshot) {
+          showView(targetView);
+          return;
+        }
+        showConfirm('השינויים שביצעת בטופס יאבדו. לחזור בכל זאת?', function () { showView(targetView); }, 'כן, חזור', 'הישאר בטופס');
+      });
+
+      document.getElementById('f_title_en').addEventListener('input', function () {
+        if (!state.slugManuallyEdited) {
+          var derived = slugify(this.value);
+          document.getElementById('f_slug').value = derived;
+          document.getElementById('slugPreview').textContent = derived;
+        }
+      });
+      document.getElementById('f_slug').addEventListener('input', function () {
+        state.slugManuallyEdited = true;
+        document.getElementById('slugPreview').textContent = this.value;
+      });
+
+      document.getElementById('storyForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var errorsEl = document.getElementById('formErrors');
+        errorsEl.classList.add('hidden');
+        showStatus('בודק נתונים...', 'info');
+        var collected = collectFormToFields();
+        var errors = await validateForm(collected);
+        clearStatus();
+        if (errors.length > 0) {
+          errorsEl.innerHTML = errors.map(function (msg) { return '<div>' + escapeHtml(msg) + '</div>'; }).join('');
+          errorsEl.classList.remove('hidden');
+          return;
+        }
+        var isRename = state.mode === 'edit' && collected.slug !== state.slug;
+        var confirmMsg = isRename
+          ? ('שינית את כתובת הסיפור מ-"' + state.slug + '" ל-"' + collected.slug + '". הקובץ הישן יימחק והחדש ייווצר. לשמור ולפרסם את השינויים באתר?')
+          : 'לשמור ולפרסם את השינויים באתר?';
+        showConfirm(confirmMsg, function () { performSave(collected, isRename); }, 'פרסם', 'בטל');
+      });
+
+      document.getElementById('conflictKeepMineBtn').addEventListener('click', async function () {
+        try {
+          var result = await ghGetFile(state.path);
+          state.sha = result.sha;
+          document.getElementById('conflictBox').classList.add('hidden');
+          showStatus('הגרסה עודכנה. אפשר לנסות לשמור שוב.', 'info');
+        } catch (e) {
+          showStatus('שגיאה בעדכון הגרסה. נסה שוב.', 'error');
+        }
+      });
+
+      document.getElementById('conflictDiscardMineBtn').addEventListener('click', async function () {
+        try {
+          var result = await ghGetFile(state.path);
+          var parsed = parseFrontmatter(result.text);
+          state.sha = result.sha;
+          state.fields = parsed.fields;
+          state.extraLines = parsed.extraLines;
+          state.body = parsed.body;
+          document.getElementById('conflictBox').classList.add('hidden');
+          renderForm();
+          showStatus('הטופס נטען מחדש מהגרסה העדכנית.', 'info');
+        } catch (e) {
+          document.getElementById('conflictBox').classList.add('hidden');
+          showStatus(e.isParseFailure ? e.message : 'שגיאה בטעינת הקובץ מחדש.', 'error');
+        }
+      });
+
+      initApp();
+    })();
+  </script>
+
+</body>
+
+</html>

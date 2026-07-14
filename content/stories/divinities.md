@@ -2,8 +2,7 @@
 title: "אלוהויות"
 title_en: "Divinities"
 date: 2020-01-07
-description: "לא היה יום שז'ול ומועלם לא היו חווים את מצבו המעורר של 
- מקצועם במוֹאה, ובייחוד ברגעים כמו אלה, כשהיו לכודים בבטן יען מקומי."
+description: "לא היה יום שז'ול ומועלם לא היו חווים את מצבו המעורר של מקצועם במוֹאה, ובייחוד ברגעים כמו אלה, כשהיו לכודים בבטן יען מקומי."
 description_en: "Not a day went by that Jules and Muallam didn't experience the exciting state of their profession in Moah, especially in moments like these, when they were trapped in the belly of a local ostrich."
 cover: "images/divinities.jpg"
 tags: ["מדע בדיוני", "חלל"]
