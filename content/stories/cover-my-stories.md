@@ -4,7 +4,7 @@ title_en: "Cover My Stories"
 date: 2026-07-14
 description: "זהו סיפור שבודק האם הסיפורים נכנסים דרך הדף כמו שצריך"
 description_en: "This is a short story that checks how stories are being processed by this page"
-cover: ""
+cover: "images/cover-my-stories.jpg"
 tags: ["טסט", "בדיקה"]
 featured: false
 draft: true
