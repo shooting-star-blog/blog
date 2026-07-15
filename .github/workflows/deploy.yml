@@ -11,6 +11,9 @@ permissions:
 
 jobs:
   deploy:
+    # Lets a multi-commit save (e.g. a slug rename) push several commits without
+    # building on each one — only the final, untagged commit of the save triggers this.
+    if: "!contains(github.event.head_commit.message, '[skip-deploy]')"
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

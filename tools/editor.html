@@ -525,9 +525,9 @@
           <button type="submit" id="saveBtn">שמור ופרסם</button>
           <span class="publish-counter" id="publishCounter"></span>
           <span class="info-tooltip" tabindex="0" role="img"
-            aria-label="GitHub Pages מגביל בנייה מחודשת של האתר לכ-10 פעמים בשעה. המונה הזה סופר כמה פרסומים בוצעו מהדפדפן הזה בשעה האחרונה, כדי לעזור להימנע מחריגה מהמגבלה. שינוי כתובת (Slug) של סיפור קיים נספר כשני פרסומים.">
+            aria-label="GitHub Pages מגביל בנייה מחודשת של האתר לכ-10 פעמים בשעה. המונה הזה סופר כמה פרסומים בוצעו מהדפדפן הזה בשעה האחרונה, כדי לעזור להימנע מחריגה מהמגבלה.">
             <span aria-hidden="true">ⓘ</span>
-            <span class="tooltip-text" aria-hidden="true">GitHub Pages מגביל בנייה מחודשת של האתר לכ-10 פעמים בשעה. המונה סופר פרסומים שבוצעו מהדפדפן הזה בשעה האחרונה. שינוי כתובת (Slug) של סיפור קיים נספר כשני פרסומים (יצירה + מחיקה).</span>
+            <span class="tooltip-text" aria-hidden="true">GitHub Pages מגביל בנייה מחודשת של האתר לכ-10 פעמים בשעה. המונה סופר פרסומים שבוצעו מהדפדפן הזה בשעה האחרונה.</span>
           </span>
         </div>
       </form>
@@ -1198,15 +1198,17 @@
         showStatus('שומר ומפרסם...', 'info');
         var path = 'content/stories/' + collected.slug + '.md';
         var content = serializeStory(collected.fields, state.extraLines, collected.body);
-        var message = state.mode === 'new'
+        var baseMessage = state.mode === 'new'
           ? ('story: add ' + collected.fields.title_en)
           : (isRename ? ('story: rename ' + state.slug + ' to ' + collected.slug) : ('story: update ' + collected.fields.title_en));
+        // Rename = 2 commits (create new, then delete old); only the delete should
+        // trigger a build, so a failed delete doesn't leave the site mid-rename.
+        var message = isRename ? (baseMessage + ' [skip-deploy]') : baseMessage;
 
         try {
           var sha = (state.mode === 'edit' && !isRename) ? state.sha : undefined;
           var res = await ghPutFile(path, content, message, sha);
           if (res.ok) {
-            recordPublish();
             if (isRename) {
               var delRes = await ghDeleteFile(state.path, state.sha, 'story: rename ' + state.slug + ' to ' + collected.slug);
               if (!delRes.ok) {
@@ -1215,8 +1217,8 @@
                 showView('menu');
                 return;
               }
-              recordPublish();
             }
+            recordPublish();
             clearStatus();
             showStatus('הסיפור פורסם! השינויים יופיעו באתר תוך כדקה.', 'success');
             showView('menu');
