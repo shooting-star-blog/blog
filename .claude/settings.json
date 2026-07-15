@@ -30,7 +30,11 @@
       "Bash(npm ls *)",
       "WebFetch(domain:docs.github.com)",
       "WebFetch(domain:github.blog)",
-      "Bash(grep -n \"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|rgba\\(\" /home/sabichos/Projects/shooting-star-blog/tools/editor.html)"
+      "Bash(grep -n \"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|rgba\\(\" /home/sabichos/Projects/shooting-star-blog/tools/editor.html)",
+      "Bash(node --check /tmp/editor_extracted.js)",
+      "Bash(node test_cover.js)",
+      "Bash(node --check extracted_cover_fns.js)",
+      "Bash(node run_cover_tests.js)"
     ]
   }
 }

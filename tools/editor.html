@@ -119,13 +119,15 @@
       margin-top: 0;
     }
 
-    label {
+    label,
+    .field-block {
       display: block;
       margin-bottom: 1rem;
       font-weight: 600;
     }
 
-    label small {
+    label small,
+    .field-block small {
       display: block;
       font-weight: 400;
       color: var(--muted);
@@ -149,6 +151,37 @@
 
     textarea {
       resize: vertical;
+    }
+
+    input[type="file"] {
+      display: block;
+      width: 100%;
+      margin-top: 0.35rem;
+      padding: 0.5rem 0.7rem;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    input[type="file"]::file-selector-button {
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: inherit;
+      padding: 0.4rem 0.9rem;
+      margin-inline-end: 0.75rem;
+      border-radius: 6px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: var(--on-accent);
+    }
+
+    input[type="file"]::file-selector-button:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
     }
 
     #f_body {
@@ -274,6 +307,15 @@
     .field-error.success {
       background: var(--success-bg);
       color: var(--success-text);
+    }
+
+    .field-note {
+      background: var(--info-bg);
+      color: var(--info-text);
+      border-radius: 6px;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
     }
 
     .overlay {
@@ -420,6 +462,55 @@
     .info-tooltip:focus-within .tooltip-text {
       display: block;
     }
+
+    .cover-hint {
+      display: block;
+      font-weight: 400;
+      color: var(--muted);
+      margin: 0 0 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .cover-preview-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .cover-preview-wrap.hidden {
+      display: none;
+    }
+
+    .cover-preview-label {
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .cover-preview-img {
+      width: 220px;
+      max-width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      display: block;
+    }
+
+    .cover-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+    }
+
+    .cover-processing {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
   </style>
 </head>
 
@@ -513,6 +604,31 @@
         <label>תיאור קצר (אנגלית)
           <textarea id="f_description_en"></textarea>
         </label>
+        <div class="field-block">תמונת שער
+          <small class="cover-hint">מומלץ תמונה לרוחב (יחס רחב), ברוחב 1200 פיקסלים לפחות — אותה תמונה מוצגת גם
+            חתוכה בגדלים קטנים יותר, כך שתמונה לאורך או חתוכה מדי עלולה להיראות פחות טוב. הקובץ יוקטן ויעובד אוטומטית
+            לפני ההעלאה. פורמטים נתמכים: JPEG, PNG, WEBP (לא HEIC/HEIF — בדרך כלל הפורמט של תמונות אייפון; יש לייצא
+            כ-JPEG).</small>
+          <div class="cover-preview-row">
+            <div id="coverCurrentWrap" class="cover-preview-wrap hidden">
+              <div class="cover-preview-label">תמונת השער הנוכחית</div>
+              <img id="coverCurrentImg" class="cover-preview-img" alt="תמונת השער הנוכחית">
+            </div>
+            <div id="coverNewWrap" class="cover-preview-wrap hidden">
+              <div class="cover-preview-label" id="coverNewLabel">תמונה חדשה</div>
+              <img id="coverNewImg" class="cover-preview-img" alt="תצוגה מקדימה של תמונת השער החדשה">
+            </div>
+          </div>
+          <input type="file" id="f_cover_file" aria-label="תמונת שער"
+            accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp">
+          <div id="coverProcessing" class="cover-processing hidden">מעבד תמונה...</div>
+          <div id="coverNote" class="field-note hidden"></div>
+          <div id="coverError" class="field-error hidden"></div>
+          <div class="cover-actions">
+            <button type="button" class="secondary hidden" id="coverRemoveBtn">הסר תמונת שער</button>
+            <button type="button" class="secondary hidden" id="coverRestoreBtn"></button>
+          </div>
+        </div>
         <label>תגיות (מופרדות בפסיקים)
           <input type="text" id="f_tags" placeholder="לדוגמה: מדע בדיוני, חלל">
         </label>
@@ -568,6 +684,11 @@
       var PUBLISH_LOG_KEY = 'ssb_editor_publish_log';
       var PUBLISH_WINDOW_MS = 60 * 60 * 1000;
       var PUBLISH_SOFT_LIMIT = 10;
+      var COVER_MIME_EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+      var COVER_EXT_MIME = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp' };
+      var COVER_MAX_EDGE = 1900; // longest edge cap for the committed source file; never upscales
+      var COVER_MIN_HINT_WIDTH = 1200; // below this, warn but don't block
+      var COVER_MAX_UPLOAD_BYTES = 25 * 1024 * 1024; // sanity guard before attempting to decode
 
       var ghToken = null;
       var storyListCache = [];
@@ -780,6 +901,38 @@
         });
       }
 
+      // Binary-safe variants used for cover images — content travels as raw base64,
+      // not re-encoded through the UTF-8-safe b64EncodeUtf8/b64DecodeUtf8 pair above
+      // (those assume the decoded bytes are valid UTF-8 text, which image bytes aren't).
+
+      async function ghGetFileBase64(path) {
+        var res = await ghFetch('/contents/' + path);
+        if (res.status === 401) { handleAuthExpired(); throw Object.assign(new Error('unauthorized'), { isAuthFailure: true }); }
+        if (res.status === 404) return null;
+        if (!res.ok) throw new Error('שגיאה בטעינת קובץ התמונה (קוד ' + res.status + ').');
+        var data = await res.json();
+        return { base64: data.content.replace(/\n/g, ''), sha: data.sha };
+      }
+
+      function ghPutFileBase64(path, base64Content, message, sha) {
+        var body = { message: message, content: base64Content, branch: BRANCH };
+        if (sha) body.sha = sha;
+        return ghFetch('/contents/' + path, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+      }
+
+      async function ghListDir(path) {
+        var res = await ghFetch('/contents/' + path);
+        if (res.status === 404) return [];
+        if (res.status === 401) { handleAuthExpired(); throw Object.assign(new Error('unauthorized'), { isAuthFailure: true }); }
+        if (!res.ok) throw new Error('שגיאה בטעינת רשימת קבצים (קוד ' + res.status + ').');
+        var data = await res.json();
+        return Array.isArray(data) ? data : [];
+      }
+
       // ---------- slug ----------
 
       function stripCombiningMarks(str) {
@@ -800,6 +953,204 @@
           .replace(/[\s_]+/g, '-')
           .replace(/-+/g, '-')
           .replace(/^-+|-+$/g, '');
+      }
+
+      // ---------- cover image: path helpers ----------
+
+      function coverAssetPath(coverField) {
+        // frontmatter `cover: "images/akira.jpg"` is relative to assets/ (Hugo `resources.Get`)
+        return 'assets/' + coverField;
+      }
+
+      function coverExtOf(coverField) {
+        var m = /\.([a-z0-9]+)$/i.exec(coverField || '');
+        return m ? m[1].toLowerCase() : '';
+      }
+
+      function coverMimeForExt(ext) {
+        return COVER_EXT_MIME[(ext || '').toLowerCase()] || 'application/octet-stream';
+      }
+
+      // ---------- cover image: format validation ----------
+
+      function isHeicFile(file) {
+        var type = (file.type || '').toLowerCase();
+        var name = (file.name || '').toLowerCase();
+        return type === 'image/heic' || type === 'image/heif' || /\.(heic|heif)$/.test(name);
+      }
+
+      function coverFormatError() {
+        var err = new Error('פורמט הקובץ אינו נתמך. יש להעלות תמונה בפורמט JPEG, PNG או WEBP.');
+        err.isCoverFormatError = true;
+        return err;
+      }
+
+      function coverHeicError() {
+        var err = new Error('תמונות בפורמט HEIC/HEIF אינן נתמכות (זהו לעיתים קרובות הפורמט שבו מצלמת אייפון שומרת תמונות כברירת מחדל). יש לייצא או לשתף את התמונה כ-JPEG ולנסות שוב.');
+        err.isCoverFormatError = true;
+        return err;
+      }
+
+      function detectCoverMime(file) {
+        if (isHeicFile(file)) throw coverHeicError();
+        var type = (file.type || '').toLowerCase();
+        if (COVER_MIME_EXT[type]) return type;
+        // some browsers/OSes leave file.type empty for certain sources — fall back to the extension
+        var name = (file.name || '').toLowerCase();
+        var extMatch = /\.([a-z0-9]+)$/.exec(name);
+        var ext = extMatch ? extMatch[1] : '';
+        if (ext === 'jpg' || ext === 'jpeg') return 'image/jpeg';
+        if (ext === 'png') return 'image/png';
+        if (ext === 'webp') return 'image/webp';
+        throw coverFormatError();
+      }
+
+      // ---------- cover image: EXIF orientation (JPEG only) ----------
+
+      function safeGetJpegOrientation(buffer) {
+        try {
+          return getJpegOrientation(buffer) || 1;
+        } catch (e) {
+          return 1;
+        }
+      }
+
+      function getJpegOrientation(buffer) {
+        var view = new DataView(buffer);
+        if (view.byteLength < 4 || view.getUint16(0, false) !== 0xffd8) return 1;
+        var offset = 2;
+        var length = view.byteLength;
+        while (offset + 4 <= length) {
+          var marker = view.getUint16(offset, false);
+          offset += 2;
+          if (marker === 0xffe1) {
+            var segLength = view.getUint16(offset, false);
+            if (view.getUint32(offset + 2, false) !== 0x45786966) return 1; // "Exif"
+            var tiffOffset = offset + 8;
+            var little = view.getUint16(tiffOffset, false) === 0x4949;
+            var firstIfdOffset = view.getUint32(tiffOffset + 4, little);
+            var dirOffset = tiffOffset + firstIfdOffset;
+            var tagCount = view.getUint16(dirOffset, little);
+            for (var i = 0; i < tagCount; i++) {
+              var entryOffset = dirOffset + 2 + i * 12;
+              if (entryOffset + 12 > length) break;
+              var tag = view.getUint16(entryOffset, little);
+              if (tag === 0x0112) {
+                return view.getUint16(entryOffset + 8, little);
+              }
+            }
+            return 1;
+          } else if (marker === 0xffd8 || (marker & 0xff00) !== 0xff00) {
+            break;
+          } else if (marker === 0xffda) {
+            break; // start of scan — no more header markers follow
+          } else {
+            offset += view.getUint16(offset, false);
+          }
+        }
+        return 1;
+      }
+
+      // ---------- cover image: canvas resize / encode ----------
+
+      function loadImageFromFile(file) {
+        return new Promise(function (resolve, reject) {
+          var url = URL.createObjectURL(file);
+          var img = new Image();
+          img.onload = function () { resolve({ img: img, url: url }); };
+          img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('load-failed')); };
+          img.src = url;
+        });
+      }
+
+      function orientedCanvas(img, orientation) {
+        var w = img.naturalWidth, h = img.naturalHeight;
+        var swapped = orientation >= 5 && orientation <= 8;
+        var canvas = document.createElement('canvas');
+        canvas.width = swapped ? h : w;
+        canvas.height = swapped ? w : h;
+        var ctx = canvas.getContext('2d');
+        switch (orientation) {
+          case 2: ctx.transform(-1, 0, 0, 1, w, 0); break;
+          case 3: ctx.transform(-1, 0, 0, -1, w, h); break;
+          case 4: ctx.transform(1, 0, 0, -1, 0, h); break;
+          case 5: ctx.transform(0, 1, 1, 0, 0, 0); break;
+          case 6: ctx.transform(0, 1, -1, 0, h, 0); break;
+          case 7: ctx.transform(0, -1, -1, 0, h, w); break;
+          case 8: ctx.transform(0, -1, 1, 0, 0, w); break;
+          default: break;
+        }
+        ctx.drawImage(img, 0, 0, w, h);
+        return canvas;
+      }
+
+      function scaleCanvasDown(canvas, maxEdge) {
+        var w = canvas.width, h = canvas.height;
+        var scale = Math.min(1, maxEdge / Math.max(w, h));
+        if (scale >= 1) return canvas;
+        var outW = Math.max(1, Math.round(w * scale));
+        var outH = Math.max(1, Math.round(h * scale));
+        var out = document.createElement('canvas');
+        out.width = outW;
+        out.height = outH;
+        out.getContext('2d').drawImage(canvas, 0, 0, outW, outH);
+        return out;
+      }
+
+      function encodeCanvas(canvas, mime) {
+        return new Promise(function (resolve, reject) {
+          canvas.toBlob(function (blob) {
+            if (!blob) { reject(new Error('encode-failed')); return; }
+            resolve(blob);
+          }, mime, mime === 'image/png' ? undefined : 0.85);
+        });
+      }
+
+      function blobToBase64(blob) {
+        return new Promise(function (resolve, reject) {
+          var reader = new FileReader();
+          reader.onload = function () {
+            var result = reader.result;
+            resolve(result.slice(result.indexOf(',') + 1));
+          };
+          reader.onerror = function () { reject(new Error('read-failed')); };
+          reader.readAsDataURL(blob);
+        });
+      }
+
+      // Validates, EXIF-corrects, downscales (never upscales) and re-encodes an uploaded
+      // cover image in its original format. Returns { base64, ext, mime, blobUrl, width, height,
+      // originalWidth, originalHeight } — blobUrl is a fresh object URL for the local preview only.
+      async function processCoverFile(file) {
+        if (file.size > COVER_MAX_UPLOAD_BYTES) {
+          var sizeErr = new Error('הקובץ גדול מדי (מעל 25MB). יש לבחור תמונה קטנה יותר.');
+          sizeErr.isCoverFormatError = true;
+          throw sizeErr;
+        }
+        var mime = detectCoverMime(file);
+        var ext = COVER_MIME_EXT[mime];
+        var orientation = 1;
+        if (mime === 'image/jpeg') {
+          var buffer = await file.arrayBuffer();
+          orientation = safeGetJpegOrientation(buffer);
+        }
+        var loaded = await loadImageFromFile(file);
+        try {
+          var originalWidth = loaded.img.naturalWidth;
+          var originalHeight = loaded.img.naturalHeight;
+          var oriented = orientedCanvas(loaded.img, orientation);
+          var scaled = scaleCanvasDown(oriented, COVER_MAX_EDGE);
+          var blob = await encodeCanvas(scaled, mime);
+          var base64 = await blobToBase64(blob);
+          return {
+            base64: base64, ext: ext, mime: mime,
+            blobUrl: URL.createObjectURL(blob),
+            width: scaled.width, height: scaled.height,
+            originalWidth: originalWidth, originalHeight: originalHeight
+          };
+        } finally {
+          URL.revokeObjectURL(loaded.url);
+        }
       }
 
       // ---------- frontmatter parse / serialize ----------
@@ -1035,6 +1386,29 @@
         }));
       }
 
+      // ---------- cover image: inactive-folder lookup (for "restore previous cover") ----------
+
+      async function findInactiveCoverForSlug(slug) {
+        var items;
+        try {
+          items = await ghListDir('assets/images-inactive');
+        } catch (e) {
+          return null;
+        }
+        var prefix = slug + '__';
+        var matches = items.filter(function (it) {
+          return it.type === 'file' && it.name.indexOf(prefix) === 0;
+        });
+        if (!matches.length) return null;
+        // filenames are `<slug>__<Date.now()>.<ext>` — fixed-length numeric timestamps sort
+        // correctly as strings, so the lexically-last match is the most recent
+        matches.sort(function (a, b) { return b.name.localeCompare(a.name); });
+        var best = matches[0];
+        var tsMatch = /__(\d+)\.[a-z0-9]+$/i.exec(best.name);
+        var timestampLabel = tsMatch ? new Date(Number(tsMatch[1])).toLocaleString('he-IL') : '';
+        return { name: best.name, path: best.path, sha: best.sha, ext: coverExtOf(best.name), timestampLabel: timestampLabel };
+      }
+
       function sortStories(list, mode) {
         var copy = list.slice();
         if (mode === 'updated') {
@@ -1090,8 +1464,7 @@
         try {
           var result = await ghGetFile(story.path);
           var parsed = parseFrontmatter(result.text);
-          clearStatus();
-          state = {
+          state = Object.assign({
             mode: 'edit',
             slug: story.slug,
             path: story.path,
@@ -1100,7 +1473,29 @@
             slugManuallyEdited: false,
             fields: parsed.fields,
             body: parsed.body
-          };
+          }, freshCoverState());
+
+          if (parsed.fields.cover) {
+            var ext = coverExtOf(parsed.fields.cover);
+            try {
+              var coverFile = await ghGetFileBase64(coverAssetPath(parsed.fields.cover));
+              if (coverFile) {
+                state.originalCover = { base64: coverFile.base64, sha: coverFile.sha, ext: ext, mime: coverMimeForExt(ext) };
+              } else {
+                state.coverMissingWarning = true;
+              }
+            } catch (e) {
+              // best-effort — editing still works without the current-cover thumbnail;
+              // a real problem (e.g. auth expiry) already redirected via handleAuthExpired
+            }
+          }
+          try {
+            state.coverRestoreCandidate = await findInactiveCoverForSlug(story.slug);
+          } catch (e) {
+            // best-effort — restore affordance just won't show
+          }
+
+          clearStatus();
           renderForm();
         } catch (e) {
           clearStatus();
@@ -1114,8 +1509,19 @@
 
       // ---------- form ----------
 
-      function newStoryState() {
+      function freshCoverState() {
         return {
+          coverAction: 'none', // 'none' | 'replace' | 'remove' | 'restore'
+          coverPending: null,  // processed { base64, ext, mime, blobUrl, width, height, ... } for 'replace'/'restore'
+          originalCover: null, // { base64, sha, ext, mime } for the cover this story had when opened, if any
+          coverMissingWarning: false, // frontmatter names a cover file that couldn't be fetched
+          coverRestoreCandidate: null, // { name, path, sha, ext, timestampLabel } found in images-inactive/, listing-only
+          coverRestoreSource: null // set once the candidate above is actually loaded and staged for restore
+        };
+      }
+
+      function newStoryState() {
+        return Object.assign({
           mode: 'new',
           slug: '',
           path: null,
@@ -1128,7 +1534,7 @@
             tags: [], featured: false, draft: false
           },
           body: ''
-        };
+        }, freshCoverState());
       }
 
       function renderForm() {
@@ -1146,9 +1552,71 @@
         document.getElementById('f_draft').checked = !!state.fields.draft;
         document.getElementById('f_body').value = state.body || '';
         document.getElementById('formErrors').classList.add('hidden');
+        renderCoverSection();
         state.pristineSnapshot = JSON.stringify(collectFormToFields());
         renderPublishCounter();
         showView('form');
+      }
+
+      function renderCoverSection() {
+        var currentWrap = document.getElementById('coverCurrentWrap');
+        var currentImg = document.getElementById('coverCurrentImg');
+        var newWrap = document.getElementById('coverNewWrap');
+        var newImg = document.getElementById('coverNewImg');
+        var newLabel = document.getElementById('coverNewLabel');
+        var removeBtn = document.getElementById('coverRemoveBtn');
+        var restoreBtn = document.getElementById('coverRestoreBtn');
+        var noteEl = document.getElementById('coverNote');
+
+        if (state.originalCover) {
+          currentImg.src = 'data:' + state.originalCover.mime + ';base64,' + state.originalCover.base64;
+          currentWrap.classList.remove('hidden');
+        } else {
+          currentImg.removeAttribute('src');
+          currentWrap.classList.add('hidden');
+        }
+
+        if ((state.coverAction === 'replace' || state.coverAction === 'restore') && state.coverPending) {
+          newImg.src = state.coverPending.blobUrl;
+          newLabel.textContent = state.coverAction === 'restore' ? 'תמונת השער הקודמת שתשוחזר' : 'תמונה חדשה שתועלה';
+          newWrap.classList.remove('hidden');
+        } else {
+          newImg.removeAttribute('src');
+          newWrap.classList.add('hidden');
+        }
+
+        var hasSomethingToRemove = !!(state.originalCover || state.coverPending || state.coverMissingWarning);
+        removeBtn.classList.toggle('hidden', state.coverAction === 'remove' || !hasSomethingToRemove);
+
+        if (state.coverRestoreCandidate && state.coverAction !== 'restore') {
+          restoreBtn.textContent = 'שחזר תמונת שער קודמת' +
+            (state.coverRestoreCandidate.timestampLabel ? ' (מ-' + state.coverRestoreCandidate.timestampLabel + ')' : '');
+          restoreBtn.classList.remove('hidden');
+        } else {
+          restoreBtn.classList.add('hidden');
+        }
+
+        var notes = [];
+        if (state.coverAction === 'remove') {
+          notes.push('תמונת השער תוסר בשמירה.');
+        } else if (state.coverAction === 'replace') {
+          notes.push('התמונה תעובד, תוקטן ותועלה בשמירה, במקום התמונה הנוכחית.');
+        } else if (state.coverAction === 'restore') {
+          notes.push('התמונה הקודמת תשוחזר כתמונת השער בשמירה.');
+        } else if (state.coverMissingWarning) {
+          notes.push('שים לב: הכתובת של תמונת השער בקובץ לא נמצאה בגיטהאב. אפשר להעלות תמונה חדשה או להסיר את הכתובת השבורה.');
+        }
+        if (state.coverPending && state.coverAction === 'replace' && state.coverPending.originalWidth < COVER_MIN_HINT_WIDTH) {
+          notes.push('לתשומת לב: רוחב התמונה (' + state.coverPending.originalWidth + 'px) נמוך מהמומלץ (' + COVER_MIN_HINT_WIDTH + 'px) — האיכות בתצוגות גדולות עלולה להיפגע.');
+        }
+        if (notes.length) {
+          noteEl.textContent = notes.join(' ');
+          noteEl.classList.remove('hidden');
+        } else {
+          noteEl.classList.add('hidden');
+        }
+
+        document.getElementById('f_cover_file').value = '';
       }
 
       function collectFormToFields() {
@@ -1167,7 +1635,11 @@
             featured: document.getElementById('f_featured').checked,
             draft: document.getElementById('f_draft').checked
           },
-          body: document.getElementById('f_body').value
+          body: document.getElementById('f_body').value,
+          // cover isn't a DOM-bound field — its pending intent lives on `state` and is folded
+          // in here only so the back-button dirty-check (pristineSnapshot comparison) notices it
+          coverAction: state.coverAction,
+          coverPendingKey: state.coverPending ? (state.coverPending.ext + ':' + state.coverPending.base64.length) : null
         };
       }
 
@@ -1179,6 +1651,11 @@
         if (!collected.body.trim()) errors.push('גוף הסיפור הוא שדה חובה.');
         if (!collected.slug || !/^[a-z0-9-]+$/.test(collected.slug)) {
           errors.push('כתובת האתר (Slug) חייבת להכיל רק אותיות לועזיות קטנות, מספרים ומקפים.');
+        }
+
+        var isRenameCheck = state.mode === 'edit' && collected.slug !== state.slug;
+        if (isRenameCheck && state.coverAction === 'none' && state.fields.cover && !state.originalCover) {
+          errors.push('לא ניתן לשנות את כתובת הסיפור מבלי שנטענה קודם תמונת השער הנוכחית. רענן את הדף ונסה שוב, או הסר/החלף את תמונת השער.');
         }
 
         if (errors.length === 0 && (state.mode === 'new' || collected.slug !== state.slug)) {
@@ -1194,8 +1671,116 @@
         return errors;
       }
 
+      // Computes the ordered list of image-file commits a save needs (add/archive/rename the
+      // cover), plus the frontmatter `cover` value the save should end up with. All of these
+      // commits are tagged [skip-deploy] — they always run before the frontmatter commit, which
+      // is the one commit in the whole save left untagged so it's the one that triggers a build.
+      //
+      // A genuine replace/remove always archives the current cover to assets/images-inactive/
+      // first (rather than overwriting it in place) so the "restore previous cover" affordance
+      // keeps working even when the new upload reuses the exact same filename (same slug + same
+      // extension is the common case). If the follow-up add-new step then fails, the site is
+      // left with a temporarily broken cover image rather than silently losing the old one —
+      // recoverable via the restore button, unlike an in-place overwrite would be.
+      function buildCoverPlan(collected, isRename) {
+        var newSlug = collected.slug;
+        var oldCoverField = state.fields.cover || '';
+        var oldCoverExt = coverExtOf(oldCoverField);
+        var steps = [];
+        var finalCoverField = oldCoverField;
+
+        var needsMoveAside = (state.coverAction === 'replace' || state.coverAction === 'restore' || state.coverAction === 'remove')
+          && oldCoverField && state.originalCover;
+
+        if (needsMoveAside) {
+          var archivePath = 'assets/images-inactive/' + newSlug + '__' + Date.now() + '.' + oldCoverExt;
+          var oldPath = coverAssetPath(oldCoverField);
+          var archiveMsg = 'cover: archive previous cover for ' + newSlug + ' [skip-deploy]';
+          steps.push({
+            run: function () { return ghPutFileBase64(archivePath, state.originalCover.base64, archiveMsg); },
+            failMessage: 'שמירת גיבוי של תמונת השער הקודמת נכשלה. נסה שוב.'
+          });
+          steps.push({
+            run: function () { return ghDeleteFile(oldPath, state.originalCover.sha, archiveMsg); },
+            failMessage: 'תמונת השער הקודמת גובתה, אך מחיקתה מהמיקום המקורי (' + oldPath + ') נכשלה. אפשר למחוק אותה ידנית בגיטהאב, או להתעלם — היא לא תיפגע בסיפור.'
+          });
+        }
+
+        if (state.coverAction === 'replace' || state.coverAction === 'restore') {
+          var newExt = state.coverPending.ext;
+          var newPath = 'assets/images/' + newSlug + '.' + newExt;
+          var setMsg = 'cover: set cover for ' + newSlug + ' [skip-deploy]';
+          steps.push({
+            run: function () { return ghPutFileBase64(newPath, state.coverPending.base64, setMsg); },
+            failMessage: 'העלאת תמונת השער נכשלה. נסה שוב.'
+          });
+          finalCoverField = 'images/' + newSlug + '.' + newExt;
+          if (state.coverAction === 'restore' && state.coverRestoreSource) {
+            var src = state.coverRestoreSource;
+            steps.push({
+              run: function () { return ghDeleteFile(src.path, src.sha, 'cover: cleanup restored copy for ' + newSlug + ' [skip-deploy]'); },
+              failMessage: null // non-critical cleanup of the now-redundant archived copy; don't block the save on it
+            });
+          }
+        } else if (state.coverAction === 'remove') {
+          finalCoverField = '';
+        } else if (state.coverAction === 'none' && isRename && oldCoverField) {
+          // pure slug rename, cover content unchanged: relocate the file, don't archive it —
+          // it isn't "unused", just following the story to its new address
+          if (!state.originalCover) {
+            throw new Error('לא ניתן לשנות את כתובת הסיפור מבלי שנטענה קודם תמונת השער הנוכחית. רענן את הדף ונסה שוב.');
+          }
+          var renamedPath = 'assets/images/' + newSlug + '.' + oldCoverExt;
+          var origOldPath = coverAssetPath(oldCoverField);
+          var renameMsg = 'cover: rename ' + state.slug + ' to ' + newSlug + ' [skip-deploy]';
+          steps.push({
+            run: function () { return ghPutFileBase64(renamedPath, state.originalCover.base64, renameMsg); },
+            failMessage: 'שינוי שם קובץ תמונת השער נכשל. נסה שוב.'
+          });
+          steps.push({
+            run: function () { return ghDeleteFile(origOldPath, state.originalCover.sha, renameMsg); },
+            failMessage: 'תמונת השער נשמרה בכתובת החדשה, אך מחיקת הקובץ הישן (' + origOldPath + ') נכשלה. יש למחוק אותו ידנית בגיטהאב.'
+          });
+          finalCoverField = 'images/' + newSlug + '.' + oldCoverExt;
+        }
+
+        return { finalCoverField: finalCoverField, steps: steps };
+      }
+
       async function performSave(collected, isRename) {
         showStatus('שומר ומפרסם...', 'info');
+
+        var coverPlan;
+        try {
+          coverPlan = buildCoverPlan(collected, isRename);
+        } catch (e) {
+          clearStatus();
+          showStatus(e.message, 'error');
+          return;
+        }
+
+        for (var i = 0; i < coverPlan.steps.length; i++) {
+          var step = coverPlan.steps[i];
+          var stepRes;
+          try {
+            stepRes = await step.run();
+          } catch (netErr) {
+            if (!step.failMessage) continue;
+            clearStatus();
+            showStatus('בעיית חיבור לאינטרנט בעת שמירת תמונת השער. נסה שוב.', 'error');
+            return;
+          }
+          if (!stepRes.ok) {
+            if (!step.failMessage) continue;
+            var stepErrInfo = classifyError(stepRes);
+            clearStatus();
+            if (stepErrInfo.code === 'auth') { handleAuthExpired(); return; }
+            showStatus(step.failMessage, 'error');
+            return;
+          }
+        }
+
+        collected.fields.cover = coverPlan.finalCoverField;
         var path = 'content/stories/' + collected.slug + '.md';
         var content = serializeStory(collected.fields, state.extraLines, collected.body);
         var baseMessage = state.mode === 'new'
@@ -1298,6 +1883,69 @@
         document.getElementById('slugPreview').textContent = this.value;
       });
 
+      document.getElementById('f_cover_file').addEventListener('change', async function () {
+        var fileInput = this;
+        var file = fileInput.files && fileInput.files[0];
+        if (!file) return;
+        var errorEl = document.getElementById('coverError');
+        var processingEl = document.getElementById('coverProcessing');
+        errorEl.classList.add('hidden');
+        processingEl.classList.remove('hidden');
+        try {
+          var processed = await processCoverFile(file);
+          if (state.coverPending && state.coverPending.blobUrl) URL.revokeObjectURL(state.coverPending.blobUrl);
+          state.coverPending = processed;
+          state.coverAction = 'replace';
+          state.coverRestoreSource = null;
+          processingEl.classList.add('hidden');
+          renderCoverSection();
+        } catch (e) {
+          processingEl.classList.add('hidden');
+          errorEl.textContent = e.message || 'שגיאה בעיבוד התמונה.';
+          errorEl.classList.remove('hidden');
+          fileInput.value = '';
+        }
+      });
+
+      document.getElementById('coverRemoveBtn').addEventListener('click', function () {
+        if (state.coverPending && state.coverPending.blobUrl) URL.revokeObjectURL(state.coverPending.blobUrl);
+        state.coverPending = null;
+        state.coverAction = 'remove';
+        state.coverRestoreSource = null;
+        document.getElementById('coverError').classList.add('hidden');
+        renderCoverSection();
+      });
+
+      document.getElementById('coverRestoreBtn').addEventListener('click', async function () {
+        if (!state.coverRestoreCandidate) return;
+        var errorEl = document.getElementById('coverError');
+        var processingEl = document.getElementById('coverProcessing');
+        errorEl.classList.add('hidden');
+        processingEl.classList.remove('hidden');
+        try {
+          var candidate = state.coverRestoreCandidate;
+          var file = await ghGetFileBase64(candidate.path);
+          processingEl.classList.add('hidden');
+          if (!file) {
+            errorEl.textContent = 'הגרסה הקודמת לא נמצאה עוד בגיטהאב (ייתכן שנמחקה בינתיים).';
+            errorEl.classList.remove('hidden');
+            return;
+          }
+          var mime = coverMimeForExt(candidate.ext);
+          if (state.coverPending && state.coverPending.blobUrl) URL.revokeObjectURL(state.coverPending.blobUrl);
+          state.coverPending = { base64: file.base64, ext: candidate.ext, mime: mime, blobUrl: 'data:' + mime + ';base64,' + file.base64, originalWidth: 0 };
+          state.coverAction = 'restore';
+          state.coverRestoreSource = candidate;
+          renderCoverSection();
+        } catch (e) {
+          processingEl.classList.add('hidden');
+          if (!e.isAuthFailure) {
+            errorEl.textContent = e.message || 'שגיאה בטעינת הגרסה הקודמת.';
+            errorEl.classList.remove('hidden');
+          }
+        }
+      });
+
       document.getElementById('storyForm').addEventListener('submit', async function (e) {
         e.preventDefault();
         var errorsEl = document.getElementById('formErrors');
@@ -1312,10 +1960,19 @@
           return;
         }
         var isRename = state.mode === 'edit' && collected.slug !== state.slug;
-        var confirmMsg = isRename
-          ? ('שינית את כתובת הסיפור מ-"' + state.slug + '" ל-"' + collected.slug + '". הקובץ הישן יימחק והחדש ייווצר. לשמור ולפרסם את השינויים באתר?')
-          : 'לשמור ולפרסם את השינויים באתר?';
-        showConfirm(confirmMsg, function () { performSave(collected, isRename); }, 'פרסם', 'בטל');
+        var confirmParts = [];
+        if (isRename) {
+          confirmParts.push('שינית את כתובת הסיפור מ-"' + state.slug + '" ל-"' + collected.slug + '". הקובץ הישן יימחק והחדש ייווצר.');
+        }
+        if (state.coverAction === 'remove') {
+          confirmParts.push('תמונת השער תוסר.');
+        } else if (state.coverAction === 'replace') {
+          confirmParts.push('תמונת שער חדשה תועלה.');
+        } else if (state.coverAction === 'restore') {
+          confirmParts.push('תמונת שער קודמת תשוחזר.');
+        }
+        confirmParts.push('לשמור ולפרסם את השינויים באתר?');
+        showConfirm(confirmParts.join(' '), function () { performSave(collected, isRename); }, 'פרסם', 'בטל');
       });
 
       document.getElementById('conflictKeepMineBtn').addEventListener('click', async function () {
@@ -1333,10 +1990,30 @@
         try {
           var result = await ghGetFile(state.path);
           var parsed = parseFrontmatter(result.text);
+          if (state.coverPending && state.coverPending.blobUrl) URL.revokeObjectURL(state.coverPending.blobUrl);
           state.sha = result.sha;
           state.fields = parsed.fields;
           state.extraLines = parsed.extraLines;
           state.body = parsed.body;
+          Object.assign(state, freshCoverState());
+          if (parsed.fields.cover) {
+            var ext = coverExtOf(parsed.fields.cover);
+            try {
+              var coverFile = await ghGetFileBase64(coverAssetPath(parsed.fields.cover));
+              if (coverFile) {
+                state.originalCover = { base64: coverFile.base64, sha: coverFile.sha, ext: ext, mime: coverMimeForExt(ext) };
+              } else {
+                state.coverMissingWarning = true;
+              }
+            } catch (e) {
+              // best-effort, same as the initial open-for-edit fetch
+            }
+          }
+          try {
+            state.coverRestoreCandidate = await findInactiveCoverForSlug(state.slug);
+          } catch (e) {
+            // best-effort
+          }
           document.getElementById('conflictBox').classList.add('hidden');
           renderForm();
           showStatus('הטופס נטען מחדש מהגרסה העדכנית.', 'info');
