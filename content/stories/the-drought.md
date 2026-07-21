@@ -2,8 +2,8 @@
 title: "הבצורת"
 title_en: "The Drought"
 date: 2021-11-03
-description: "טלי יוצאת למסע בים כדי לבקש סליחה על קללה עתיקה שפקדה את כפרה."
-description_en: "Tali sets sail to seek forgiveness for an ancient curse that has plagued her village."
+description: "לילי יוצאת למסע בים כדי לבקש סליחה על קללה עתיקה שפקדה את כפרה."
+description_en: "Lily sets sail to seek forgiveness for an ancient curse that has plagued her village."
 cover: ""
 tags: ["פנטזיה", "אגדה"]
 featured: true
