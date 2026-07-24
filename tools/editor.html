@@ -184,11 +184,6 @@
       border-color: var(--accent-hover);
     }
 
-    #f_body {
-      min-height: 320px;
-      font-family: "Consolas", monospace;
-    }
-
     #f_description,
     #f_description_en {
       min-height: 70px;
@@ -511,6 +506,245 @@
       color: var(--muted);
       margin-top: 0.5rem;
     }
+
+    /* ---------- body editor: toolbar + live-highlight surface + preview ---------- */
+
+    :root {
+      --accent-wash: color-mix(in oklab, var(--accent) 16%, transparent);
+    }
+
+    .body-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.15rem;
+      flex-wrap: wrap;
+      margin-top: 0.35rem;
+      padding: 0.25rem;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .body-toolbar button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.25rem;
+      height: 2rem;
+      padding: 0;
+      border: none;
+      border-radius: 6px;
+      background: none;
+      color: var(--text);
+    }
+
+    .body-toolbar button:hover {
+      background: color-mix(in oklab, var(--text) 8%, transparent);
+      border-color: transparent;
+    }
+
+    .body-toolbar button:active,
+    .body-toolbar button.active {
+      background: var(--accent-wash);
+      color: var(--accent-text);
+    }
+
+    .body-toolbar .tb-icon {
+      width: 1.15rem;
+      height: 1.15rem;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .body-toolbar .tb-icon.flip {
+      transform: scaleX(-1);
+    }
+
+    .body-toolbar .tb-divider {
+      width: 1px;
+      height: 1.25rem;
+      background: var(--border);
+      margin: 0 0.3rem;
+      flex-shrink: 0;
+    }
+
+    .body-toolbar .tb-spacer {
+      flex: 1;
+    }
+
+    .body-toolbar .tb-preview-btn {
+      width: auto;
+      padding: 0 0.75rem;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    .body-surface {
+      position: relative;
+      margin-top: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--panel);
+    }
+
+    .body-backdrop,
+    #f_body {
+      margin: 0;
+      padding: 0.55rem 0.7rem;
+      border: none;
+      width: 100%;
+      min-height: 320px;
+      font-family: "Consolas", monospace;
+      font-size: 1rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      box-sizing: border-box;
+      /* #f_body is a real (overflow:auto) textarea, so once its content overflows the
+         browser gives it a vertical scrollbar that eats into its content width. The
+         backdrop div (overflow:hidden) never gets one, so without this it stays wider
+         than the textarea and every wrapped line drifts further out of alignment the
+         longer the text gets. Reserving the gutter unconditionally on both elements
+         keeps their content-box widths identical whether or not either is actually
+         scrollable. */
+      scrollbar-gutter: stable;
+    }
+
+    .body-backdrop {
+      position: absolute;
+      inset: 0;
+      color: var(--text);
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: 6px;
+    }
+
+    #f_body {
+      /* A <textarea> defaults to display:inline-block in the UA stylesheet, which makes
+         it an inline-formatting-context participant in .body-surface — its line box then
+         includes a few px of font-descent "phantom" space below the element itself. That
+         made .body-surface's auto height (and therefore .body-backdrop's inset:0 height)
+         come out taller than #f_body's own box, so the two disagreed on scrollable range
+         and .body-backdrop.scrollTop got silently clamped short once #f_body scrolled
+         near its end — the caret would drift out from under the backdrop's highlighted
+         text specifically near the bottom of long stories. display:block removes it from
+         that inline formatting context so both boxes agree on height exactly. */
+      display: block;
+      position: relative;
+      background: transparent;
+      color: transparent;
+      caret-color: var(--accent-text);
+    }
+
+    /* Browsers force a visible text color on selected text by default, ignoring the
+       transparent color above — without this override, selecting text shows the raw
+       markdown on top of the backdrop's already-styled version of the same text
+       underneath it (doubled/ghosted look). Keep the glyphs transparent, just show a
+       highlight background so a selection is still visible before clicking a toolbar button. */
+    #f_body::selection {
+      color: transparent;
+      background: var(--accent-wash);
+    }
+
+    #f_body::-moz-selection {
+      color: transparent;
+      background: var(--accent-wash);
+    }
+
+    .hl-marker {
+      opacity: 0.4;
+    }
+
+    .hl-heading-text {
+      font-weight: 700;
+      color: var(--accent-text);
+    }
+
+    .hl-quote-text {
+      color: var(--muted);
+    }
+
+    .hl-bold {
+      font-weight: 700;
+    }
+
+    .hl-italic {
+      font-style: italic;
+    }
+
+    .hl-tag {
+      color: var(--accent-text);
+      background: var(--accent-wash);
+      border-radius: 3px;
+    }
+
+    .body-preview {
+      display: none;
+      padding: 1rem 1.1rem;
+      font-size: 1.05rem;
+      line-height: 1.85;
+      min-height: 320px;
+    }
+
+    .body-preview.shown {
+      display: block;
+    }
+
+    .body-preview h2 {
+      font-size: 1.15rem;
+      margin: 1.3rem 0 0.7rem;
+    }
+
+    .body-preview h2:first-child {
+      margin-top: 0;
+    }
+
+    .body-preview p {
+      margin: 0 0 1rem;
+    }
+
+    .body-preview blockquote {
+      margin: 1.6rem 0;
+      padding-inline-start: 1rem;
+      border-inline-start: 2px solid var(--accent);
+      font-size: 1.15rem;
+      line-height: 1.5;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+
+    .body-preview blockquote p {
+      margin-bottom: 0;
+    }
+
+    .body-preview .poem {
+      margin-block: 1.5rem;
+      padding-inline-start: 1.1rem;
+      border-inline-start: 3px solid var(--muted);
+      font-style: italic;
+    }
+
+    .body-preview .ltr-block {
+      direction: ltr;
+      text-align: left;
+      margin-block: 1.2rem;
+    }
+
+    .body-preview table {
+      border-collapse: collapse;
+      margin: 0 0 1.2rem;
+    }
+
+    .body-preview th,
+    .body-preview td {
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.6rem;
+    }
   </style>
 </head>
 
@@ -634,9 +868,40 @@
         </label>
         <label class="checkbox-label"><input type="checkbox" id="f_featured"> סיפור מומלץ</label>
         <label class="checkbox-label"><input type="checkbox" id="f_draft"> טיוטה (לא יופיע כסופי)</label>
-        <label>גוף הסיפור *
-          <textarea id="f_body" required></textarea>
-        </label>
+        <label>גוף הסיפור *</label>
+        <div class="body-toolbar" id="bodyToolbar">
+          <button type="button" data-cmd="heading" title="כותרת">
+            <svg class="tb-icon" viewBox="0 0 24 24"><path d="M15 11h4.5a1 1 0 0 1 0 5h-4a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h3a1 1 0 0 1 0 5"/><path d="m2 16 4.039-9.69a.5.5 0 0 1 .923 0L11 16"/><path d="M3.304 13h6.392"/></svg>
+          </button>
+          <div class="tb-divider"></div>
+          <button type="button" data-cmd="bold" title="מודגש">
+            <svg class="tb-icon" viewBox="0 0 24 24"><path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/></svg>
+          </button>
+          <button type="button" data-cmd="italic" title="נטוי">
+            <svg class="tb-icon" viewBox="0 0 24 24"><line x1="19" x2="10" y1="4" y2="4"/><line x1="14" x2="5" y1="20" y2="20"/><line x1="15" x2="9" y1="4" y2="20"/></svg>
+          </button>
+          <div class="tb-divider"></div>
+          <button type="button" data-cmd="citation" title="ציטוט פתיחה">
+            <svg class="tb-icon flip" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 16h8"/><path d="M7 11h12"/><path d="M7 6h3"/></svg>
+          </button>
+          <div class="tb-divider"></div>
+          <button type="button" data-cmd="ltr" title="טקסט לועזי (LTR)">
+            <svg class="tb-icon" viewBox="0 0 24 24"><path d="M10 3v11"/><path d="M10 9H7a1 1 0 0 1 0-6h8"/><path d="M14 3v11"/><path d="m18 14 4 4H2"/><path d="m22 18-4 4"/></svg>
+          </button>
+          <button type="button" data-cmd="poem" title="שיר">
+            <svg class="tb-icon" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 8h7"/><path d="M8 12h6"/><path d="M11 16h5"/></svg>
+          </button>
+          <span class="tb-spacer"></span>
+          <button type="button" class="tb-preview-btn" id="bodyPreviewToggle">
+            <svg class="tb-icon" viewBox="0 0 24 24"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+            <span id="bodyPreviewToggleLabel">תצוגה מקדימה</span>
+          </button>
+        </div>
+        <div class="body-surface">
+          <div class="body-backdrop" id="bodyBackdrop" aria-hidden="true"></div>
+          <textarea id="f_body" required spellcheck="false"></textarea>
+          <div class="body-preview" id="bodyPreview"></div>
+        </div>
         <div class="save-row">
           <button type="submit" id="saveBtn">שמור ופרסם</button>
           <span class="publish-counter" id="publishCounter"></span>
@@ -670,6 +935,17 @@
       </div>
     </div>
   </div>
+
+  <!-- Vendored: marked v12.0.2 (MIT License, Copyright (c) 2011-2024 Christopher Jeffrey) -->
+  <!-- https://github.com/markedjs/marked — used only to render the body preview; not loaded from a CDN so the tool stays fully offline/file://. -->
+  <script>
+/**
+ * marked v12.0.2 - a markdown parser
+ * Copyright (c) 2011-2024, Christopher Jeffrey. (MIT Licensed)
+ * https://github.com/markedjs/marked
+ */
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t((e="undefined"!=typeof globalThis?globalThis:e||self).marked={})}(this,(function(e){"use strict";function t(){return{async:!1,breaks:!1,extensions:null,gfm:!0,hooks:null,pedantic:!1,renderer:null,silent:!1,tokenizer:null,walkTokens:null}}function n(t){e.defaults=t}e.defaults={async:!1,breaks:!1,extensions:null,gfm:!0,hooks:null,pedantic:!1,renderer:null,silent:!1,tokenizer:null,walkTokens:null};const s=/[&<>"']/,r=new RegExp(s.source,"g"),i=/[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/,l=new RegExp(i.source,"g"),o={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"},a=e=>o[e];function c(e,t){if(t){if(s.test(e))return e.replace(r,a)}else if(i.test(e))return e.replace(l,a);return e}const h=/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi;function p(e){return e.replace(h,((e,t)=>"colon"===(t=t.toLowerCase())?":":"#"===t.charAt(0)?"x"===t.charAt(1)?String.fromCharCode(parseInt(t.substring(2),16)):String.fromCharCode(+t.substring(1)):""))}const u=/(^|[^\[])\^/g;function k(e,t){let n="string"==typeof e?e:e.source;t=t||"";const s={replace:(e,t)=>{let r="string"==typeof t?t:t.source;return r=r.replace(u,"$1"),n=n.replace(e,r),s},getRegex:()=>new RegExp(n,t)};return s}function g(e){try{e=encodeURI(e).replace(/%25/g,"%")}catch(e){return null}return e}const f={exec:()=>null};function d(e,t){const n=e.replace(/\|/g,((e,t,n)=>{let s=!1,r=t;for(;--r>=0&&"\\"===n[r];)s=!s;return s?"|":" |"})).split(/ \|/);let s=0;if(n[0].trim()||n.shift(),n.length>0&&!n[n.length-1].trim()&&n.pop(),t)if(n.length>t)n.splice(t);else for(;n.length<t;)n.push("");for(;s<n.length;s++)n[s]=n[s].trim().replace(/\\\|/g,"|");return n}function x(e,t,n){const s=e.length;if(0===s)return"";let r=0;for(;r<s;){const i=e.charAt(s-r-1);if(i!==t||n){if(i===t||!n)break;r++}else r++}return e.slice(0,s-r)}function b(e,t,n,s){const r=t.href,i=t.title?c(t.title):null,l=e[1].replace(/\\([\[\]])/g,"$1");if("!"!==e[0].charAt(0)){s.state.inLink=!0;const e={type:"link",raw:n,href:r,title:i,text:l,tokens:s.inlineTokens(l)};return s.state.inLink=!1,e}return{type:"image",raw:n,href:r,title:i,text:c(l)}}class w{options;rules;lexer;constructor(t){this.options=t||e.defaults}space(e){const t=this.rules.block.newline.exec(e);if(t&&t[0].length>0)return{type:"space",raw:t[0]}}code(e){const t=this.rules.block.code.exec(e);if(t){const e=t[0].replace(/^ {1,4}/gm,"");return{type:"code",raw:t[0],codeBlockStyle:"indented",text:this.options.pedantic?e:x(e,"\n")}}}fences(e){const t=this.rules.block.fences.exec(e);if(t){const e=t[0],n=function(e,t){const n=e.match(/^(\s+)(?:```)/);if(null===n)return t;const s=n[1];return t.split("\n").map((e=>{const t=e.match(/^\s+/);if(null===t)return e;const[n]=t;return n.length>=s.length?e.slice(s.length):e})).join("\n")}(e,t[3]||"");return{type:"code",raw:e,lang:t[2]?t[2].trim().replace(this.rules.inline.anyPunctuation,"$1"):t[2],text:n}}}heading(e){const t=this.rules.block.heading.exec(e);if(t){let e=t[2].trim();if(/#$/.test(e)){const t=x(e,"#");this.options.pedantic?e=t.trim():t&&!/ $/.test(t)||(e=t.trim())}return{type:"heading",raw:t[0],depth:t[1].length,text:e,tokens:this.lexer.inline(e)}}}hr(e){const t=this.rules.block.hr.exec(e);if(t)return{type:"hr",raw:t[0]}}blockquote(e){const t=this.rules.block.blockquote.exec(e);if(t){let e=t[0].replace(/\n {0,3}((?:=+|-+) *)(?=\n|$)/g,"\n    $1");e=x(e.replace(/^ *>[ \t]?/gm,""),"\n");const n=this.lexer.state.top;this.lexer.state.top=!0;const s=this.lexer.blockTokens(e);return this.lexer.state.top=n,{type:"blockquote",raw:t[0],tokens:s,text:e}}}list(e){let t=this.rules.block.list.exec(e);if(t){let n=t[1].trim();const s=n.length>1,r={type:"list",raw:"",ordered:s,start:s?+n.slice(0,-1):"",loose:!1,items:[]};n=s?`\\d{1,9}\\${n.slice(-1)}`:`\\${n}`,this.options.pedantic&&(n=s?n:"[*+-]");const i=new RegExp(`^( {0,3}${n})((?:[\t ][^\\n]*)?(?:\\n|$))`);let l="",o="",a=!1;for(;e;){let n=!1;if(!(t=i.exec(e)))break;if(this.rules.block.hr.test(e))break;l=t[0],e=e.substring(l.length);let s=t[2].split("\n",1)[0].replace(/^\t+/,(e=>" ".repeat(3*e.length))),c=e.split("\n",1)[0],h=0;this.options.pedantic?(h=2,o=s.trimStart()):(h=t[2].search(/[^ ]/),h=h>4?1:h,o=s.slice(h),h+=t[1].length);let p=!1;if(!s&&/^ *$/.test(c)&&(l+=c+"\n",e=e.substring(c.length+1),n=!0),!n){const t=new RegExp(`^ {0,${Math.min(3,h-1)}}(?:[*+-]|\\d{1,9}[.)])((?:[ \t][^\\n]*)?(?:\\n|$))`),n=new RegExp(`^ {0,${Math.min(3,h-1)}}((?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$)`),r=new RegExp(`^ {0,${Math.min(3,h-1)}}(?:\`\`\`|~~~)`),i=new RegExp(`^ {0,${Math.min(3,h-1)}}#`);for(;e;){const a=e.split("\n",1)[0];if(c=a,this.options.pedantic&&(c=c.replace(/^ {1,4}(?=( {4})*[^ ])/g,"  ")),r.test(c))break;if(i.test(c))break;if(t.test(c))break;if(n.test(e))break;if(c.search(/[^ ]/)>=h||!c.trim())o+="\n"+c.slice(h);else{if(p)break;if(s.search(/[^ ]/)>=4)break;if(r.test(s))break;if(i.test(s))break;if(n.test(s))break;o+="\n"+c}p||c.trim()||(p=!0),l+=a+"\n",e=e.substring(a.length+1),s=c.slice(h)}}r.loose||(a?r.loose=!0:/\n *\n *$/.test(l)&&(a=!0));let u,k=null;this.options.gfm&&(k=/^\[[ xX]\] /.exec(o),k&&(u="[ ] "!==k[0],o=o.replace(/^\[[ xX]\] +/,""))),r.items.push({type:"list_item",raw:l,task:!!k,checked:u,loose:!1,text:o,tokens:[]}),r.raw+=l}r.items[r.items.length-1].raw=l.trimEnd(),r.items[r.items.length-1].text=o.trimEnd(),r.raw=r.raw.trimEnd();for(let e=0;e<r.items.length;e++)if(this.lexer.state.top=!1,r.items[e].tokens=this.lexer.blockTokens(r.items[e].text,[]),!r.loose){const t=r.items[e].tokens.filter((e=>"space"===e.type)),n=t.length>0&&t.some((e=>/\n.*\n/.test(e.raw)));r.loose=n}if(r.loose)for(let e=0;e<r.items.length;e++)r.items[e].loose=!0;return r}}html(e){const t=this.rules.block.html.exec(e);if(t){return{type:"html",block:!0,raw:t[0],pre:"pre"===t[1]||"script"===t[1]||"style"===t[1],text:t[0]}}}def(e){const t=this.rules.block.def.exec(e);if(t){const e=t[1].toLowerCase().replace(/\s+/g," "),n=t[2]?t[2].replace(/^<(.*)>$/,"$1").replace(this.rules.inline.anyPunctuation,"$1"):"",s=t[3]?t[3].substring(1,t[3].length-1).replace(this.rules.inline.anyPunctuation,"$1"):t[3];return{type:"def",tag:e,raw:t[0],href:n,title:s}}}table(e){const t=this.rules.block.table.exec(e);if(!t)return;if(!/[:|]/.test(t[2]))return;const n=d(t[1]),s=t[2].replace(/^\||\| *$/g,"").split("|"),r=t[3]&&t[3].trim()?t[3].replace(/\n[ \t]*$/,"").split("\n"):[],i={type:"table",raw:t[0],header:[],align:[],rows:[]};if(n.length===s.length){for(const e of s)/^ *-+: *$/.test(e)?i.align.push("right"):/^ *:-+: *$/.test(e)?i.align.push("center"):/^ *:-+ *$/.test(e)?i.align.push("left"):i.align.push(null);for(const e of n)i.header.push({text:e,tokens:this.lexer.inline(e)});for(const e of r)i.rows.push(d(e,i.header.length).map((e=>({text:e,tokens:this.lexer.inline(e)}))));return i}}lheading(e){const t=this.rules.block.lheading.exec(e);if(t)return{type:"heading",raw:t[0],depth:"="===t[2].charAt(0)?1:2,text:t[1],tokens:this.lexer.inline(t[1])}}paragraph(e){const t=this.rules.block.paragraph.exec(e);if(t){const e="\n"===t[1].charAt(t[1].length-1)?t[1].slice(0,-1):t[1];return{type:"paragraph",raw:t[0],text:e,tokens:this.lexer.inline(e)}}}text(e){const t=this.rules.block.text.exec(e);if(t)return{type:"text",raw:t[0],text:t[0],tokens:this.lexer.inline(t[0])}}escape(e){const t=this.rules.inline.escape.exec(e);if(t)return{type:"escape",raw:t[0],text:c(t[1])}}tag(e){const t=this.rules.inline.tag.exec(e);if(t)return!this.lexer.state.inLink&&/^<a /i.test(t[0])?this.lexer.state.inLink=!0:this.lexer.state.inLink&&/^<\/a>/i.test(t[0])&&(this.lexer.state.inLink=!1),!this.lexer.state.inRawBlock&&/^<(pre|code|kbd|script)(\s|>)/i.test(t[0])?this.lexer.state.inRawBlock=!0:this.lexer.state.inRawBlock&&/^<\/(pre|code|kbd|script)(\s|>)/i.test(t[0])&&(this.lexer.state.inRawBlock=!1),{type:"html",raw:t[0],inLink:this.lexer.state.inLink,inRawBlock:this.lexer.state.inRawBlock,block:!1,text:t[0]}}link(e){const t=this.rules.inline.link.exec(e);if(t){const e=t[2].trim();if(!this.options.pedantic&&/^</.test(e)){if(!/>$/.test(e))return;const t=x(e.slice(0,-1),"\\");if((e.length-t.length)%2==0)return}else{const e=function(e,t){if(-1===e.indexOf(t[1]))return-1;let n=0;for(let s=0;s<e.length;s++)if("\\"===e[s])s++;else if(e[s]===t[0])n++;else if(e[s]===t[1]&&(n--,n<0))return s;return-1}(t[2],"()");if(e>-1){const n=(0===t[0].indexOf("!")?5:4)+t[1].length+e;t[2]=t[2].substring(0,e),t[0]=t[0].substring(0,n).trim(),t[3]=""}}let n=t[2],s="";if(this.options.pedantic){const e=/^([^'"]*[^\s])\s+(['"])(.*)\2/.exec(n);e&&(n=e[1],s=e[3])}else s=t[3]?t[3].slice(1,-1):"";return n=n.trim(),/^</.test(n)&&(n=this.options.pedantic&&!/>$/.test(e)?n.slice(1):n.slice(1,-1)),b(t,{href:n?n.replace(this.rules.inline.anyPunctuation,"$1"):n,title:s?s.replace(this.rules.inline.anyPunctuation,"$1"):s},t[0],this.lexer)}}reflink(e,t){let n;if((n=this.rules.inline.reflink.exec(e))||(n=this.rules.inline.nolink.exec(e))){const e=t[(n[2]||n[1]).replace(/\s+/g," ").toLowerCase()];if(!e){const e=n[0].charAt(0);return{type:"text",raw:e,text:e}}return b(n,e,n[0],this.lexer)}}emStrong(e,t,n=""){let s=this.rules.inline.emStrongLDelim.exec(e);if(!s)return;if(s[3]&&n.match(/[\p{L}\p{N}]/u))return;if(!(s[1]||s[2]||"")||!n||this.rules.inline.punctuation.exec(n)){const n=[...s[0]].length-1;let r,i,l=n,o=0;const a="*"===s[0][0]?this.rules.inline.emStrongRDelimAst:this.rules.inline.emStrongRDelimUnd;for(a.lastIndex=0,t=t.slice(-1*e.length+n);null!=(s=a.exec(t));){if(r=s[1]||s[2]||s[3]||s[4]||s[5]||s[6],!r)continue;if(i=[...r].length,s[3]||s[4]){l+=i;continue}if((s[5]||s[6])&&n%3&&!((n+i)%3)){o+=i;continue}if(l-=i,l>0)continue;i=Math.min(i,i+l+o);const t=[...s[0]][0].length,a=e.slice(0,n+s.index+t+i);if(Math.min(n,i)%2){const e=a.slice(1,-1);return{type:"em",raw:a,text:e,tokens:this.lexer.inlineTokens(e)}}const c=a.slice(2,-2);return{type:"strong",raw:a,text:c,tokens:this.lexer.inlineTokens(c)}}}}codespan(e){const t=this.rules.inline.code.exec(e);if(t){let e=t[2].replace(/\n/g," ");const n=/[^ ]/.test(e),s=/^ /.test(e)&&/ $/.test(e);return n&&s&&(e=e.substring(1,e.length-1)),e=c(e,!0),{type:"codespan",raw:t[0],text:e}}}br(e){const t=this.rules.inline.br.exec(e);if(t)return{type:"br",raw:t[0]}}del(e){const t=this.rules.inline.del.exec(e);if(t)return{type:"del",raw:t[0],text:t[2],tokens:this.lexer.inlineTokens(t[2])}}autolink(e){const t=this.rules.inline.autolink.exec(e);if(t){let e,n;return"@"===t[2]?(e=c(t[1]),n="mailto:"+e):(e=c(t[1]),n=e),{type:"link",raw:t[0],text:e,href:n,tokens:[{type:"text",raw:e,text:e}]}}}url(e){let t;if(t=this.rules.inline.url.exec(e)){let e,n;if("@"===t[2])e=c(t[0]),n="mailto:"+e;else{let s;do{s=t[0],t[0]=this.rules.inline._backpedal.exec(t[0])?.[0]??""}while(s!==t[0]);e=c(t[0]),n="www."===t[1]?"http://"+t[0]:t[0]}return{type:"link",raw:t[0],text:e,href:n,tokens:[{type:"text",raw:e,text:e}]}}}inlineText(e){const t=this.rules.inline.text.exec(e);if(t){let e;return e=this.lexer.state.inRawBlock?t[0]:c(t[0]),{type:"text",raw:t[0],text:e}}}}const m=/^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/,y=/(?:[*+-]|\d{1,9}[.)])/,$=k(/^(?!bull |blockCode|fences|blockquote|heading|html)((?:.|\n(?!\s*?\n|bull |blockCode|fences|blockquote|heading|html))+?)\n {0,3}(=+|-+) *(?:\n+|$)/).replace(/bull/g,y).replace(/blockCode/g,/ {4}/).replace(/fences/g,/ {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g,/ {0,3}>/).replace(/heading/g,/ {0,3}#{1,6}/).replace(/html/g,/ {0,3}<[^\n>]+>\n/).getRegex(),z=/^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table| +\n)[^\n]+)*)/,T=/(?!\s*\])(?:\\.|[^\[\]\\])+/,R=k(/^ {0,3}\[(label)\]: *(?:\n *)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n *)?| *\n *)(title))? *(?:\n+|$)/).replace("label",T).replace("title",/(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/).getRegex(),_=k(/^( {0,3}bull)([ \t][^\n]+?)?(?:\n|$)/).replace(/bull/g,y).getRegex(),A="address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul",S=/<!--(?:-?>|[\s\S]*?(?:-->|$))/,I=k("^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>\\n*|$)|<![A-Z][\\s\\S]*?(?:>\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>\\n*|$)|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n *)+\\n|$)|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$)|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$))","i").replace("comment",S).replace("tag",A).replace("attribute",/ +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/).getRegex(),E=k(z).replace("hr",m).replace("heading"," {0,3}#{1,6}(?:\\s|$)").replace("|lheading","").replace("|table","").replace("blockquote"," {0,3}>").replace("fences"," {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list"," {0,3}(?:[*+-]|1[.)]) ").replace("html","</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag",A).getRegex(),q={blockquote:k(/^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/).replace("paragraph",E).getRegex(),code:/^( {4}[^\n]+(?:\n(?: *(?:\n|$))*)?)+/,def:R,fences:/^ {0,3}(`{3,}(?=[^`\n]*(?:\n|$))|~{3,})([^\n]*)(?:\n|$)(?:|([\s\S]*?)(?:\n|$))(?: {0,3}\1[~`]* *(?=\n|$)|$)/,heading:/^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/,hr:m,html:I,lheading:$,list:_,newline:/^(?: *(?:\n|$))+/,paragraph:E,table:f,text:/^[^\n]+/},Z=k("^ *([^\\n ].*)\\n {0,3}((?:\\| *)?:?-+:? *(?:\\| *:?-+:? *)*(?:\\| *)?)(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)").replace("hr",m).replace("heading"," {0,3}#{1,6}(?:\\s|$)").replace("blockquote"," {0,3}>").replace("code"," {4}[^\\n]").replace("fences"," {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list"," {0,3}(?:[*+-]|1[.)]) ").replace("html","</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag",A).getRegex(),L={...q,table:Z,paragraph:k(z).replace("hr",m).replace("heading"," {0,3}#{1,6}(?:\\s|$)").replace("|lheading","").replace("table",Z).replace("blockquote"," {0,3}>").replace("fences"," {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list"," {0,3}(?:[*+-]|1[.)]) ").replace("html","</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag",A).getRegex()},P={...q,html:k("^ *(?:comment *(?:\\n|\\s*$)|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)|<tag(?:\"[^\"]*\"|'[^']*'|\\s[^'\"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))").replace("comment",S).replace(/tag/g,"(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b").getRegex(),def:/^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/,heading:/^(#{1,6})(.*)(?:\n+|$)/,fences:f,lheading:/^(.+?)\n {0,3}(=+|-+) *(?:\n+|$)/,paragraph:k(z).replace("hr",m).replace("heading"," *#{1,6} *[^\n]").replace("lheading",$).replace("|table","").replace("blockquote"," {0,3}>").replace("|fences","").replace("|list","").replace("|html","").replace("|tag","").getRegex()},Q=/^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,v=/^( {2,}|\\)\n(?!\s*$)/,B="\\p{P}\\p{S}",C=k(/^((?![*_])[\spunctuation])/,"u").replace(/punctuation/g,B).getRegex(),M=k(/^(?:\*+(?:((?!\*)[punct])|[^\s*]))|^_+(?:((?!_)[punct])|([^\s_]))/,"u").replace(/punct/g,B).getRegex(),O=k("^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)[punct](\\*+)(?=[\\s]|$)|[^punct\\s](\\*+)(?!\\*)(?=[punct\\s]|$)|(?!\\*)[punct\\s](\\*+)(?=[^punct\\s])|[\\s](\\*+)(?!\\*)(?=[punct])|(?!\\*)[punct](\\*+)(?!\\*)(?=[punct])|[^punct\\s](\\*+)(?=[^punct\\s])","gu").replace(/punct/g,B).getRegex(),D=k("^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)[punct](_+)(?=[\\s]|$)|[^punct\\s](_+)(?!_)(?=[punct\\s]|$)|(?!_)[punct\\s](_+)(?=[^punct\\s])|[\\s](_+)(?!_)(?=[punct])|(?!_)[punct](_+)(?!_)(?=[punct])","gu").replace(/punct/g,B).getRegex(),j=k(/\\([punct])/,"gu").replace(/punct/g,B).getRegex(),H=k(/^<(scheme:[^\s\x00-\x1f<>]*|email)>/).replace("scheme",/[a-zA-Z][a-zA-Z0-9+.-]{1,31}/).replace("email",/[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/).getRegex(),U=k(S).replace("(?:--\x3e|$)","--\x3e").getRegex(),X=k("^comment|^</[a-zA-Z][\\w:-]*\\s*>|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>|^<\\?[\\s\\S]*?\\?>|^<![a-zA-Z]+\\s[\\s\\S]*?>|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>").replace("comment",U).replace("attribute",/\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/).getRegex(),F=/(?:\[(?:\\.|[^\[\]\\])*\]|\\.|`[^`]*`|[^\[\]\\`])*?/,N=k(/^!?\[(label)\]\(\s*(href)(?:\s+(title))?\s*\)/).replace("label",F).replace("href",/<(?:\\.|[^\n<>\\])+>|[^\s\x00-\x1f]*/).replace("title",/"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/).getRegex(),G=k(/^!?\[(label)\]\[(ref)\]/).replace("label",F).replace("ref",T).getRegex(),J=k(/^!?\[(ref)\](?:\[\])?/).replace("ref",T).getRegex(),K={_backpedal:f,anyPunctuation:j,autolink:H,blockSkip:/\[[^[\]]*?\]\([^\(\)]*?\)|`[^`]*?`|<[^<>]*?>/g,br:v,code:/^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,del:f,emStrongLDelim:M,emStrongRDelimAst:O,emStrongRDelimUnd:D,escape:Q,link:N,nolink:J,punctuation:C,reflink:G,reflinkSearch:k("reflink|nolink(?!\\()","g").replace("reflink",G).replace("nolink",J).getRegex(),tag:X,text:/^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/,url:f},V={...K,link:k(/^!?\[(label)\]\((.*?)\)/).replace("label",F).getRegex(),reflink:k(/^!?\[(label)\]\s*\[([^\]]*)\]/).replace("label",F).getRegex()},W={...K,escape:k(Q).replace("])","~|])").getRegex(),url:k(/^((?:ftp|https?):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/,"i").replace("email",/[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/).getRegex(),_backpedal:/(?:[^?!.,:;*_'"~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_'"~)]+(?!$))+/,del:/^(~~?)(?=[^\s~])([\s\S]*?[^\s~])\1(?=[^~]|$)/,text:/^([`~]+|[^`~])(?:(?= {2,}\n)|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)|[\s\S]*?(?:(?=[\\<!\[`*~_]|\b_|https?:\/\/|ftp:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)))/},Y={...W,br:k(v).replace("{2,}","*").getRegex(),text:k(W.text).replace("\\b_","\\b_| {2,}\\n").replace(/\{2,\}/g,"*").getRegex()},ee={normal:q,gfm:L,pedantic:P},te={normal:K,gfm:W,breaks:Y,pedantic:V};class ne{tokens;options;state;tokenizer;inlineQueue;constructor(t){this.tokens=[],this.tokens.links=Object.create(null),this.options=t||e.defaults,this.options.tokenizer=this.options.tokenizer||new w,this.tokenizer=this.options.tokenizer,this.tokenizer.options=this.options,this.tokenizer.lexer=this,this.inlineQueue=[],this.state={inLink:!1,inRawBlock:!1,top:!0};const n={block:ee.normal,inline:te.normal};this.options.pedantic?(n.block=ee.pedantic,n.inline=te.pedantic):this.options.gfm&&(n.block=ee.gfm,this.options.breaks?n.inline=te.breaks:n.inline=te.gfm),this.tokenizer.rules=n}static get rules(){return{block:ee,inline:te}}static lex(e,t){return new ne(t).lex(e)}static lexInline(e,t){return new ne(t).inlineTokens(e)}lex(e){e=e.replace(/\r\n|\r/g,"\n"),this.blockTokens(e,this.tokens);for(let e=0;e<this.inlineQueue.length;e++){const t=this.inlineQueue[e];this.inlineTokens(t.src,t.tokens)}return this.inlineQueue=[],this.tokens}blockTokens(e,t=[]){let n,s,r,i;for(e=this.options.pedantic?e.replace(/\t/g,"    ").replace(/^ +$/gm,""):e.replace(/^( *)(\t+)/gm,((e,t,n)=>t+"    ".repeat(n.length)));e;)if(!(this.options.extensions&&this.options.extensions.block&&this.options.extensions.block.some((s=>!!(n=s.call({lexer:this},e,t))&&(e=e.substring(n.raw.length),t.push(n),!0)))))if(n=this.tokenizer.space(e))e=e.substring(n.raw.length),1===n.raw.length&&t.length>0?t[t.length-1].raw+="\n":t.push(n);else if(n=this.tokenizer.code(e))e=e.substring(n.raw.length),s=t[t.length-1],!s||"paragraph"!==s.type&&"text"!==s.type?t.push(n):(s.raw+="\n"+n.raw,s.text+="\n"+n.text,this.inlineQueue[this.inlineQueue.length-1].src=s.text);else if(n=this.tokenizer.fences(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.heading(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.hr(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.blockquote(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.list(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.html(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.def(e))e=e.substring(n.raw.length),s=t[t.length-1],!s||"paragraph"!==s.type&&"text"!==s.type?this.tokens.links[n.tag]||(this.tokens.links[n.tag]={href:n.href,title:n.title}):(s.raw+="\n"+n.raw,s.text+="\n"+n.raw,this.inlineQueue[this.inlineQueue.length-1].src=s.text);else if(n=this.tokenizer.table(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.lheading(e))e=e.substring(n.raw.length),t.push(n);else{if(r=e,this.options.extensions&&this.options.extensions.startBlock){let t=1/0;const n=e.slice(1);let s;this.options.extensions.startBlock.forEach((e=>{s=e.call({lexer:this},n),"number"==typeof s&&s>=0&&(t=Math.min(t,s))})),t<1/0&&t>=0&&(r=e.substring(0,t+1))}if(this.state.top&&(n=this.tokenizer.paragraph(r)))s=t[t.length-1],i&&"paragraph"===s.type?(s.raw+="\n"+n.raw,s.text+="\n"+n.text,this.inlineQueue.pop(),this.inlineQueue[this.inlineQueue.length-1].src=s.text):t.push(n),i=r.length!==e.length,e=e.substring(n.raw.length);else if(n=this.tokenizer.text(e))e=e.substring(n.raw.length),s=t[t.length-1],s&&"text"===s.type?(s.raw+="\n"+n.raw,s.text+="\n"+n.text,this.inlineQueue.pop(),this.inlineQueue[this.inlineQueue.length-1].src=s.text):t.push(n);else if(e){const t="Infinite loop on byte: "+e.charCodeAt(0);if(this.options.silent){console.error(t);break}throw new Error(t)}}return this.state.top=!0,t}inline(e,t=[]){return this.inlineQueue.push({src:e,tokens:t}),t}inlineTokens(e,t=[]){let n,s,r,i,l,o,a=e;if(this.tokens.links){const e=Object.keys(this.tokens.links);if(e.length>0)for(;null!=(i=this.tokenizer.rules.inline.reflinkSearch.exec(a));)e.includes(i[0].slice(i[0].lastIndexOf("[")+1,-1))&&(a=a.slice(0,i.index)+"["+"a".repeat(i[0].length-2)+"]"+a.slice(this.tokenizer.rules.inline.reflinkSearch.lastIndex))}for(;null!=(i=this.tokenizer.rules.inline.blockSkip.exec(a));)a=a.slice(0,i.index)+"["+"a".repeat(i[0].length-2)+"]"+a.slice(this.tokenizer.rules.inline.blockSkip.lastIndex);for(;null!=(i=this.tokenizer.rules.inline.anyPunctuation.exec(a));)a=a.slice(0,i.index)+"++"+a.slice(this.tokenizer.rules.inline.anyPunctuation.lastIndex);for(;e;)if(l||(o=""),l=!1,!(this.options.extensions&&this.options.extensions.inline&&this.options.extensions.inline.some((s=>!!(n=s.call({lexer:this},e,t))&&(e=e.substring(n.raw.length),t.push(n),!0)))))if(n=this.tokenizer.escape(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.tag(e))e=e.substring(n.raw.length),s=t[t.length-1],s&&"text"===n.type&&"text"===s.type?(s.raw+=n.raw,s.text+=n.text):t.push(n);else if(n=this.tokenizer.link(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.reflink(e,this.tokens.links))e=e.substring(n.raw.length),s=t[t.length-1],s&&"text"===n.type&&"text"===s.type?(s.raw+=n.raw,s.text+=n.text):t.push(n);else if(n=this.tokenizer.emStrong(e,a,o))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.codespan(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.br(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.del(e))e=e.substring(n.raw.length),t.push(n);else if(n=this.tokenizer.autolink(e))e=e.substring(n.raw.length),t.push(n);else if(this.state.inLink||!(n=this.tokenizer.url(e))){if(r=e,this.options.extensions&&this.options.extensions.startInline){let t=1/0;const n=e.slice(1);let s;this.options.extensions.startInline.forEach((e=>{s=e.call({lexer:this},n),"number"==typeof s&&s>=0&&(t=Math.min(t,s))})),t<1/0&&t>=0&&(r=e.substring(0,t+1))}if(n=this.tokenizer.inlineText(r))e=e.substring(n.raw.length),"_"!==n.raw.slice(-1)&&(o=n.raw.slice(-1)),l=!0,s=t[t.length-1],s&&"text"===s.type?(s.raw+=n.raw,s.text+=n.text):t.push(n);else if(e){const t="Infinite loop on byte: "+e.charCodeAt(0);if(this.options.silent){console.error(t);break}throw new Error(t)}}else e=e.substring(n.raw.length),t.push(n);return t}}class se{options;constructor(t){this.options=t||e.defaults}code(e,t,n){const s=(t||"").match(/^\S*/)?.[0];return e=e.replace(/\n$/,"")+"\n",s?'<pre><code class="language-'+c(s)+'">'+(n?e:c(e,!0))+"</code></pre>\n":"<pre><code>"+(n?e:c(e,!0))+"</code></pre>\n"}blockquote(e){return`<blockquote>\n${e}</blockquote>\n`}html(e,t){return e}heading(e,t,n){return`<h${t}>${e}</h${t}>\n`}hr(){return"<hr>\n"}list(e,t,n){const s=t?"ol":"ul";return"<"+s+(t&&1!==n?' start="'+n+'"':"")+">\n"+e+"</"+s+">\n"}listitem(e,t,n){return`<li>${e}</li>\n`}checkbox(e){return"<input "+(e?'checked="" ':"")+'disabled="" type="checkbox">'}paragraph(e){return`<p>${e}</p>\n`}table(e,t){return t&&(t=`<tbody>${t}</tbody>`),"<table>\n<thead>\n"+e+"</thead>\n"+t+"</table>\n"}tablerow(e){return`<tr>\n${e}</tr>\n`}tablecell(e,t){const n=t.header?"th":"td";return(t.align?`<${n} align="${t.align}">`:`<${n}>`)+e+`</${n}>\n`}strong(e){return`<strong>${e}</strong>`}em(e){return`<em>${e}</em>`}codespan(e){return`<code>${e}</code>`}br(){return"<br>"}del(e){return`<del>${e}</del>`}link(e,t,n){const s=g(e);if(null===s)return n;let r='<a href="'+(e=s)+'"';return t&&(r+=' title="'+t+'"'),r+=">"+n+"</a>",r}image(e,t,n){const s=g(e);if(null===s)return n;let r=`<img src="${e=s}" alt="${n}"`;return t&&(r+=` title="${t}"`),r+=">",r}text(e){return e}}class re{strong(e){return e}em(e){return e}codespan(e){return e}del(e){return e}html(e){return e}text(e){return e}link(e,t,n){return""+n}image(e,t,n){return""+n}br(){return""}}class ie{options;renderer;textRenderer;constructor(t){this.options=t||e.defaults,this.options.renderer=this.options.renderer||new se,this.renderer=this.options.renderer,this.renderer.options=this.options,this.textRenderer=new re}static parse(e,t){return new ie(t).parse(e)}static parseInline(e,t){return new ie(t).parseInline(e)}parse(e,t=!0){let n="";for(let s=0;s<e.length;s++){const r=e[s];if(this.options.extensions&&this.options.extensions.renderers&&this.options.extensions.renderers[r.type]){const e=r,t=this.options.extensions.renderers[e.type].call({parser:this},e);if(!1!==t||!["space","hr","heading","code","table","blockquote","list","html","paragraph","text"].includes(e.type)){n+=t||"";continue}}switch(r.type){case"space":continue;case"hr":n+=this.renderer.hr();continue;case"heading":{const e=r;n+=this.renderer.heading(this.parseInline(e.tokens),e.depth,p(this.parseInline(e.tokens,this.textRenderer)));continue}case"code":{const e=r;n+=this.renderer.code(e.text,e.lang,!!e.escaped);continue}case"table":{const e=r;let t="",s="";for(let t=0;t<e.header.length;t++)s+=this.renderer.tablecell(this.parseInline(e.header[t].tokens),{header:!0,align:e.align[t]});t+=this.renderer.tablerow(s);let i="";for(let t=0;t<e.rows.length;t++){const n=e.rows[t];s="";for(let t=0;t<n.length;t++)s+=this.renderer.tablecell(this.parseInline(n[t].tokens),{header:!1,align:e.align[t]});i+=this.renderer.tablerow(s)}n+=this.renderer.table(t,i);continue}case"blockquote":{const e=r,t=this.parse(e.tokens);n+=this.renderer.blockquote(t);continue}case"list":{const e=r,t=e.ordered,s=e.start,i=e.loose;let l="";for(let t=0;t<e.items.length;t++){const n=e.items[t],s=n.checked,r=n.task;let o="";if(n.task){const e=this.renderer.checkbox(!!s);i?n.tokens.length>0&&"paragraph"===n.tokens[0].type?(n.tokens[0].text=e+" "+n.tokens[0].text,n.tokens[0].tokens&&n.tokens[0].tokens.length>0&&"text"===n.tokens[0].tokens[0].type&&(n.tokens[0].tokens[0].text=e+" "+n.tokens[0].tokens[0].text)):n.tokens.unshift({type:"text",text:e+" "}):o+=e+" "}o+=this.parse(n.tokens,i),l+=this.renderer.listitem(o,r,!!s)}n+=this.renderer.list(l,t,s);continue}case"html":{const e=r;n+=this.renderer.html(e.text,e.block);continue}case"paragraph":{const e=r;n+=this.renderer.paragraph(this.parseInline(e.tokens));continue}case"text":{let i=r,l=i.tokens?this.parseInline(i.tokens):i.text;for(;s+1<e.length&&"text"===e[s+1].type;)i=e[++s],l+="\n"+(i.tokens?this.parseInline(i.tokens):i.text);n+=t?this.renderer.paragraph(l):l;continue}default:{const e='Token with "'+r.type+'" type was not found.';if(this.options.silent)return console.error(e),"";throw new Error(e)}}}return n}parseInline(e,t){t=t||this.renderer;let n="";for(let s=0;s<e.length;s++){const r=e[s];if(this.options.extensions&&this.options.extensions.renderers&&this.options.extensions.renderers[r.type]){const e=this.options.extensions.renderers[r.type].call({parser:this},r);if(!1!==e||!["escape","html","link","image","strong","em","codespan","br","del","text"].includes(r.type)){n+=e||"";continue}}switch(r.type){case"escape":{const e=r;n+=t.text(e.text);break}case"html":{const e=r;n+=t.html(e.text);break}case"link":{const e=r;n+=t.link(e.href,e.title,this.parseInline(e.tokens,t));break}case"image":{const e=r;n+=t.image(e.href,e.title,e.text);break}case"strong":{const e=r;n+=t.strong(this.parseInline(e.tokens,t));break}case"em":{const e=r;n+=t.em(this.parseInline(e.tokens,t));break}case"codespan":{const e=r;n+=t.codespan(e.text);break}case"br":n+=t.br();break;case"del":{const e=r;n+=t.del(this.parseInline(e.tokens,t));break}case"text":{const e=r;n+=t.text(e.text);break}default:{const e='Token with "'+r.type+'" type was not found.';if(this.options.silent)return console.error(e),"";throw new Error(e)}}}return n}}class le{options;constructor(t){this.options=t||e.defaults}static passThroughHooks=new Set(["preprocess","postprocess","processAllTokens"]);preprocess(e){return e}postprocess(e){return e}processAllTokens(e){return e}}class oe{defaults={async:!1,breaks:!1,extensions:null,gfm:!0,hooks:null,pedantic:!1,renderer:null,silent:!1,tokenizer:null,walkTokens:null};options=this.setOptions;parse=this.#e(ne.lex,ie.parse);parseInline=this.#e(ne.lexInline,ie.parseInline);Parser=ie;Renderer=se;TextRenderer=re;Lexer=ne;Tokenizer=w;Hooks=le;constructor(...e){this.use(...e)}walkTokens(e,t){let n=[];for(const s of e)switch(n=n.concat(t.call(this,s)),s.type){case"table":{const e=s;for(const s of e.header)n=n.concat(this.walkTokens(s.tokens,t));for(const s of e.rows)for(const e of s)n=n.concat(this.walkTokens(e.tokens,t));break}case"list":{const e=s;n=n.concat(this.walkTokens(e.items,t));break}default:{const e=s;this.defaults.extensions?.childTokens?.[e.type]?this.defaults.extensions.childTokens[e.type].forEach((s=>{const r=e[s].flat(1/0);n=n.concat(this.walkTokens(r,t))})):e.tokens&&(n=n.concat(this.walkTokens(e.tokens,t)))}}return n}use(...e){const t=this.defaults.extensions||{renderers:{},childTokens:{}};return e.forEach((e=>{const n={...e};if(n.async=this.defaults.async||n.async||!1,e.extensions&&(e.extensions.forEach((e=>{if(!e.name)throw new Error("extension name required");if("renderer"in e){const n=t.renderers[e.name];t.renderers[e.name]=n?function(...t){let s=e.renderer.apply(this,t);return!1===s&&(s=n.apply(this,t)),s}:e.renderer}if("tokenizer"in e){if(!e.level||"block"!==e.level&&"inline"!==e.level)throw new Error("extension level must be 'block' or 'inline'");const n=t[e.level];n?n.unshift(e.tokenizer):t[e.level]=[e.tokenizer],e.start&&("block"===e.level?t.startBlock?t.startBlock.push(e.start):t.startBlock=[e.start]:"inline"===e.level&&(t.startInline?t.startInline.push(e.start):t.startInline=[e.start]))}"childTokens"in e&&e.childTokens&&(t.childTokens[e.name]=e.childTokens)})),n.extensions=t),e.renderer){const t=this.defaults.renderer||new se(this.defaults);for(const n in e.renderer){if(!(n in t))throw new Error(`renderer '${n}' does not exist`);if("options"===n)continue;const s=n,r=e.renderer[s],i=t[s];t[s]=(...e)=>{let n=r.apply(t,e);return!1===n&&(n=i.apply(t,e)),n||""}}n.renderer=t}if(e.tokenizer){const t=this.defaults.tokenizer||new w(this.defaults);for(const n in e.tokenizer){if(!(n in t))throw new Error(`tokenizer '${n}' does not exist`);if(["options","rules","lexer"].includes(n))continue;const s=n,r=e.tokenizer[s],i=t[s];t[s]=(...e)=>{let n=r.apply(t,e);return!1===n&&(n=i.apply(t,e)),n}}n.tokenizer=t}if(e.hooks){const t=this.defaults.hooks||new le;for(const n in e.hooks){if(!(n in t))throw new Error(`hook '${n}' does not exist`);if("options"===n)continue;const s=n,r=e.hooks[s],i=t[s];le.passThroughHooks.has(n)?t[s]=e=>{if(this.defaults.async)return Promise.resolve(r.call(t,e)).then((e=>i.call(t,e)));const n=r.call(t,e);return i.call(t,n)}:t[s]=(...e)=>{let n=r.apply(t,e);return!1===n&&(n=i.apply(t,e)),n}}n.hooks=t}if(e.walkTokens){const t=this.defaults.walkTokens,s=e.walkTokens;n.walkTokens=function(e){let n=[];return n.push(s.call(this,e)),t&&(n=n.concat(t.call(this,e))),n}}this.defaults={...this.defaults,...n}})),this}setOptions(e){return this.defaults={...this.defaults,...e},this}lexer(e,t){return ne.lex(e,t??this.defaults)}parser(e,t){return ie.parse(e,t??this.defaults)}#e(e,t){return(n,s)=>{const r={...s},i={...this.defaults,...r};!0===this.defaults.async&&!1===r.async&&(i.silent||console.warn("marked(): The async option was set to true by an extension. The async: false option sent to parse will be ignored."),i.async=!0);const l=this.#t(!!i.silent,!!i.async);if(null==n)return l(new Error("marked(): input parameter is undefined or null"));if("string"!=typeof n)return l(new Error("marked(): input parameter is of type "+Object.prototype.toString.call(n)+", string expected"));if(i.hooks&&(i.hooks.options=i),i.async)return Promise.resolve(i.hooks?i.hooks.preprocess(n):n).then((t=>e(t,i))).then((e=>i.hooks?i.hooks.processAllTokens(e):e)).then((e=>i.walkTokens?Promise.all(this.walkTokens(e,i.walkTokens)).then((()=>e)):e)).then((e=>t(e,i))).then((e=>i.hooks?i.hooks.postprocess(e):e)).catch(l);try{i.hooks&&(n=i.hooks.preprocess(n));let s=e(n,i);i.hooks&&(s=i.hooks.processAllTokens(s)),i.walkTokens&&this.walkTokens(s,i.walkTokens);let r=t(s,i);return i.hooks&&(r=i.hooks.postprocess(r)),r}catch(e){return l(e)}}}#t(e,t){return n=>{if(n.message+="\nPlease report this to https://github.com/markedjs/marked.",e){const e="<p>An error occurred:</p><pre>"+c(n.message+"",!0)+"</pre>";return t?Promise.resolve(e):e}if(t)return Promise.reject(n);throw n}}}const ae=new oe;function ce(e,t){return ae.parse(e,t)}ce.options=ce.setOptions=function(e){return ae.setOptions(e),ce.defaults=ae.defaults,n(ce.defaults),ce},ce.getDefaults=t,ce.defaults=e.defaults,ce.use=function(...e){return ae.use(...e),ce.defaults=ae.defaults,n(ce.defaults),ce},ce.walkTokens=function(e,t){return ae.walkTokens(e,t)},ce.parseInline=ae.parseInline,ce.Parser=ie,ce.parser=ie.parse,ce.Renderer=se,ce.TextRenderer=re,ce.Lexer=ne,ce.lexer=ne.lex,ce.Tokenizer=w,ce.Hooks=le,ce.parse=ce;const he=ce.options,pe=ce.setOptions,ue=ce.use,ke=ce.walkTokens,ge=ce.parseInline,fe=ce,de=ie.parse,xe=ne.lex;e.Hooks=le,e.Lexer=ne,e.Marked=oe,e.Parser=ie,e.Renderer=se,e.TextRenderer=re,e.Tokenizer=w,e.getDefaults=t,e.lexer=xe,e.marked=ce,e.options=he,e.parse=fe,e.parseInline=ge,e.parser=de,e.setOptions=pe,e.use=ue,e.walkTokens=ke}));
+  </script>
 
   <script>
     (function () {
@@ -1267,6 +1543,317 @@
         return lines.join('\n') + '\n' + body;
       }
 
+      // ---------- body editor: toolbar, live-highlight, preview ----------
+
+      var BODY_PLACEHOLDERS = {
+        heading: 'כותרת',
+        bold: 'מודגש',
+        italic: 'נטוי',
+        ltr: 'טקסט לועזי',
+        poem: 'שורות השיר',
+        citationQuote: 'ציטוט לדוגמה'
+      };
+
+      // A "word" character for boundary-snapping below — letters/digits in any script (so Hebrew
+      // text is covered, not just ASCII \w) plus underscore.
+      function isWordChar(ch) {
+        return !!ch && /[\p{L}\p{N}_]/u.test(ch);
+      }
+
+      // If start/end sit in the middle of a word, push them out to the nearest word boundary.
+      // Without this, wrapping e.g. "his" out of "t|his wil|l" with ** produces "t**his wil**l" —
+      // markdown emphasis markers glued to letters on both sides read as part of the word, not as
+      // formatting, to anyone (or any parser) not applying CommonMark's flanking rules exactly.
+      function expandToWordBoundaries(val, start, end) {
+        while (start > 0 && isWordChar(val[start - 1]) && isWordChar(val[start])) start--;
+        while (end < val.length && isWordChar(val[end - 1]) && isWordChar(val[end])) end++;
+        return { start: start, end: end };
+      }
+
+      // Replaces ta.value.slice(start, end) with `text`, going through execCommand('insertText')
+      // instead of a direct ta.value assignment. Setting .value directly doesn't register as an
+      // undoable edit — worse, it leaves the browser's native undo stack in place but disconnected
+      // from the new text, so a later Ctrl+Z after a toolbar click either no-ops or replays some
+      // unrelated earlier edit instead of reverting the toolbar's own change. Routing through
+      // execCommand makes each toolbar action a real, correctly-ordered undo/redo step, same as
+      // typing. Falls back to a direct assignment only if execCommand is unavailable/fails.
+      function replaceBodyRange(ta, start, end, text) {
+        ta.focus();
+        ta.setSelectionRange(start, end);
+        var ok = false;
+        try { ok = document.execCommand('insertText', false, text); } catch (err) { ok = false; }
+        if (!ok) {
+          var val = ta.value;
+          ta.value = val.slice(0, start) + text + val.slice(end);
+          ta.setSelectionRange(start + text.length, start + text.length);
+        }
+      }
+
+      // Wraps the current selection with before/after, or inserts a placeholder if nothing is
+      // selected. Always inserts before+after together — never a lone open or close tag — so the
+      // toolbar can't itself produce an unbalanced shortcode; checkShortcodeBalance() below is
+      // only a backstop for manual edits after the fact.
+      function bodyWrapSelection(before, after, placeholder, snapToWords) {
+        var ta = document.getElementById('f_body');
+        var start = ta.selectionStart, end = ta.selectionEnd;
+        var val = ta.value;
+        if (snapToWords && start !== end) {
+          var expanded = expandToWordBoundaries(val, start, end);
+          start = expanded.start;
+          end = expanded.end;
+        }
+        var selected = val.slice(start, end) || placeholder;
+        replaceBodyRange(ta, start, end, before + selected + after);
+        var pos = start + before.length;
+        ta.setSelectionRange(pos, pos + selected.length);
+        syncBodyHighlight();
+      }
+
+      // Does `marker` sit immediately before/after `pos`? For the single-char italic marker,
+      // also reject a hit that's actually one leg of a bold `**` pair (e.g. the italic check
+      // must not fire on the inner star of "**word**") — mirrors the flanking guard the
+      // highlighter regex uses.
+      function markerEndsAt(val, pos, marker) {
+        if (val.slice(pos - marker.length, pos) !== marker) return false;
+        if (marker === '*' && val.charAt(pos - marker.length - 1) === '*') return false;
+        return true;
+      }
+      function markerStartsAt(val, pos, marker) {
+        if (val.slice(pos, pos + marker.length) !== marker) return false;
+        if (marker === '*' && val.charAt(pos + marker.length) === '*') return false;
+        return true;
+      }
+
+      // Toggles `marker` around the current selection instead of always adding more of it:
+      // clicking bold/italic on text that's already bold/italic removes the markers instead of
+      // nesting a second pair around them.
+      function bodyToggleWrap(marker, placeholder, snapToWords) {
+        var ta = document.getElementById('f_body');
+        var start = ta.selectionStart, end = ta.selectionEnd;
+        var val = ta.value;
+
+        // Selection includes the markers themselves, e.g. "**|word|**" selected as "**word**".
+        if (end - start >= marker.length * 2 &&
+            markerStartsAt(val, start, marker) &&
+            markerEndsAt(val, end, marker)) {
+          var inner = val.slice(start + marker.length, end - marker.length);
+          replaceBodyRange(ta, start, end, inner);
+          ta.setSelectionRange(start, start + inner.length);
+          syncBodyHighlight();
+          return;
+        }
+
+        // Markers sit just outside the selection, e.g. "**word**" with only "word" selected.
+        if (start !== end && markerEndsAt(val, start, marker) && markerStartsAt(val, end, marker)) {
+          var newStart = start - marker.length;
+          replaceBodyRange(ta, newStart, end + marker.length, val.slice(start, end));
+          ta.setSelectionRange(newStart, newStart + (end - start));
+          syncBodyHighlight();
+          return;
+        }
+
+        bodyWrapSelection(marker, marker, placeholder, snapToWords);
+      }
+
+      function bodyInsertBlock(text, selStart, selLen) {
+        var ta = document.getElementById('f_body');
+        var start = ta.selectionStart;
+        var val = ta.value;
+        var needsNlBefore = start > 0 && val[start - 1] !== '\n' ? '\n' : '';
+        var needsNlAfter = start < val.length && val[start] !== '\n' ? '\n' : '';
+        var insert = needsNlBefore + text + needsNlAfter;
+        replaceBodyRange(ta, start, start, insert);
+        var base = start + needsNlBefore.length;
+        ta.setSelectionRange(base + selStart, base + selStart + selLen);
+        syncBodyHighlight();
+      }
+
+      function handleBodyToolbarCommand(cmd) {
+        switch (cmd) {
+          case 'heading': bodyWrapSelection('## ', '', BODY_PLACEHOLDERS.heading); break;
+          case 'bold': bodyToggleWrap('**', BODY_PLACEHOLDERS.bold, true); break;
+          case 'italic': bodyToggleWrap('*', BODY_PLACEHOLDERS.italic, true); break;
+          case 'ltr': bodyWrapSelection('{{% ltr %}}\n', '\n{{% /ltr %}}', BODY_PLACEHOLDERS.ltr); break;
+          case 'poem': bodyWrapSelection('{{% poem %}}\n', '\n{{% /poem %}}', BODY_PLACEHOLDERS.poem); break;
+          case 'citation': {
+            var quote = BODY_PLACEHOLDERS.citationQuote;
+            bodyInsertBlock('> "' + quote + '"\n>\n> שם המקור', 3, quote.length);
+            break;
+          }
+        }
+      }
+
+      // Live-highlight overlay for the body textarea: a styled backdrop sits behind a
+      // transparent-text textarea (see #f_body / .body-backdrop CSS). This function can only
+      // ever change color/weight/font-style on a span, never font-size or spacing, because the
+      // backdrop has to stay pixel-for-pixel aligned with the real (invisible) textarea text
+      // underneath it — that's what keeps the caret, selection, and native keyboard/mouse
+      // behavior exactly matching a plain textarea. Anything this doesn't recognize (a bullet
+      // list, a table, an H1, a link — any markdown outside the 6 toolbar buttons) just falls
+      // through as plain escaped text on the last branch below: never crashes, never touches the
+      // underlying characters, and still saves/previews correctly since it's real markdown.
+      function highlightBodyInline(s) {
+        s = escapeHtml(s);
+        s = s.replace(/(\*\*)([^*]*)(\*\*)/g, '<span class="hl-marker">$1</span><span class="hl-bold">$2</span><span class="hl-marker">$3</span>');
+        s = s.replace(/(?<!\*)(\*)([^*]+)(\*)(?!\*)/g, '<span class="hl-marker">$1</span><span class="hl-italic">$2</span><span class="hl-marker">$3</span>');
+        return s;
+      }
+
+      function highlightBody(src) {
+        var lines = src.split('\n');
+        var out = [];
+        var i = 0;
+        while (i < lines.length) {
+          var line = lines[i];
+          if (line.indexOf('## ') === 0) {
+            out.push('<span class="hl-marker">## </span><span class="hl-heading-text">' + escapeHtml(line.slice(3)) + '</span>');
+          } else if (line === '>') {
+            out.push('<span class="hl-marker">&gt;</span>');
+          } else if (line.indexOf('> ') === 0) {
+            out.push('<span class="hl-marker">&gt; </span><span class="hl-quote-text">' + escapeHtml(line.slice(2)) + '</span>');
+          } else if (line.trim() === '{{% ltr %}}' || line.trim() === '{{% /ltr %}}' || line.trim() === '{{% poem %}}' || line.trim() === '{{% /poem %}}') {
+            out.push('<span class="hl-tag">' + escapeHtml(line) + '</span>');
+          } else {
+            out.push(highlightBodyInline(line));
+          }
+          i++;
+          if (i < lines.length) out.push('\n');
+        }
+        return out.join('');
+      }
+
+      function syncBodyHighlight() {
+        var ta = document.getElementById('f_body');
+        var backdrop = document.getElementById('bodyBackdrop');
+        var html = highlightBody(ta.value);
+        // A <textarea> whose value ends in "\n" renders (and scrolls for) one extra phantom
+        // empty line past that newline — it needs somewhere to show the caret if the author
+        // types more. A plain white-space:pre-wrap div doesn't grow for a trailing newline the
+        // same way, so without this the backdrop ends up exactly one line short of the
+        // textarea's real scroll height, and scrollTop sync gets clamped short near the very
+        // bottom of any story whose body happens to end with a blank line.
+        if (ta.value.slice(-1) === '\n') html += '\n';
+        backdrop.innerHTML = html;
+        backdrop.scrollTop = ta.scrollTop;
+        // The browser can auto-scroll the textarea to keep the caret in view (e.g. typing or a
+        // toolbar wrap near the bottom edge) slightly after this event handler already ran, and
+        // that adjustment doesn't reliably fire its own 'scroll' event in every browser. Re-check
+        // on the next frame so the backdrop can't get stuck showing a stale scroll position.
+        requestAnimationFrame(function () {
+          if (backdrop.scrollTop !== ta.scrollTop) backdrop.scrollTop = ta.scrollTop;
+        });
+      }
+
+      function countOccurrences(str, sub) {
+        return str.split(sub).length - 1;
+      }
+
+      // Backstop, not the primary defense: the toolbar buttons only ever insert matched
+      // {{% x %}}/{{% /x %}} pairs together (see bodyWrapSelection above), so an imbalance here
+      // means a manual edit broke one — e.g. deleted a closing tag while editing around it.
+      function checkShortcodeBalance(body) {
+        var errors = [];
+        if (countOccurrences(body, '{{% ltr %}}') !== countOccurrences(body, '{{% /ltr %}}')) {
+          errors.push('יש חוסר איזון בתגית {{% ltr %}} / {{% /ltr %}} בגוף הסיפור — יש לוודא שכל פתיחה נסגרת.');
+        }
+        if (countOccurrences(body, '{{% poem %}}') !== countOccurrences(body, '{{% /poem %}}')) {
+          errors.push('יש חוסר איזון בתגית {{% poem %}} / {{% /poem %}} בגוף הסיפור — יש לוודא שכל פתיחה נסגרת.');
+        }
+        return errors;
+      }
+
+      // Full preview: recursively splits out the two Hugo shortcode blocks (ltr/poem — real
+      // Hugo shortcode syntax, not markdown, so the vendored parser wouldn't know what to do with
+      // them) and renders everything else through `marked` for full CommonMark/GFM fidelity — any
+      // valid markdown beyond the 6 toolbar buttons (a list, a table, a link, any heading level)
+      // renders correctly here too, matching the "render it, don't restrict it" decision. The
+      // recursive structure (rather than a flat regex) is what makes nested shortcodes, like an
+      // ltr block wrapping a poem block (used in a couple of real stories), render correctly.
+      function renderBodyPreview(src) {
+        var lines = src.replace(/\r\n/g, '\n').split('\n');
+
+        function findMatchingClose(openTag, closeTag, startAfter, endI) {
+          var depth = 1;
+          var j = startAfter;
+          while (j < endI) {
+            var t = lines[j].trim();
+            if (t === openTag) depth++;
+            else if (t === closeTag) {
+              depth--;
+              if (depth === 0) return j;
+            }
+            j++;
+          }
+          return endI; // unbalanced — best-effort: treat the rest of the range as inner content
+        }
+
+        function renderRange(startI, endI) {
+          var out = [];
+          var buffer = [];
+          function flushBuffer() {
+            if (buffer.length) {
+              out.push(marked.parse(buffer.join('\n')));
+              buffer = [];
+            }
+          }
+          var i = startI;
+          while (i < endI) {
+            var trimmed = lines[i].trim();
+            if (trimmed === '{{% ltr %}}' || trimmed === '{{% poem %}}') {
+              flushBuffer();
+              var isLtr = trimmed === '{{% ltr %}}';
+              var closeTag = isLtr ? '{{% /ltr %}}' : '{{% /poem %}}';
+              var closeIdx = findMatchingClose(trimmed, closeTag, i + 1, endI);
+              var innerHtml = renderRange(i + 1, closeIdx);
+              out.push('<div class="' + (isLtr ? 'ltr-block' : 'poem') + '">' + innerHtml + '</div>');
+              i = Math.min(closeIdx + 1, endI);
+            } else {
+              buffer.push(lines[i]);
+              i++;
+            }
+          }
+          flushBuffer();
+          return out.join('');
+        }
+
+        return renderRange(0, lines.length);
+      }
+
+      function setBodyPreviewShown(shown) {
+        var backdrop = document.getElementById('bodyBackdrop');
+        var ta = document.getElementById('f_body');
+        var preview = document.getElementById('bodyPreview');
+        var toggle = document.getElementById('bodyPreviewToggle');
+        var label = document.getElementById('bodyPreviewToggleLabel');
+        backdrop.classList.toggle('hidden', shown);
+        ta.classList.toggle('hidden', shown);
+        preview.classList.toggle('shown', shown);
+        toggle.classList.toggle('active', shown);
+        label.textContent = shown ? 'חזרה לעריכה' : 'תצוגה מקדימה';
+        if (shown) preview.innerHTML = renderBodyPreview(ta.value);
+      }
+
+      document.getElementById('bodyToolbar').addEventListener('click', function (e) {
+        var btn = e.target.closest('button[data-cmd]');
+        if (btn) handleBodyToolbarCommand(btn.dataset.cmd);
+      });
+      document.getElementById('f_body').addEventListener('input', syncBodyHighlight);
+      document.getElementById('f_body').addEventListener('scroll', function () {
+        document.getElementById('bodyBackdrop').scrollTop = this.scrollTop;
+      });
+      // Ctrl/Cmd+B and Ctrl/Cmd+I. Keyed off e.code (the physical key position, "KeyB"/"KeyI")
+      // rather than e.key (the character the active keyboard layout produces) — with a Hebrew
+      // layout active, e.key for the B/I keys is a Hebrew letter, not 'b'/'i', so checking e.key
+      // would silently never match.
+      document.getElementById('f_body').addEventListener('keydown', function (e) {
+        if (!(e.ctrlKey || e.metaKey)) return;
+        if (e.code === 'KeyB') { e.preventDefault(); handleBodyToolbarCommand('bold'); }
+        else if (e.code === 'KeyI') { e.preventDefault(); handleBodyToolbarCommand('italic'); }
+      });
+      document.getElementById('bodyPreviewToggle').addEventListener('click', function () {
+        setBodyPreviewShown(!document.getElementById('bodyPreview').classList.contains('shown'));
+      });
+
       // ---------- auth flow ----------
 
       var validatedToken = null;
@@ -1551,6 +2138,8 @@
         document.getElementById('f_featured').checked = !!state.fields.featured;
         document.getElementById('f_draft').checked = !!state.fields.draft;
         document.getElementById('f_body').value = state.body || '';
+        setBodyPreviewShown(false);
+        syncBodyHighlight();
         document.getElementById('formErrors').classList.add('hidden');
         renderCoverSection();
         state.pristineSnapshot = JSON.stringify(collectFormToFields());
@@ -1652,6 +2241,7 @@
         if (!collected.slug || !/^[a-z0-9-]+$/.test(collected.slug)) {
           errors.push('כתובת האתר (Slug) חייבת להכיל רק אותיות לועזיות קטנות, מספרים ומקפים.');
         }
+        errors.push.apply(errors, checkShortcodeBalance(collected.body));
 
         var isRenameCheck = state.mode === 'edit' && collected.slug !== state.slug;
         if (isRenameCheck && state.coverAction === 'none' && state.fields.cover && !state.originalCover) {
