@@ -340,6 +340,21 @@ main { flex: 1; }
 .ss-card:hover .ss-card__cover { border-color: var(--accent); }
 
 /* ==========================================================================
+   RSS follow (Homepage)
+   ========================================================================== */
+.ss-rss-section { max-width: 1180px; margin: 0 auto; padding: 76px 28px 56px; }
+.ss-rss {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; border: 1px solid var(--border);
+  border-radius: 14px; background: var(--bg-2); padding: 18px 24px;
+}
+.ss-rss__text { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13.5px; line-height: 1.6; }
+.ss-rss__icon { width: 18px; height: 18px; flex-shrink: 0; color: var(--accent-text); }
+.ss-rss__hint { color: var(--text-dim); }
+.ss-rss__link { flex-shrink: 0; font-size: 13px; text-decoration: none; white-space: nowrap; margin-inline-start: auto; }
+.ss-rss__link:hover { text-decoration: underline; }
+
+/* ==========================================================================
    Contact
    ========================================================================== */
 .ss-contact-section { max-width: 1180px; margin: 0 auto; padding: 66px 28px 80px; }
@@ -657,6 +672,9 @@ main { flex: 1; }
   .ss-hero__inner { padding: 48px 16px 44px; }
   .ss-cards { grid-template-columns: 1fr; }
   .ss-grid-section { padding: 44px 16px 16px; }
+  .ss-rss-section { padding: 48px 16px 36px; }
+  .ss-rss { padding: 16px 18px; }
+  .ss-rss__link { margin-inline: auto; }
   .ss-contact-section { padding: 44px 16px 60px; }
   .ss-contact { padding: 36px 20px; }
   .ss-archive { padding: 44px 16px 60px; }
