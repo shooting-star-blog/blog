@@ -1,0 +1,26 @@
+name = "shooting-star-contact"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+
+# Allows this worker to send email through Cloudflare Email Routing.
+# No destination_address/allowed_destination_addresses restriction here on
+# purpose -- pinning it would mean hardcoding the real inbox address in this
+# committed file. Leaving it unset just means "any verified destination on
+# this account", and only the account owner can verify a destination in the
+# Email Routing dashboard, so this stays safe without exposing the address.
+[[send_email]]
+name = "SEND_EMAIL"
+
+# The real inbox address and the Turnstile secret key are set as Worker
+# secrets, not committed here (secrets live only on Cloudflare, never in
+# this repo):
+#   wrangler secret put TO_ADDRESS
+#   wrangler secret put TURNSTILE_SECRET
+#
+# Comma-separated allowlist of origins permitted to call this worker.
+# Includes Hugo's local dev server port so `hugo server` can test against
+# the real deployed worker (redeploy after editing this list). Not
+# sensitive -- this is the same origin any visitor's browser already sees.
+[vars]
+ALLOWED_ORIGINS = "https://shooting-star-blog.com,http://localhost:1313"
+FROM_ADDRESS = "contact@shooting-star-blog.com"

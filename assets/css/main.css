@@ -340,48 +340,56 @@ main { flex: 1; }
 .ss-card:hover .ss-card__cover { border-color: var(--accent); }
 
 /* ==========================================================================
-   Newsletter
+   Contact
    ========================================================================== */
-.ss-newsletter-section { max-width: 1180px; margin: 0 auto; padding: 66px 28px 80px; }
-.ss-newsletter {
+.ss-contact-section { max-width: 1180px; margin: 0 auto; padding: 66px 28px 80px; }
+.ss-contact {
   position: relative; overflow: hidden; border: 1px solid var(--border);
   border-radius: 18px; background: var(--bg-2); padding: 54px 44px; text-align: center;
 }
-.ss-newsletter__stars {
+.ss-contact__stars {
   position: absolute; inset: 0; pointer-events: none; opacity: 0.7;
   background:
     radial-gradient(1.3px 1.3px at 20% 40%, var(--star), transparent),
     radial-gradient(1.1px 1.1px at 76% 30%, var(--star), transparent),
     radial-gradient(1.4px 1.4px at 60% 70%, var(--star), transparent);
 }
-.ss-newsletter__inner { position: relative; max-width: 520px; margin: 0 auto; }
-.ss-newsletter__title {
+.ss-contact__inner { position: relative; max-width: 480px; margin: 0 auto; }
+.ss-contact__title {
   font-weight: 700; font-size: clamp(26px, 3.2vw, 36px); line-height: 1.25;
   letter-spacing: -0.01em; margin-bottom: 14px; text-wrap: balance;
 }
-.ss-newsletter__desc { font-size: 17px; line-height: 1.7; color: var(--text-dim); margin-bottom: 28px; }
-.ss-newsletter__form {
-  display: flex; gap: 10px; max-width: 440px; margin: 0 auto;
-  flex-wrap: wrap; justify-content: center;
+.ss-contact__desc { font-size: 17px; line-height: 1.7; color: var(--text-dim); margin-bottom: 28px; }
+.ss-contact__form { display: flex; flex-direction: column; gap: 14px; text-align: right; }
+.ss-contact__row { display: flex; flex-direction: column; gap: 6px; }
+.ss-contact__label { font-size: 13px; color: var(--text-dim); }
+.ss-contact__input,
+.ss-contact__textarea {
+  font-family: var(--font-ui); font-size: 14.5px;
+  padding: 13px 16px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text); outline: none; width: 100%;
 }
-.ss-newsletter__label {
+.ss-contact__input { border-radius: 999px; }
+.ss-contact__input[type="email"] { direction: ltr; }
+.ss-contact__textarea {
+  border-radius: 16px; resize: vertical; min-height: 110px; font-family: inherit;
+}
+.ss-contact__input::placeholder,
+.ss-contact__textarea::placeholder { color: var(--text-dim); }
+.ss-contact__input:focus,
+.ss-contact__textarea:focus { border-color: var(--accent); }
+.ss-contact__honeypot {
   position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);
 }
-.ss-newsletter__input {
-  flex: 1; min-width: 220px; font-family: var(--font-ui); font-size: 14.5px;
-  padding: 13px 16px; border-radius: 999px; border: 1px solid var(--border);
-  background: var(--surface); color: var(--text); outline: none; direction: ltr;
-}
-.ss-newsletter__input::placeholder { color: var(--text-dim); }
-.ss-newsletter__input:focus { border-color: var(--accent); }
-.ss-newsletter__submit {
+.ss-contact__turnstile { display: flex; justify-content: center; margin-top: 4px; }
+.ss-contact__submit {
   font-family: var(--font-ui); font-size: 14.5px; font-weight: 600;
   color: var(--bg); background: var(--text); padding: 13px 24px; border-radius: 999px;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s; align-self: center; min-width: 140px;
 }
-.ss-newsletter__submit:hover { opacity: 0.88; }
-.ss-newsletter__consent { font-size: 13px; color: var(--text-dim); margin-top: 16px; }
-.ss-newsletter__consent a { color: var(--accent-text); text-decoration: underline; }
+.ss-contact__submit:hover { opacity: 0.88; }
+.ss-contact__submit:disabled { opacity: 0.6; cursor: default; }
+.ss-contact__status { font-size: 13px; color: var(--text-dim); margin-top: 4px; min-height: 1.2em; }
 
 /* ==========================================================================
    Story single page
@@ -649,8 +657,8 @@ main { flex: 1; }
   .ss-hero__inner { padding: 48px 16px 44px; }
   .ss-cards { grid-template-columns: 1fr; }
   .ss-grid-section { padding: 44px 16px 16px; }
-  .ss-newsletter-section { padding: 44px 16px 60px; }
-  .ss-newsletter { padding: 36px 20px; }
+  .ss-contact-section { padding: 44px 16px 60px; }
+  .ss-contact { padding: 36px 20px; }
   .ss-archive { padding: 44px 16px 60px; }
   .ss-archive__item { gap: 14px; align-items: stretch; }
   .ss-archive__cover { width: 92px; aspect-ratio: auto; align-self: stretch; }

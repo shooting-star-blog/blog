@@ -1,0 +1,92 @@
+<section class="ss-contact-section" aria-labelledby="contact-heading">
+  <div class="ss-contact">
+    <div class="ss-contact__stars" aria-hidden="true"></div>
+    <div class="ss-contact__inner">
+      <h2 id="contact-heading" class="ss-contact__title">יצירת קשר</h2>
+      <p class="ss-contact__desc">בואו נשתף פעולה, שלחו הודעה ואני אחזור אליכם.</p>
+
+      <form class="ss-contact__form" id="ss-contact-form" novalidate
+            data-endpoint="{{ .Site.Params.contactFormEndpoint }}">
+        <div class="ss-contact__row">
+          <label for="ss-contact-name" class="ss-contact__label">שם (לא חובה)</label>
+          <input id="ss-contact-name" name="name" type="text"
+                 class="ss-contact__input" autocomplete="name">
+        </div>
+
+        <div class="ss-contact__row">
+          <label for="ss-contact-email" class="ss-contact__label">דוא״ל (לא חובה, לצורך תשובה)</label>
+          <input id="ss-contact-email" name="email" type="email"
+                 class="ss-contact__input" dir="ltr" autocomplete="email">
+        </div>
+
+        <div class="ss-contact__row">
+          <label for="ss-contact-message" class="ss-contact__label">הודעה</label>
+          <textarea id="ss-contact-message" name="message" rows="4" required
+                    aria-required="true" class="ss-contact__textarea"></textarea>
+        </div>
+
+        <div class="ss-contact__honeypot" aria-hidden="true">
+          <label for="ss-contact-website">אתר</label>
+          <input id="ss-contact-website" name="website" type="text" tabindex="-1" autocomplete="off">
+        </div>
+
+        {{ with .Site.Params.turnstileSiteKey }}
+        <div class="cf-turnstile ss-contact__turnstile" data-sitekey="{{ . }}" data-theme="auto"></div>
+        {{ end }}
+
+        <button type="submit" class="ss-contact__submit">שליחה</button>
+        <p class="ss-contact__status" id="ss-contact-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+{{ with .Site.Params.turnstileSiteKey }}
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{{ end }}
+
+{{ with .Site.Params.contactFormEndpoint }}
+<script>
+(function () {
+  var form = document.getElementById('ss-contact-form');
+  var endpoint = form ? form.dataset.endpoint : '';
+  var status = document.getElementById('ss-contact-status');
+  if (!form) return;
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    if (form.website.value) return; // honeypot tripped, drop silently
+
+    var message = form.message.value.trim();
+    if (!message) return;
+
+    var data = {
+      name: form.name.value.trim(),
+      email: form.email.value.trim(),
+      message: message,
+      turnstileToken: (form.querySelector('[name="cf-turnstile-response"]') || {}).value || ''
+    };
+
+    var btn = form.querySelector('.ss-contact__submit');
+    btn.disabled = true;
+    status.textContent = 'שולח...';
+
+    fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(function (res) {
+      if (!res.ok) throw new Error('bad response');
+      status.textContent = 'ההודעה נשלחה, תודה!';
+      form.reset();
+      if (window.turnstile) window.turnstile.reset();
+    }).catch(function () {
+      status.textContent = 'משהו השתבש. אפשר לנסות שוב מאוחר יותר.';
+    }).finally(function () {
+      btn.disabled = false;
+    });
+  });
+})();
+</script>
+{{ end }}

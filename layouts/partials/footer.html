@@ -5,7 +5,7 @@
       <div class="ss-footer__brand-logo">
         {{ .Site.Title }}
       </div>
-      <p class="ss-footer__brand-desc">מדע בדיוני קצר על מסעות בחלל, מושבות, והעתידים שאנחנו עדיין כותבים את דרכנו אליהם.</p>
+      <p class="ss-footer__brand-desc">סיפורי מדע בדיוני קצרים על מסעות בחלל, מושבות, והעתידים שאנחנו עדיין כותבים את דרכנו אליהם.</p>
     </div>
 
     <div class="ss-footer__col">
@@ -22,11 +22,6 @@
       <p class="ss-footer__col-label">במקומות אחרים</p>
       <ul class="ss-footer__links">
         <li><a href="{{ "/index.xml" | absURL }}">הזנת RSS</a></li>
-        {{ if .Site.Params.newsletterEnabled }}
-        {{ with .Site.Params.buttondownUsername }}
-        <li><a href="https://buttondown.email/{{ . }}">ניוזלטר</a></li>
-        {{ end }}
-        {{ end }}
       </ul>
     </div>
 

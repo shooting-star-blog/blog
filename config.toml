@@ -7,9 +7,9 @@ enableRobotsTXT = true
 [params]
   description = "סיפורי מדע בדיוני ופנטזיה קצרים מאת ש.מ"
   author = "ש.מ"
-  contactEmail = "shootingstarblog@outlook.com"
-  newsletterEnabled = false # Buttondown dropped: no RTL support. Flip on once a Hebrew-friendly provider is picked
-  buttondownUsername = "shootingstarblog" # kept for reference; unused while newsletterEnabled = false
+  contactEmail = "contact@shooting-star-blog.com"
+  contactFormEndpoint = "https://shooting-star-contact.shootingstarblog.workers.dev"
+  turnstileSiteKey = "0x4AAAAAAEQLhHRIzv5JfsbT"
   umamiSiteId = "3f8b449d-9a37-4f79-b838-d949d6f2ef85"
 
 [taxonomies]
